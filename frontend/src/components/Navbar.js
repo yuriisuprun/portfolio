@@ -7,7 +7,7 @@ export default function Navbar(){
         <nav className="flex justify-between p-6 border-b">
 
             <h1 className="font-bold text-xl">
-                Yurii Suprun
+                YS.
             </h1>
 
             <div className="flex gap-6">
