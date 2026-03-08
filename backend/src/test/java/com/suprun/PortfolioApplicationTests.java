@@ -1,4 +1,4 @@
-package com.suprun.portfolio;
+package com.suprun;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
