@@ -2,19 +2,17 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Projects from "./components/Projects";
 
-function App(){
+function App() {
 
-  return(
+    return (
+        <div className="min-h-screen bg-white text-black dark:bg-gray-900 dark:text-white">
 
-      <div>
+            <Navbar/>
+            <Hero/>
+            <Projects/>
 
-        <Navbar/>
-        <Hero/>
-        <Projects/>
-
-      </div>
-
-  );
+        </div>
+    );
 
 }
 
