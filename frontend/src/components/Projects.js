@@ -27,15 +27,11 @@ export default function Projects(){
                 {repos.map(repo=>(
                     <div key={repo.id} className="border p-6 rounded-xl">
 
-                        <h3 className="text-xl font-bold">
-                            {repo.name}
-                        </h3>
+                        <h3 className="text-xl font-bold">{repo.name}</h3>
 
                         <p>{repo.description}</p>
 
-                        <a href={repo.html_url} className="text-blue-500">
-                            View Code
-                        </a>
+                        <a href={repo.html_url} className="text-blue-500">View Code</a>
 
                     </div>
                 ))}
