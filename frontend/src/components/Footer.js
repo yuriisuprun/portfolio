@@ -6,30 +6,31 @@ export default function Footer() {
 
         <footer className="border-t py-8">
 
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <div
+                className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
 
-                <p>© {year} Yurii Suprun.</p>
+                <p>© {year} Made by Yurii Suprun</p>
 
                 <div className="flex items-center gap-6">
 
                     <a href="https://github.com/yuriisuprun"
-                        title="Github"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:scale-110 transition">
+                       title="Github"
+                       target="_blank"
+                       rel="noreferrer"
+                       className="hover:scale-110 transition">
                         <img
                             src="/icons/github.png"
                             alt="GitHub"
                             className="w-6 h-6"/></a>
 
                     <a href="https://www.linkedin.com/in/yurii-suprun/"
-                        title="Linkedin"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:scale-110 transition">
+                       title="Linkedin"
+                       target="_blank"
+                       rel="noreferrer"
+                       className="hover:scale-110 transition">
                         <img src="/icons/linkedin.png"
-                            alt="LinkedIn"
-                            className="w-6 h-6"/></a>
+                             alt="LinkedIn"
+                             className="w-6 h-6"/></a>
 
                     <a href="mailto:iursuprun@gmail.com"
                        title="Email"
