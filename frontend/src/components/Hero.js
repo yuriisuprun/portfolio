@@ -1,4 +1,5 @@
 export default function Hero() {
+
     return (
         <section className="flex items-center justify-center py-24 text-center">
             <div className="flex flex-col items-center gap-6">
