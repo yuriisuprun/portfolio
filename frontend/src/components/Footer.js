@@ -8,37 +8,19 @@ export default function Footer() {
 
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
 
-                <p>
-                    © {year} Yurii Suprun. All rights reserved.
-                </p>
+                <p>© {year} Yurii Suprun.</p>
 
                 <div className="flex gap-6">
 
-                    <a href="#home" className="hover:underline">
-                        Home
-                    </a>
-
-                    <a href="#projects" className="hover:underline">
-                        Projects
-                    </a>
-
-                    <a
-                        href="https://github.com/"
+                    <a href="https://github.com/yuriisuprun"
                         target="_blank"
                         rel="noreferrer"
-                        className="hover:underline"
-                    >
-                        GitHub
-                    </a>
+                        className="hover:underline">GitHub</a>
 
-                    <a
-                        href="https://linkedin.com/"
+                    <a href="https://www.linkedin.com/in/yurii-suprun/"
                         target="_blank"
                         rel="noreferrer"
-                        className="hover:underline"
-                    >
-                        LinkedIn
-                    </a>
+                        className="hover:underline">LinkedIn</a>
 
                 </div>
 

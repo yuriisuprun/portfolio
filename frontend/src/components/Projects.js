@@ -18,7 +18,7 @@ export default function Projects(){
 
     return(
 
-        <section id="projects" className="p-12">
+        <section className="p-12">
 
             <h2 className="text-3xl mb-8">
                 Projects

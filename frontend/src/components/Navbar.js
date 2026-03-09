@@ -1,26 +1,40 @@
 import ThemeToggle from "./ThemeToggle";
 
-export default function Navbar(){
+export default function Navbar({ setActiveSection }) {
 
-    return(
+    return (
 
         <nav className="flex justify-between p-6 border-b">
 
-            <h1 className="font-bold text-xl">
-                <a href="#home">YS.</a>
+            <h1
+                className="font-bold text-xl cursor-pointer"
+                onClick={() => setActiveSection("home")}
+            >
+                YS.
             </h1>
 
             <div className="flex gap-6">
 
-                <a href="#home">Home</a>
-                <a href="#projects">Projects</a>
+                <button
+                    onClick={() => setActiveSection("home")}
+                    className="hover:underline"
+                >
+                    Home
+                </button>
 
-                <ThemeToggle/>
+                <button
+                    onClick={() => setActiveSection("projects")}
+                    className="hover:underline"
+                >
+                    Projects
+                </button>
+
+                <ThemeToggle />
 
             </div>
 
         </nav>
 
-    )
+    );
 
 }
