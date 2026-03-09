@@ -7,11 +7,11 @@ export default function Hero(){
             <div>
 
                 <h1 className="text-5xl font-bold">
-                    Hi 👋 I'm Yurii
+                    Yurii Suprun
                 </h1>
 
                 <p className="mt-4 text-xl">
-                    Full Stack Developer
+                    Software Engineer
                 </p>
 
             </div>
