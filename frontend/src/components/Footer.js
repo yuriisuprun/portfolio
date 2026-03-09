@@ -31,6 +31,15 @@ export default function Footer() {
                             alt="LinkedIn"
                             className="w-6 h-6"/></a>
 
+                    <a href="mailto:iursuprun@gmail.com"
+                       title="Email"
+                       target="_blank"
+                       rel="noreferrer"
+                       className="hover:scale-110 transition">
+                        <img src="/icons/email.png"
+                             alt="Email"
+                             className="w-6 h-6"/></a>
+
                 </div>
 
             </div>
