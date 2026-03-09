@@ -6,8 +6,7 @@ export default function Footer() {
 
         <footer className="border-t py-8">
 
-            <div
-                className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
 
                 <p>© {year} Made by Yurii Suprun</p>
 
