@@ -2,7 +2,7 @@ export default function Hero(){
 
     return(
 
-        <section className="flex items-center justify-center gap-10 py-24">
+        <section className="flex items-center justify-center gap-10 py-24 text-center">
 
             <div>
 

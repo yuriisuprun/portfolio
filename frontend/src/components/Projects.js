@@ -24,7 +24,7 @@ export default function Projects(){
                 Projects
             </h2>
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
 
                 {repos.map(repo=>(
                     <div key={repo.id} className="border p-6 rounded-xl">
