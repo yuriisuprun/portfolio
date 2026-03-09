@@ -3,7 +3,6 @@ export default function Footer() {
 
     return (
         <footer className="border-t py-8">
-            {/* Center the text */}
             <div className="flex flex-col items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <p>© {year} Made by Yurii Suprun</p>
             </div>
