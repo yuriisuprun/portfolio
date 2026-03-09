@@ -9,17 +9,20 @@ function App() {
     const [activeSection, setActiveSection] = useState("home");
 
     return (
-        <div className="min-h-screen bg-white text-black dark:bg-gray-900 dark:text-white">
+        <div className="min-h-screen flex flex-col bg-white text-black dark:bg-gray-900 dark:text-white">
 
-            <div className="max-w-6xl mx-auto px-6">
+            <div className="max-w-6xl mx-auto px-6 w-full flex flex-col flex-grow">
 
                 <Navbar setActiveSection={setActiveSection} />
 
-                {activeSection === "home" && <Hero/>}
+                <main className="flex-grow">
 
-                {activeSection === "projects" && <Projects/>}
+                    {activeSection === "home" && <Hero />}
+                    {activeSection === "projects" && <Projects />}
 
-                <Footer/>
+                </main>
+
+                <Footer />
 
             </div>
 

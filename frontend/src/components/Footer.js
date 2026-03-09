@@ -4,23 +4,32 @@ export default function Footer() {
 
     return (
 
-        <footer className="border-t mt-20 py-8">
+        <footer className="border-t py-8">
 
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
 
                 <p>© {year} Yurii Suprun.</p>
 
-                <div className="flex gap-6">
+                <div className="flex items-center gap-6">
 
                     <a href="https://github.com/yuriisuprun"
+                        title="Github"
                         target="_blank"
                         rel="noreferrer"
-                        className="hover:underline">GitHub</a>
+                        className="hover:scale-110 transition">
+                        <img
+                            src="/icons/github.png"
+                            alt="GitHub"
+                            className="w-6 h-6"/></a>
 
                     <a href="https://www.linkedin.com/in/yurii-suprun/"
+                        title="Linkedin"
                         target="_blank"
                         rel="noreferrer"
-                        className="hover:underline">LinkedIn</a>
+                        className="hover:scale-110 transition">
+                        <img src="/icons/linkedin.png"
+                            alt="LinkedIn"
+                            className="w-6 h-6"/></a>
 
                 </div>
 
