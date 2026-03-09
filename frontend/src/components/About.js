@@ -1,4 +1,5 @@
 export default function About() {
+
     return (
         <section className="flex items-center justify-center gap-10 py-24 text-center">
             <div>

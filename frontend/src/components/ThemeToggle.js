@@ -1,18 +1,12 @@
-import {useState} from "react";
+export default function ThemeToggle({ dark, setDark }) {
 
-export default function ThemeToggle(){
-
-    const [dark,setDark]=useState(false);
-
-    function toggle(){
-        document.documentElement.classList.toggle("dark");
+    function toggle() {
         setDark(!dark);
     }
 
-    return(
+    return (
         <button onClick={toggle}>
-            {dark?"☀️":"🌙"}
+            {dark ? "☀️" : "🌙"}
         </button>
     );
-
 }
