@@ -3,17 +3,11 @@ export default function Contacts({ language }) {
     const text = {
         en: {
             title: "Contact Me",
-            description: "Feel free to reach out if you'd like to collaborate or have any questions.",
-            email: "Email",
-            linkedin: "LinkedIn",
-            github: "GitHub"
+            description: "Feel free to reach out if you'd like to collaborate."
         },
         it: {
             title: "Contattami",
-            description: "Sentiti libero di contattarmi se vuoi collaborare o hai domande.",
-            email: "Email",
-            linkedin: "LinkedIn",
-            github: "GitHub"
+            description: "Sentiti libero di contattarmi se vuoi collaborare."
         }
     };
 

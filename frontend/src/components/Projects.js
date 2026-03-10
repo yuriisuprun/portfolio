@@ -11,14 +11,8 @@ export default function Projects({ language }) {
     }, []);
 
     const text = {
-        en: {
-            title: "Projects",
-            view: "View Code"
-        },
-        it: {
-            title: "Progetti",
-            view: "Vedi Codice"
-        }
+        en: { title: "Projects", view: "View Code" },
+        it: { title: "Progetti", view: "Vedi Codice" }
     };
 
     const t = text[language];
@@ -26,7 +20,9 @@ export default function Projects({ language }) {
     return (
         <section className="p-12">
 
-            <h2 className="text-3xl mb-8">{t.title}</h2>
+            <h2 className="text-3xl mb-8">
+                {t.title}
+            </h2>
 
             <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
 
@@ -34,7 +30,9 @@ export default function Projects({ language }) {
 
                     <div key={repo.id} className="border p-6 rounded-xl">
 
-                        <h3 className="text-xl font-bold">{repo.name}</h3>
+                        <h3 className="text-xl font-bold">
+                            {repo.name}
+                        </h3>
 
                         <p>{repo.description}</p>
 

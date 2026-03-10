@@ -1,34 +1,32 @@
+import { Link } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 
-export default function Navbar({ setActiveSection, dark, setDark, language, setLanguage }) {
+export default function Navbar({ dark, setDark, language, setLanguage }) {
 
     return (
         <nav className="flex justify-between p-6 border-b">
 
-            <h1
-                className="font-bold text-xl cursor-pointer"
-                onClick={() => setActiveSection("home")}
-            >
+            <Link to="/home" className="font-bold text-xl">
                 YS.
-            </h1>
+            </Link>
 
             <div className="flex gap-6 items-center">
 
-                <button onClick={() => setActiveSection("home")} className="hover:underline">
+                <Link to="/home" className="hover:underline">
                     {language === "en" ? "home" : "home"}
-                </button>
+                </Link>
 
-                <button onClick={() => setActiveSection("about")} className="hover:underline">
+                <Link to="/about" className="hover:underline">
                     {language === "en" ? "about" : "chi sono"}
-                </button>
+                </Link>
 
-                <button onClick={() => setActiveSection("projects")} className="hover:underline">
+                <Link to="/projects" className="hover:underline">
                     {language === "en" ? "projects" : "progetti"}
-                </button>
+                </Link>
 
-                <button onClick={() => setActiveSection("contacts")} className="hover:underline">
+                <Link to="/contacts" className="hover:underline">
                     {language === "en" ? "contacts" : "contatti"}
-                </button>
+                </Link>
 
                 <button
                     onClick={() => setLanguage(language === "en" ? "it" : "en")}
@@ -40,6 +38,7 @@ export default function Navbar({ setActiveSection, dark, setDark, language, setL
                 <ThemeToggle dark={dark} setDark={setDark} />
 
             </div>
+
         </nav>
     );
 }
