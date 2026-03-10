@@ -6,7 +6,7 @@ export default function Projects({ language }) {
     const [repos, setRepos] = useState([]);
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/repos")
+        axios.get("https://yuriisuprun.onrender.com/api/repos")
             .then(res => setRepos(res.data.slice(0, 6)));
     }, []);
 
