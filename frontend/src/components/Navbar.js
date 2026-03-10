@@ -1,36 +1,44 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar({ dark, setDark, language, setLanguage }) {
 
-    return (
-        <nav className="flex justify-between p-6 border-b">
+    const linkClass = ({ isActive }) =>
+        isActive
+            ? "underline font-semibold"
+            : "hover:underline";
 
-            <Link to="/home" className="font-bold text-xl">
+    return (
+        <nav className="flex justify-between items-center p-6 border-b">
+
+            <NavLink
+                to="/home"
+                className="font-bold text-xl"
+            >
                 YS.
-            </Link>
+            </NavLink>
 
             <div className="flex gap-6 items-center">
 
-                <Link to="/home" className="hover:underline">
+                <NavLink to="/home" className={linkClass}>
                     {language === "en" ? "home" : "home"}
-                </Link>
+                </NavLink>
 
-                <Link to="/about" className="hover:underline">
+                <NavLink to="/about" className={linkClass}>
                     {language === "en" ? "about" : "chi sono"}
-                </Link>
+                </NavLink>
 
-                <Link to="/projects" className="hover:underline">
+                <NavLink to="/projects" className={linkClass}>
                     {language === "en" ? "projects" : "progetti"}
-                </Link>
+                </NavLink>
 
-                <Link to="/contacts" className="hover:underline">
+                <NavLink to="/contacts" className={linkClass}>
                     {language === "en" ? "contacts" : "contatti"}
-                </Link>
+                </NavLink>
 
                 <button
                     onClick={() => setLanguage(language === "en" ? "it" : "en")}
-                    className="text-sm border px-2 py-1 rounded"
+                    className="text-sm border px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                     {language === "en" ? "IT" : "EN"}
                 </button>
