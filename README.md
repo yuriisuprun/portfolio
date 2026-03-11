@@ -1,6 +1,6 @@
 ﻿# Yurii Suprun - Portfolio
 
-Personal portfolio website with React frontend and Spring Boot backend used by the Projects page to fetch GitHub repositories.
+Personal portfolio website with React frontend and Spring Boot backend used by the Projects page to fetch my GitHub repositories.
 
 - Live site: https://yuriisuprun.vercel.app
 - Backend (production): https://yuriisuprun.onrender.com
@@ -15,7 +15,7 @@ Personal portfolio website with React frontend and Spring Boot backend used by t
 
 ```
 .
-├── frontend/   # React (react-scripts) + TailwindCSS
+├── frontend/   # React + TailwindCSS
 └── backend/    # Spring Boot REST API (Maven, Java 17)
 ```
 
@@ -23,18 +23,18 @@ Personal portfolio website with React frontend and Spring Boot backend used by t
 
 - SPA navigation: `/home`, `/about`, `/projects`, `/contacts`
 - Light/dark mode toggle (Tailwind `dark` class)
-- Language toggle: English/Italian (simple in-component dictionaries)
+- Language toggle: English/Italian
 - Projects grid populated from the backend API
 
 ## Tech stack
 
-Frontend (`frontend/`):
+Frontend:
 - React 19 (`react`, `react-dom`)
 - React Router 7 (`react-router-dom`)
 - TailwindCSS 3
 - Axios
 
-Backend (`backend/`):
+Backend:
 - Java 17
 - Spring Boot 4 (Spring MVC)
 - Caffeine cache (30 minute TTL for GitHub repos)
