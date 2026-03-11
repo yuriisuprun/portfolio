@@ -11,7 +11,7 @@ The project showcases professional experience, projects, and contact information
 
 ---
 
-<a href="https://yuriisuprun.vercel.app/" target="_blank">
+<a href="https://yuriisuprun.vercel.app/" target="_blank" rel="noopener noreferrer">
   <img src="https://img.shields.io/badge/https://yuriisuprun.vercel.app/-0A66C2?style=for-the-badge&logo=vercel&logoColor=white">
 </a>
 
