@@ -1,0 +1,11 @@
+${AnsiColor.BRIGHT_CYAN}
+ __   __  ___
+ \ \ / / / __|
+  \ V /  \__ \  _
+   |_|   |___/ (_)
+
+${AnsiColor.BRIGHT_YELLOW}:: ${spring.application.name} ::${AnsiColor.DEFAULT}
+
+${AnsiColor.GREEN}Spring Boot ${spring-boot.version}${AnsiColor.DEFAULT}  ${AnsiColor.BRIGHT_BLACK}Java ${java.version}${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_BLACK}${application.formatted-version}${AnsiColor.DEFAULT}
+
