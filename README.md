@@ -19,7 +19,7 @@ Personal portfolio website with React frontend and Spring Boot backend used by t
 └── backend/    # Spring Boot REST API (Maven, Java 17)
 ```
 
-## Features (implemented)
+## Features
 
 - SPA navigation: `/home`, `/about`, `/projects`, `/contacts`
 - Light/dark mode toggle (Tailwind `dark` class)
