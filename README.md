@@ -3,7 +3,7 @@
 Personal portfolio website with React frontend and Spring Boot backend used by the Projects page to fetch my GitHub repositories.
 
 - Live site: https://yuriisuprun.vercel.app
-- Backend (production): https://yuriisuprun.onrender.com
+- Backend: https://yuriisuprun.onrender.com/api/repos
 
 [![React](https://img.shields.io/badge/React-19-blue?logo=react)]()
 [![React%20Router](https://img.shields.io/badge/React%20Router-7-red?logo=reactrouter)]()
