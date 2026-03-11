@@ -14,7 +14,7 @@ The project showcases professional experience, projects, and contact information
 # 🚀 Live Demo
 
 ```
-[https://yuriisuprun.vercel.app/](https://yuriisuprun.vercel.app/)
+<https://yuriisuprun.vercel.app/](https://yuriisuprun.vercel.app/>
 ```
 
 ---
