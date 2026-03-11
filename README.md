@@ -13,10 +13,7 @@ The project showcases professional experience, projects, and contact information
 
 # 🚀 Live Demo
 
-```
-Visit [GitHub](https://github.com)
-<https://yuriisuprun.vercel.app/>
-```
+[https://yuriisuprun.vercel.app/](https://yuriisuprun.vercel.app/)
 
 ---
 
