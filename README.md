@@ -42,8 +42,8 @@ Backend:
 ## Run locally
 
 Prerequisites:
-- Node.js (recommended: 18+)
-- Java 17
+- Node.js (recommended version: 18+)
+- Java version: 17
 
 ### 1) Start the backend
 
