@@ -100,7 +100,7 @@ docker run --rm -p 8080:8080 portfolio-backend
 
 ## License
 
-No `LICENSE` file is included in this repository at the moment.
+MIT license.
 
 ## Contact
 
