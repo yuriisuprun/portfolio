@@ -1,235 +1,109 @@
-# 🌐 Yurii Suprun — My personal website
+﻿# Yurii Suprun - Portfolio
 
-[![React](https://img.shields.io/badge/React-18-blue?logo=react)]()
-[![Tailwind](https://img.shields.io/badge/TailwindCSS-3-blue?logo=tailwindcss)]()
-[![Java](https://img.shields.io/badge/Java-Backend-orange?logo=java)]()
-[![Spring Boot](https://img.shields.io/badge/SpringBoot-API-green?logo=springboot)]()
-[![License](https://img.shields.io/badge/license-MIT-lightgrey)]()
+Personal portfolio website with a React frontend and a Spring Boot backend used by the Projects page to fetch GitHub repositories.
 
-A modern **full-stack developer portfolio** built with **React, Tailwind CSS, and Spring Boot**.
-The project showcases professional experience, projects, and contact information while demonstrating modern frontend architecture and clean UI design.
+- Live site: https://yuriisuprun.vercel.app
+- Backend (production): https://yuriisuprun.onrender.com
 
----
+[![React](https://img.shields.io/badge/React-19-blue?logo=react)]()
+[![React%20Router](https://img.shields.io/badge/React%20Router-7-red?logo=reactrouter)]()
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-blue?logo=tailwindcss)]()
+[![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)]()
+[![Spring%20Boot](https://img.shields.io/badge/Spring%20Boot-4-green?logo=springboot)]()
 
-<a href="https://yuriisuprun.vercel.app/" target="_blank" rel="noopener noreferrer">
-  <img src="https://img.shields.io/badge/https://yuriisuprun.vercel.app/-0A66C2?style=for-the-badge&logo=vercel&logoColor=white">
-</a>
-
----
-
-# 📸 Preview
-
-## Home
-
-<img width="900" alt="Portfolio Home Screenshot" src="docs/home.png">
-
-## Projects
-
-<img width="900" alt="Portfolio Projects Screenshot" src="docs/projects.png">
-
-## Contacts
-
-<img width="900" alt="Portfolio Contacts Screenshot" src="docs/contacts.png">
-
-*(Screenshots can be added later inside a `/docs` folder)*
-
----
-
-# ✨ Features
-
-### 🎨 Modern UI
-
-* Responsive design
-* Clean minimal layout
-* Tailwind CSS styling
-* Dark / Light mode toggle
-
-### 🌍 Multilingual Support
-
-* English 🇬🇧
-* Italian 🇮🇹
-* Instant language switching
-
-### ⚡ SPA Navigation
-
-* Client-side routing
-* No page reloads
-* Clean URL structure
+## Repository layout
 
 ```
-/home
-/about
-/projects
-/contacts
+.
+├── frontend/   # React (react-scripts) + TailwindCSS
+└── backend/    # Spring Boot REST API (Maven, Java 17)
 ```
 
-### 📦 Dynamic Projects
+## Features (implemented)
 
-Projects are loaded from a backend API.
+- SPA navigation: `/home`, `/about`, `/projects`, `/contacts`
+- Light/dark mode toggle (Tailwind `dark` class)
+- Language toggle: English/Italian (simple in-component dictionaries)
+- Projects grid populated from the backend API
 
-### 📱 Fully Responsive
+## Tech stack
 
-Works across:
+Frontend (`frontend/`):
+- React 19 (`react`, `react-dom`)
+- React Router 7 (`react-router-dom`)
+- TailwindCSS 3
+- Axios
 
-* Desktop
-* Tablet
-* Mobile
+Backend (`backend/`):
+- Java 17
+- Spring Boot 4 (Spring MVC)
+- Caffeine cache (30 minute TTL for GitHub repos)
 
----
+## Run locally
 
-# 🧰 Tech Stack
+Prerequisites:
+- Node.js (recommended: 18+)
+- Java 17
 
-## Frontend
+### 1) Start the backend
 
-| Technology   | Purpose        |
-| ------------ | -------------- |
-| React        | UI Framework   |
-| React Router | SPA Navigation |
-| Tailwind CSS | Styling        |
-| Axios        | API requests   |
-
----
-
-## Backend (Optional)
-
-| Technology  | Purpose          |
-| ----------- | ---------------- |
-| Java        | Backend language |
-| Spring Boot | REST API         |
-| GitHub API  | Repository data  |
-
----
-
-# 📂 Project Structure
-
-```
-src
-│
-├── components
-│   ├── Navbar.jsx
-│   ├── Hero.jsx
-│   ├── About.jsx
-│   ├── Projects.jsx
-│   ├── Contacts.jsx
-│   ├── Footer.jsx
-│   └── ThemeToggle.jsx
-│
-├── App.jsx
-├── index.js
-└── index.css
+```bash
+cd backend
+./mvnw spring-boot:run
 ```
 
----
+Windows PowerShell:
 
-# ⚙️ Installation
-
-## 1️⃣ Clone the repository
-
-```
-git clone https://github.com/yuriisuprun/portfolio.git
-cd portfolio
+```powershell
+cd backend
+.\mvnw.cmd spring-boot:run
 ```
 
----
+Backend starts on `http://localhost:8080`.
 
-## 2️⃣ Install dependencies
+### 2) Start the frontend
 
-```
+```bash
+cd frontend
 npm install
-```
-
----
-
-## 3️⃣ Start the development server
-
-```
 npm start
 ```
 
-Open in browser:
+Frontend starts on `http://localhost:3000`.
 
-```
-http://localhost:3000
-```
+Note: the frontend currently calls the production API URL directly in `frontend/src/components/Projects.js`. To use the local backend, replace it with `http://localhost:8080/api/repos`.
 
----
+## API
 
-# 🔗 Backend API
+Backend endpoint (Spring MVC):
 
-The **Projects** section retrieves data from a backend service.
-
-Example endpoint:
-
-```
-GET http://localhost:8080/api/repos
+```http
+GET /api/repos
 ```
 
-Example response:
+What it does:
+- Fetches repositories from `https://api.github.com/users/yuriisuprun/repos`
+- Caches the response in-memory for 30 minutes (Caffeine)
+- Allows cross-origin requests to `/api/**` (currently `allowedOrigins("*")`)
 
-```json
-[
-  {
-    "id": 1,
-    "name": "portfolio",
-    "description": "Personal developer portfolio",
-    "html_url": "https://github.com/username/portfolio"
-  }
-]
+Notes:
+- The backend uses the public GitHub API without authentication, so requests can be subject to GitHub rate limits.
+
+## Docker (backend)
+
+Build and run the backend container:
+
+```bash
+docker build -t portfolio-backend ./backend
+docker run --rm -p 8080:8080 portfolio-backend
 ```
 
----
+## License
 
-# 🎯 Roadmap
+No `LICENSE` file is included in this repository at the moment.
 
-Future improvements planned:
+## Contact
 
-* Project filtering
-* Blog section
-* Deployment pipeline
-* Contact form with email service
-* Animations and transitions
-* SEO improvements
-
----
-
-# 📬 Contact
-
-**Yurii Suprun**
-
-Email
-
-```
-iursuprun@gmail.com
-```
-
-GitHub
-
-```
-https://github.com/yuriisuprun
-```
-
-LinkedIn
-
-```
-https://www.linkedin.com/in/yurii-suprun
-```
-
----
-
-# 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-# ⭐ Support
-
-If you like this project:
-
-⭐ Star the repository
-🍴 Fork it
-🛠 Use it as inspiration for your own portfolio
-
----
-
-**Made by Yurii Suprun**
+- Email: iursuprun@gmail.com
+- GitHub: https://github.com/yuriisuprun
+- LinkedIn: https://www.linkedin.com/in/yurii-suprun/
