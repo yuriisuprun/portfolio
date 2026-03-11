@@ -15,6 +15,10 @@ The project showcases professional experience, projects, and contact information
 
 [https://yuriisuprun.vercel.app/](https://yuriisuprun.vercel.app/)
 
+# 🚀 Live Demo
+
+[![https://yuriisuprun.vercel.app/](https://img.shields.io/badge/https://yuriisuprun.vercel.app/-blue?style=for-the-badge)](https://yuriisuprun.vercel.app/)
+
 ---
 
 # 📸 Preview
