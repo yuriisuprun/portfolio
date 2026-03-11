@@ -24,7 +24,7 @@ Personal portfolio website with React frontend and Spring Boot backend used by t
 - SPA navigation: `/home`, `/about`, `/projects`, `/contacts`
 - Light/dark mode toggle (Tailwind `dark` class)
 - Language toggle: English/Italian
-- Projects grid populated from the backend API
+- Projects grid populated from the backend API (GitHub integration)
 
 ## Tech stack
 
