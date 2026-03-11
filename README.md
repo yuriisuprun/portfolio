@@ -1,6 +1,6 @@
 ﻿# Yurii Suprun - Portfolio
 
-Personal portfolio website with a React frontend and a Spring Boot backend used by the Projects page to fetch GitHub repositories.
+Personal portfolio website with React frontend and Spring Boot backend used by the Projects page to fetch GitHub repositories.
 
 - Live site: https://yuriisuprun.vercel.app
 - Backend (production): https://yuriisuprun.onrender.com
