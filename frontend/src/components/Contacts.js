@@ -2,7 +2,7 @@ export default function Contacts({ language }) {
 
     const text = {
         en: {
-            title: "Contact",
+            title: "Contacts",
             description: "Feel free to reach out if you'd like to collaborate."
         },
         it: {
