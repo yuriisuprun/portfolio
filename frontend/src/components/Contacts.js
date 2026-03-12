@@ -31,11 +31,11 @@ export default function Contacts({ language }) {
                 </p>
 
                 <p>
-                    &gt; <a href="https://github.com/yuriisuprun" target="_blank">github.com/yuriisuprun</a>
+                    &gt; <a href="https://github.com/yuriisuprun" target="_blank" rel="noreferrer noopener">github.com/yuriisuprun</a>
                 </p>
 
                 <p>
-                    &gt; <a href="https://linkedin.com/in/yurii-suprun" target="_blank">linkedin.com/in/yurii-suprun</a>
+                    &gt; <a href="https://linkedin.com/in/yurii-suprun" target="_blank" rel="noreferrer noopener">linkedin.com/in/yurii-suprun</a>
                 </p>
 
             </div>
