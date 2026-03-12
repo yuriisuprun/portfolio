@@ -6,7 +6,8 @@ export default function Projects({ language }) {
     const [repos, setRepos] = useState([]);
 
     useEffect(() => {
-        axios.get("https://yuriisuprun.onrender.com/api/repos")
+        axios
+            .get("https://yuriisuprun.onrender.com/api/repos")
             .then(res => setRepos(res.data.slice(0, 6)));
     }, []);
 
@@ -18,9 +19,9 @@ export default function Projects({ language }) {
     const t = text[language];
 
     return (
-        <section className="p-12">
+        <section className="py-16">
 
-            <h2 className="text-3xl mb-8">
+            <h2 className="text-3xl mb-10">
                 {t.title}
             </h2>
 
@@ -28,16 +29,26 @@ export default function Projects({ language }) {
 
                 {repos.map(repo => (
 
-                    <div key={repo.id} className="border p-6 rounded-xl">
+                    <div
+                        key={repo.id}
+                        className="border border-gray-300 dark:border-terminal p-6 rounded"
+                    >
 
-                        <h3 className="text-xl font-bold">
+                        <h3 className="text-lg font-bold">
                             {repo.name}
                         </h3>
 
-                        <p>{repo.description}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            {repo.description}
+                        </p>
 
-                        <a href={repo.html_url} className="text-blue-500">
-                            {t.view}
+                        <a
+                            href={repo.html_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block mt-4 text-blue-600 dark:text-green-400"
+                        >
+                            &gt; {t.view}
                         </a>
 
                     </div>

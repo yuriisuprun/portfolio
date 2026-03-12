@@ -2,11 +2,11 @@ export default function Contacts({ language }) {
 
     const text = {
         en: {
-            title: "Contact Me",
+            title: "Contact",
             description: "Feel free to reach out if you'd like to collaborate."
         },
         it: {
-            title: "Contattami",
+            title: "Contatti",
             description: "Sentiti libero di contattarmi se vuoi collaborare."
         }
     };
@@ -14,43 +14,32 @@ export default function Contacts({ language }) {
     const t = text[language];
 
     return (
-        <section className="flex items-center justify-center py-24">
-            <div className="text-center max-w-xl">
+        <section className="py-20">
 
-                <h2 className="text-4xl font-bold mb-8">
-                    {t.title}
-                </h2>
+            <h2 className="text-3xl mb-6">
+                {t.title}
+            </h2>
 
-                <p className="mb-10 text-lg">
-                    {t.description}
+            <p className="text-gray-600 dark:text-gray-400 mb-10">
+                {t.description}
+            </p>
+
+            <div className="space-y-3">
+
+                <p>
+                    &gt; <a href="mailto:iursuprun@gmail.com">iursuprun@gmail.com</a>
                 </p>
 
-                <div className="flex flex-col gap-6 text-lg">
-                    <a href="mailto:iursuprun@gmail.com"
-                        className="flex items-center justify-center gap-3 hover:underline">
-                        <img src="/icons/email.png" alt="email" className="w-6 h-6 filter dark:invert"/>
-                        iursuprun@gmail.com
-                    </a>
+                <p>
+                    &gt; <a href="https://github.com/yuriisuprun" target="_blank">github.com/yuriisuprun</a>
+                </p>
 
-                    <a href="https://www.linkedin.com/in/yurii-suprun/"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center justify-center gap-3 hover:underline">
-                        <img src="/icons/linkedin.png" alt="linkedin" className="w-6 h-6 filter dark:invert"/>
-                        {t.linkedin}
-                    </a>
-
-                    <a href="https://github.com/yuriisuprun"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center justify-center gap-3 hover:underline">
-                        <img src="/icons/github.png" alt="github" className="w-6 h-6 filter dark:invert"/>
-                        {t.github}
-                    </a>
-
-                </div>
+                <p>
+                    &gt; <a href="https://linkedin.com/in/yurii-suprun" target="_blank">linkedin.com/in/yurii-suprun</a>
+                </p>
 
             </div>
+
         </section>
     );
 }

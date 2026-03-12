@@ -1,23 +1,12 @@
-export default function Footer({ language }) {
+const AUTHOR_NAME = "Yurii Suprun";
+const COPYRIGHT_SYMBOL = "\u00A9";
 
+export default function Footer() {
     const year = new Date().getFullYear();
 
-    const text = {
-        en: `© ${year} Made by Yurii Suprun`,
-        it: `© ${year} Creato da Yurii Suprun`
-    };
-
     return (
-        <footer className="border-t py-8">
-
-            <div className="flex flex-col items-center text-sm text-gray-600 dark:text-gray-400">
-
-                <p>
-                    {text[language]}
-                </p>
-
-            </div>
-
+        <footer className="border-t border-gray-300 dark:border-terminal py-6 text-sm text-gray-500">
+            {COPYRIGHT_SYMBOL} {year} {AUTHOR_NAME}
         </footer>
     );
 }

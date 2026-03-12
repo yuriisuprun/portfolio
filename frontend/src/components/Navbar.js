@@ -1,47 +1,55 @@
 import { NavLink } from "react-router-dom";
-import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar({ dark, setDark, language, setLanguage }) {
-  const linkClass = ({ isActive }) =>
-    isActive ? "underline font-semibold" : "hover:underline";
 
-  const toggleLanguage = () => {
-    setLanguage(language === "en" ? "it" : "en");
-  };
+    const linkClass = ({ isActive }) =>
+        isActive
+            ? "font-semibold text-gray-900 dark:text-white"
+            : "text-gray-500 hover:text-black dark:hover:text-white";
 
-  return (
-    <nav className="flex justify-between items-center p-6 border-b">
-      <NavLink to="/home" className="font-bold text-xl">
-        YS.
-      </NavLink>
+    const toggleLanguage = () => {
+        setLanguage(language === "en" ? "it" : "en");
+    };
 
-      <div className="flex gap-6 items-center">
-        <NavLink to="/home" className={linkClass}>
-          home
-        </NavLink>
+    return (
+        <nav className="flex justify-between items-center py-6 border-b border-gray-300 dark:border-terminal">
 
-        <NavLink to="/about" className={linkClass}>
-          {language === "en" ? "about" : "chi sono"}
-        </NavLink>
+            <NavLink to="/home" className="font-bold text-xl text-gray-900 dark:text-green-400">
+                YS.
+            </NavLink>
 
-        <NavLink to="/projects" className={linkClass}>
-          {language === "en" ? "projects" : "progetti"}
-        </NavLink>
+            <div className="flex gap-6 items-center text-sm">
 
-        <NavLink to="/contacts" className={linkClass}>
-          {language === "en" ? "contacts" : "contatti"}
-        </NavLink>
+                <NavLink to="/home" className={linkClass}>home</NavLink>
 
-        <button
-          type="button"
-          onClick={toggleLanguage}
-          className="text-sm border px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-        >
-          {language === "en" ? "IT" : "EN"}
-        </button>
+                <NavLink to="/about" className={linkClass}>
+                    {language === "en" ? "about" : "chi sono"}
+                </NavLink>
 
-        <ThemeToggle dark={dark} setDark={setDark} />
-      </div>
-    </nav>
-  );
+                <NavLink to="/projects" className={linkClass}>
+                    {language === "en" ? "projects" : "progetti"}
+                </NavLink>
+
+                <NavLink to="/contacts" className={linkClass}>
+                    {language === "en" ? "contacts" : "contatti"}
+                </NavLink>
+
+                <button
+                    onClick={toggleLanguage}
+                    className="border px-2 py-1 text-sm border-gray-400 dark:border-green-400"
+                >
+                    {language === "en" ? "IT" : "EN"}
+                </button>
+
+                <button
+                    onClick={() => setDark(!dark)}
+                    className="text-lg"
+                >
+                    {dark ? "☀️" : "🌙"}
+                </button>
+
+            </div>
+
+        </nav>
+    );
 }
