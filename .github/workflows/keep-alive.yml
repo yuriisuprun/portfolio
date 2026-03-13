@@ -1,12 +1,18 @@
-#name: Keeps server alive because the Render free tier stops the instance after 15 minutes of inactivity
-#
-#on:
-#  schedule:
-#    - cron: "*/10 * * * *"
-#
-#jobs:
-#  ping:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Ping API
-#        run: curl https://yuriisuprun.onrender.com/internal/ping
+name: Keep Render server alive
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    name: Ping Render API
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Send keep-alive request
+        run: |
+          curl --retry 3 --retry-delay 5 --fail --silent --show-error \
+          https://yuriisuprun.onrender.com/internal/ping
