@@ -12,10 +12,6 @@ export default function Hero({ language }) {
 
             <div className="space-y-6">
 
-                {/*<p className="text-gray-500 dark:text-green-400">*/}
-                {/*    $ whoami*/}
-                {/*</p>*/}
-
                 <h1 className="text-5xl font-bold">
                     Yurii Suprun
                 </h1>
