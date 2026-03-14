@@ -2,8 +2,8 @@
 
 const API_URL =
     process.env.NODE_ENV === "development"
-        ? "/api/contact"
-        : "https://yuriisuprun.vercel.app/api/contact";
+        ? "http://localhost:8080/api/contact"      // local Spring Boot
+        : "https://portfolio.onrender.com/api/contact"; // your Render backend
 
 export async function sendContact(data) {
     try {
