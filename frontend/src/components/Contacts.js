@@ -1,3 +1,5 @@
+import { SITE_CONFIG } from "../config/siteConfig";
+
 export default function Contacts({ language }) {
 
     const text = {
@@ -27,15 +29,21 @@ export default function Contacts({ language }) {
             <div className="space-y-3">
 
                 <p>
-                    &gt; <a href="mailto:iursuprun@gmail.com">iursuprun@gmail.com</a>
+                    &gt; <a href={`mailto:${SITE_CONFIG.email}`}>
+                    {SITE_CONFIG.email}
+                </a>
                 </p>
 
                 <p>
-                    &gt; <a href="https://github.com/yuriisuprun" target="_blank" rel="noreferrer noopener">github.com/yuriisuprun</a>
+                    &gt; <a href={SITE_CONFIG.github} target="_blank" rel="noreferrer noopener">
+                    github.com/{SITE_CONFIG.githubUsername}
+                </a>
                 </p>
 
                 <p>
-                    &gt; <a href="https://linkedin.com/in/yurii-suprun" target="_blank" rel="noreferrer noopener">linkedin.com/in/yurii-suprun</a>
+                    &gt; <a href={SITE_CONFIG.linkedin} target="_blank" rel="noreferrer noopener">
+                    linkedin.com/in/yurii-suprun
+                </a>
                 </p>
 
             </div>
