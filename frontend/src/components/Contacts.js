@@ -1,4 +1,3 @@
-// src/components/Contacts.js
 import { useState } from "react";
 import { sendContact } from "../api/contactApi";
 

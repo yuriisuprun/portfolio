@@ -1,9 +1,7 @@
-// src/api/contactApi.js
-
 const API_URL =
     process.env.NODE_ENV === "development"
-        ? "http://localhost:8080/api/contact"      // local Spring Boot
-        : "https://portfolio.onrender.com/api/contact"; // your Render backend
+        ? "http://localhost:8080/api/contact"
+        : "https://portfolio.onrender.com/api/contact";
 
 export async function sendContact(data) {
     try {
@@ -14,10 +12,8 @@ export async function sendContact(data) {
             mode: "cors",
         });
 
-        // If response is 204 No Content, just return empty object
         if (res.status === 204) return {};
 
-        // Only parse JSON if there is content
         const text = await res.text();
         const json = text ? JSON.parse(text) : {};
 
