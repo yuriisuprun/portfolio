@@ -6,18 +6,15 @@ export default async function handler(req, res) {
     ];
 
     const origin = req.headers.origin;
-    const isAllowedOrigin = allowedOrigins.includes(origin);
-
-    // Always set CORS headers
-    if (isAllowedOrigin) {
+    if (allowedOrigins.includes(origin)) {
         res.setHeader("Access-Control-Allow-Origin", origin);
-        res.setHeader("Vary", "Origin"); // avoids caching problems
+        res.setHeader("Vary", "Origin"); // avoids caching issues
     }
 
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    // Handle OPTIONS preflight request immediately
+    // Handle preflight OPTIONS request
     if (req.method === "OPTIONS") {
         return res.status(204).end(); // 204 No Content
     }
@@ -30,7 +27,7 @@ export default async function handler(req, res) {
     try {
         const { name, email, message, website } = req.body;
 
-        // Honeypot field
+        // Honeypot field check
         if (website) return res.status(200).json({ ok: true });
 
         // Validate required fields

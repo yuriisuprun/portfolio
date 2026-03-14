@@ -3,7 +3,7 @@
 // Auto-switch between local dev (Spring Boot) and production (Vercel)
 const API_URL =
     process.env.NODE_ENV === "development"
-        ? "/api/contact" // proxy to Spring Boot localhost
+        ? "/api/contact" // React dev server proxy to Spring Boot
         : "https://yuriisuprun.vercel.app/api/contact";
 
 export async function sendContact(data) {
@@ -12,6 +12,7 @@ export async function sendContact(data) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
+            mode: "cors", // ensures CORS is handled in production
         });
 
         if (!res.ok) {
