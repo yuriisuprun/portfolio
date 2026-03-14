@@ -15,8 +15,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("*") // for testing; replace * with frontend URL in production
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedOrigins("https://yuriisuprun.vercel.app") // frontend URL
+                        .allowedMethods("POST", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(false);
             }
