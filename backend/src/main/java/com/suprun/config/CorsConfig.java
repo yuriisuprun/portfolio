@@ -15,24 +15,19 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allowed origins
-        config.setAllowedOrigins(List.of(
+        // Allow local dev and production origins
+        config.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
-                "https://yuriisuprun.vercel.app"
+                "https://yuriisuprun.vercel.app",
+                "https://*.onrender.com"
         ));
 
-        // Allow credentials
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(true);       // Allow cookies/auth headers
+        config.addAllowedHeader("*");           // Allow all headers
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed HTTP methods
 
-        // Allowed headers
-        config.addAllowedHeader("*");
-
-        // Allowed methods
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Map CORS config to all API paths
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/api/**", config); // Apply to all API paths
 
         return new CorsFilter(source);
     }

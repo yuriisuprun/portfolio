@@ -1,48 +1,37 @@
 package com.suprun.controller;
 
-import com.suprun.dto.ContactRequest;
-import com.suprun.service.ContactService;
-import com.suprun.service.RateLimitService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/contact")
-@CrossOrigin(origins = {"http://localhost:3000", "https://yuriisuprun.vercel.app"})
 public class ContactController {
 
-    private final ContactService contactService;
-    private final RateLimitService rateLimitService;
-
-    public ContactController(
-            ContactService contactService,
-            RateLimitService rateLimitService
-    ) {
-        this.contactService = contactService;
-        this.rateLimitService = rateLimitService;
-    }
-
     @PostMapping
-    public ResponseEntity<?> sendContact(
-            @Valid @RequestBody ContactRequest request,
-            HttpServletRequest httpRequest
-    ) {
+    public ResponseEntity<?> sendContact(@RequestBody Map<String, String> body) {
 
-        // Honeypot check
-        if (request.getWebsite() != null && !request.getWebsite().isBlank()) {
-            return ResponseEntity.status(400).body("Bot detected");
+        String name = body.get("name");
+        String email = body.get("email");
+        String message = body.get("message");
+        String website = body.get("website"); // Honeypot
+
+        // Honeypot check: ignore bots
+        if (website != null && !website.isEmpty()) {
+            return ResponseEntity.ok().build();
         }
 
-        // Rate limit by IP
-        String ip = httpRequest.getRemoteAddr();
-        if (!rateLimitService.allow(ip)) {
-            return ResponseEntity.status(429).body("Too many requests");
+        // Validate required fields
+        if (name == null || name.isEmpty() ||
+                email == null || email.isEmpty() ||
+                message == null || message.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "All fields required"));
         }
 
-        contactService.processContact(request);
+        // Log message (replace with email or DB logic)
+        System.out.println("Contact submission: " + name + ", " + email + ", " + message);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(Map.of("success", true));
     }
 }
