@@ -1,14 +1,20 @@
+// src/api/contactApi.js
 export async function sendContact(data) {
+    try {
+        const res = await fetch("https://yuriisuprun.vercel.app/api/contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+        });
 
-    const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => null);
+            throw new Error(errorData?.error || "Failed to send message");
+        }
 
-    if (!res.ok) {
-        throw new Error("Failed");
+        return res.json();
+    } catch (err) {
+        console.error("sendContact error:", err);
+        throw err;
     }
 }

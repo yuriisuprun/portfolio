@@ -1,8 +1,8 @@
+// src/components/Contacts.js
 import { useState } from "react";
 import { sendContact } from "../api/contactApi";
 
 export default function Contacts({ language }) {
-
     const text = {
         en: {
             title: "Contacts",
@@ -10,11 +10,7 @@ export default function Contacts({ language }) {
             send: "Send Message",
             success: "Message sent successfully.",
             error: "Failed to send message.",
-            fields: {
-                name: "Name",
-                email: "Email",
-                message: "Message"
-            }
+            fields: { name: "Name", email: "Email", message: "Message" },
         },
         it: {
             title: "Contatti",
@@ -22,25 +18,16 @@ export default function Contacts({ language }) {
             send: "Invia Messaggio",
             success: "Messaggio inviato.",
             error: "Errore durante l'invio.",
-            fields: {
-                name: "Nome",
-                email: "Email",
-                message: "Messaggio"
-            }
-        }
+            fields: { name: "Nome", email: "Email", message: "Messaggio" },
+        },
     };
 
     const t = text[language] ?? text.en;
 
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        message: "",
-        website: "" // honeypot
-    });
-
+    const [form, setForm] = useState({ name: "", email: "", message: "", website: "" });
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
 
     function update(e) {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -50,13 +37,16 @@ export default function Contacts({ language }) {
         e.preventDefault();
         setLoading(true);
         setStatus(null);
+        setErrorMessage("");
 
         try {
             await sendContact(form);
             setStatus("success");
             setForm({ name: "", email: "", message: "", website: "" });
-        } catch {
+        } catch (err) {
+            console.error("Contact form error:", err);
             setStatus("error");
+            setErrorMessage(err.message || t.error);
         }
 
         setLoading(false);
@@ -76,7 +66,6 @@ export default function Contacts({ language }) {
                     onChange={update}
                     className="w-full p-3 border"
                 />
-
                 <input
                     name="email"
                     required
@@ -86,7 +75,6 @@ export default function Contacts({ language }) {
                     onChange={update}
                     className="w-full p-3 border"
                 />
-
                 <textarea
                     name="message"
                     required
@@ -97,7 +85,7 @@ export default function Contacts({ language }) {
                     className="w-full p-3 border"
                 />
 
-                {/* Honeypot field */}
+                {/* Honeypot */}
                 <input
                     name="website"
                     value={form.website}
@@ -111,7 +99,7 @@ export default function Contacts({ language }) {
                 </button>
 
                 {status === "success" && <p className="text-green-500">{t.success}</p>}
-                {status === "error" && <p className="text-red-500">{t.error}</p>}
+                {status === "error" && <p className="text-red-500">{errorMessage || t.error}</p>}
             </form>
         </section>
     );
