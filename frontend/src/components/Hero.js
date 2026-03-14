@@ -1,9 +1,6 @@
-import useGithubProfile from "../hooks/useGithubProfile";
 import { SITE_CONFIG } from "../config/siteConfig";
 
 export default function Hero({ language }) {
-
-    const profile = useGithubProfile(SITE_CONFIG.githubUsername);
 
     const text = {
         en: { role: "Software Engineer" },
@@ -17,15 +14,11 @@ export default function Hero({ language }) {
 
             <div className="flex items-center gap-10">
 
-                {profile ? (
-                    <img
-                        src={profile.avatar_url}
-                        alt="Yurii Suprun GitHub Avatar"
-                        className="w-32 h-32 rounded-full border-2 border-gray-400 shadow-lg"
-                    />
-                ) : (
-                    <div className="w-32 h-32 rounded-full bg-gray-300 animate-pulse border-2 border-gray-400"></div>
-                )}
+                <img
+                    src="/myphoto.png"
+                    alt="Yurii Suprun Profile Photo"
+                    className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg"
+                />
 
                 <div className="space-y-6">
 
