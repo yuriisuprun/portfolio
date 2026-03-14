@@ -9,7 +9,6 @@ export async function sendContact(data) {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
-            mode: "cors",
         });
 
         if (res.status === 204) return {};
