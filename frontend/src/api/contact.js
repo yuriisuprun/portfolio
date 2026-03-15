@@ -1,4 +1,4 @@
-const BASE_URL = "https://yuriisuprun.onrender.com"; // Spring backend
+const BASE_URL = "https://yuriisuprun.onrender.com"; // Your Spring Boot backend
 
 export default async function handler(req, res) {
     if (req.method !== "POST") {
@@ -12,7 +12,10 @@ export default async function handler(req, res) {
             body: JSON.stringify(req.body),
         });
 
-        const data = await response.json();
+        // Make safe: handle empty responses
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
+
         return res.status(response.status).json(data);
     } catch (err) {
         console.error("Contact proxy error:", err);
