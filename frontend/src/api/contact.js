@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
     try {
         const response = await fetch(
-            "https://portfolio.onrender.com/api/contact",
+            "https://yuriisuprun.onrender.com/api/contact",
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
