@@ -71,7 +71,8 @@ npm start
 
 Frontend starts on `http://localhost:3000`.
 
-Note: the frontend currently calls the production API URL directly in `frontend/src/components/Projects.js`. To use the local backend, replace it with `http://localhost:8080/api/repos`.
+Note: the frontend calls `/api/repos`. In development this is proxied to `http://localhost:8080` via `frontend/package.json` (`proxy`).
+In production (Vercel) `/api/*` is rewritten to the Render backend via `frontend/vercel.json`.
 
 ## API
 

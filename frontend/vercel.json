@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://yuriisuprun.onrender.com/api/:path*"
+    }
+  ]
+}
+
