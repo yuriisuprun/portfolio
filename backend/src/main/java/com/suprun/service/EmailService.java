@@ -85,11 +85,14 @@ public class EmailService {
         }
 
         long now = System.currentTimeMillis();
-        long disabledUntil = disabledUntilEpochMs.get();
-        if (disabledUntil > now) {
-            log.warn("Email sending temporarily disabled for {}s (last SMTP connectivity failure).",
-                    Math.max(0, (disabledUntil - now) / 1000));
-            return;
+        // Cooldown only applies to SMTP connectivity failures; don't block non-SMTP providers.
+        if (provider == Provider.SMTP) {
+            long disabledUntil = disabledUntilEpochMs.get();
+            if (disabledUntil > now) {
+                log.warn("Email sending temporarily disabled for {}s (last SMTP connectivity failure).",
+                        Math.max(0, (disabledUntil - now) / 1000));
+                return;
+            }
         }
 
         String safeName = HtmlUtils.htmlEscape(nullToEmpty(req.getName()));
@@ -164,13 +167,18 @@ public class EmailService {
         if (resendClient == null) {
             throw new IllegalStateException("Resend client not configured");
         }
-        if (from.isBlank()) {
-            log.warn("Email not sent because app.email.from is empty. Set MAIL_FROM/app.email.from for provider=RESEND.");
-            return;
+
+        // Resend requires a valid `from`. If the user didn't configure one, default to the sandbox sender
+        // so setting only RESEND_API_KEY + MAIL_TO still works out-of-the-box.
+        String effectiveFrom = from;
+        if (effectiveFrom.isBlank()) {
+            effectiveFrom = "Portfolio <onboarding@resend.dev>";
+            log.warn("app.email.from is empty; defaulting to '{}' for provider=RESEND. Set MAIL_FROM/app.email.from to override.",
+                    effectiveFrom);
         }
 
         Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("from", from);
+        payload.put("from", effectiveFrom);
         payload.put("to", new String[]{to});
         payload.put("subject", subject);
         payload.put("html", html);
