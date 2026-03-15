@@ -1,4 +1,4 @@
-const BASE_URL = "https://yuriisuprun.onrender.com"; // Spring backend
+const BASE_URL = "https://yuriisuprun.onrender.com"; // your Spring backend
 
 export default async function handler(req, res) {
     if (req.method !== "POST") {

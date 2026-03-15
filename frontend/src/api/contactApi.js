@@ -1,5 +1,4 @@
-// contactApi.js
-const API_URL = "/api/contact"; // Relative path to Next.js API route
+const API_URL = "/api/contact"; // relative path
 
 export async function sendContact(data) {
     try {
