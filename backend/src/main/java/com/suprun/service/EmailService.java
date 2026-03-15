@@ -114,12 +114,13 @@ public class EmailService {
                 log.info("Tip: if SMTP connect works locally but times out on the host, try setting JAVA_OPTS=-Djava.net.preferIPv4Stack=true on the remote runtime.");
             }
         }
-        if (this.enabled && requested == Provider.AUTO && this.provider == Provider.LOG && isLikelySmtpBlockedEnv()) {
-            if (smtpStatus.configured()) {
-                log.warn("MAIL_PROVIDER=auto resolved to LOG because this environment likely blocks outbound SMTP (even though SMTP credentials are set). " +
-                        "Set RESEND_API_KEY + MAIL_PROVIDER=auto (recommended) or set MAIL_PROVIDER=smtp to force SMTP anyway.");
+        if (this.enabled && requested == Provider.AUTO && this.provider == Provider.LOG) {
+            if (isLikelySmtpBlockedEnv()) {
+                log.warn("MAIL_PROVIDER=auto resolved to LOG. This environment often blocks outbound SMTP and no HTTP provider is configured. " +
+                        "Set RESEND_API_KEY + MAIL_PROVIDER=auto (recommended), or configure SMTP via MAIL_USER/MAIL_PASSWORD (and optionally set MAIL_PROVIDER=smtp).");
             } else {
-                log.warn("MAIL_PROVIDER=auto resolved to LOG because this environment likely blocks outbound SMTP. Set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=smtp if your platform/network allows SMTP.");
+                log.warn("MAIL_PROVIDER=auto resolved to LOG because no email provider is configured. " +
+                        "Set RESEND_API_KEY (recommended) or configure SMTP via MAIL_HOST/MAIL_PORT/MAIL_USER/MAIL_PASSWORD.");
             }
         }
         if (this.enabled && this.provider == Provider.SMTP && isLikelySmtpBlockedEnv()) {
@@ -381,13 +382,8 @@ public class EmailService {
             return Provider.RESEND;
         }
 
-        // Many PaaS networks block outbound SMTP. In such environments AUTO should not pick SMTP by default,
-        // even if credentials are present. Users can still force it with MAIL_PROVIDER=smtp.
-        if (isLikelySmtpBlockedEnv()) {
-            return Provider.LOG;
-        }
-
-        // If SMTP is configured and we're not in a likely-blocked environment, prefer trying it.
+        // If SMTP is configured, prefer trying it. If the hosting platform blocks SMTP egress, the send path
+        // will log a connectivity failure and trip a cooldown to avoid repeated timeouts.
         if (smtpConfigured) {
             return Provider.SMTP;
         }
