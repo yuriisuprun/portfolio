@@ -41,6 +41,9 @@ public class EmailService {
 
     private final Provider provider;
     private final RestClient resendClient; // null unless provider=RESEND
+    private final String smtpHost;
+    private final int smtpPort;
+    private final String smtpUsernameMasked;
 
     // When SMTP is blocked by the hosting provider, avoid burning threads/time on repeated 10s connect timeouts.
     private final AtomicLong disabledUntilEpochMs = new AtomicLong(0L);
@@ -63,6 +66,9 @@ public class EmailService {
     ) {
         this.mailSender = mailSender;
         this.enabled = enabled;
+        this.smtpHost = nullToEmpty(smtpHost).trim();
+        this.smtpPort = smtpPort;
+        this.smtpUsernameMasked = maskEmail(smtpUsername);
 
         String fromNorm = normalizeAddressHeader(from);
         String[] toNorm = normalizeAddressList(to);
@@ -97,6 +103,17 @@ public class EmailService {
                 : null;
 
         log.info("Email config: enabled={}, provider={}, toCount={}, hasFrom={}", this.enabled, this.provider, this.to.length, !this.from.isBlank());
+        if (this.enabled && (this.provider == Provider.SMTP || requested == Provider.SMTP || requested == Provider.AUTO)) {
+            log.info("SMTP target: {} (username={})", smtpTarget(), smtpUsernameMasked);
+            if (this.smtpPort == 25) {
+                log.warn("SMTP port 25 is commonly blocked by cloud providers/hosting networks. Prefer port 587 (STARTTLS) or 465 (SMTPS) if your provider supports it.");
+            }
+            String preferIpv4 = System.getProperty("java.net.preferIPv4Stack");
+            if (preferIpv4 == null || preferIpv4.isBlank()) {
+                // If the host has broken IPv6, Java may attempt IPv6 first and time out.
+                log.info("Tip: if SMTP connect works locally but times out on the host, try setting JAVA_OPTS=-Djava.net.preferIPv4Stack=true on the remote runtime.");
+            }
+        }
         if (this.enabled && requested == Provider.AUTO && this.provider == Provider.LOG && isLikelySmtpBlockedEnv()) {
             log.warn("MAIL_PROVIDER=auto resolved to LOG because this environment likely blocks outbound SMTP. Set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=smtp if your platform/network allows SMTP.");
         }
@@ -289,14 +306,16 @@ public class EmailService {
 
     private void tripCooldown(long nowEpochMs, Throwable e) {
         if (cooldown.isZero() || cooldown.isNegative()) {
-            log.warn("SMTP connectivity failure (cooldown disabled). Root cause: {}", rootCauseMessage(e));
+            log.warn("SMTP connectivity failure connecting to {} (cooldown disabled). Root cause: {}", smtpTarget(), rootCauseMessage(e));
             return;
         }
 
         long until = nowEpochMs + cooldown.toMillis();
         disabledUntilEpochMs.updateAndGet(prev -> Math.max(prev, until));
-        log.warn("SMTP connectivity failure; disabling email sending for {}s. Root cause: {}",
-                cooldown.toSeconds(), rootCauseMessage(e));
+        log.warn("SMTP connectivity failure connecting to {}; disabling email sending for {}s. Root cause: {}",
+                smtpTarget(), cooldown.toSeconds(), rootCauseMessage(e));
+        log.warn("Verify outbound connectivity from the host: it must be able to reach {}. If your hosting provider blocks SMTP egress, switch to an HTTP provider (set RESEND_API_KEY + MAIL_PROVIDER=auto/resend).",
+                smtpTarget());
     }
 
     private static boolean isConnectivityFailure(Throwable t) {
@@ -313,6 +332,12 @@ public class EmailService {
             cur = cur.getCause();
         }
         return false;
+    }
+
+    private String smtpTarget() {
+        String host = (smtpHost == null || smtpHost.isBlank()) ? "<unset>" : smtpHost;
+        int port = smtpPort <= 0 ? -1 : smtpPort;
+        return host + ":" + port;
     }
 
     private static String rootCauseMessage(Throwable t) {

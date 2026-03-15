@@ -12,7 +12,9 @@ RUN mvn -f pom.xml -DskipTests package \
 
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
-ENV JAVA_OPTS=""
+# Prefer IPv4 by default: some hosts have broken IPv6 which can cause SMTP connect attempts to time out.
+# Can be overridden at runtime by setting JAVA_OPTS explicitly.
+ENV JAVA_OPTS="-Djava.net.preferIPv4Stack=true"
 EXPOSE 8080
 COPY --from=backend-build /app/app.jar /app/app.jar
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
