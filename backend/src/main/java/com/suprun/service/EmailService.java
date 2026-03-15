@@ -87,6 +87,9 @@ public class EmailService {
                 : null;
 
         log.info("Email config: enabled={}, provider={}, toCount={}, hasFrom={}", this.enabled, this.provider, this.to.length, !this.from.isBlank());
+        if (this.enabled && requested == Provider.AUTO && this.provider == Provider.LOG && isLikelySmtpBlockedEnv()) {
+            log.warn("MAIL_PROVIDER=auto resolved to LOG because this environment likely blocks outbound SMTP. Set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=smtp if your platform/network allows SMTP.");
+        }
         if (this.enabled && this.provider == Provider.SMTP && isLikelySmtpBlockedEnv()) {
             if (requested == Provider.SMTP) {
                 log.info("MAIL_PROVIDER=smtp selected. Note: this platform often blocks outbound SMTP; if emails do not arrive, switch to RESEND_API_KEY + MAIL_PROVIDER=auto (or MAIL_PROVIDER=resend).");
@@ -338,8 +341,13 @@ public class EmailService {
             return Provider.RESEND;
         }
 
-        // Default to SMTP if no HTTP provider is configured. (Some platforms block SMTP; cooldown will prevent
-        // repeated connect timeouts and logs will point to using RESEND_API_KEY instead.)
+        // Many PaaS platforms block outbound SMTP (25/465/587). For AUTO, default to LOG there to avoid
+        // repeated connect timeouts; a warning will direct the user to configure Resend or explicitly force SMTP.
+        if (isLikelySmtpBlockedEnv()) {
+            return Provider.LOG;
+        }
+
+        // Default to SMTP if no HTTP provider is configured.
         return Provider.SMTP;
     }
 
