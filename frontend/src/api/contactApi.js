@@ -1,4 +1,4 @@
-const API_URL = "/api/contact";
+const API_URL = "/api/contact"; // Keep it relative, not full URL
 
 export async function sendContact(data) {
     try {
@@ -10,8 +10,7 @@ export async function sendContact(data) {
             body: JSON.stringify(data),
         });
 
-        const text = await res.text();
-        const json = text ? JSON.parse(text) : {};
+        const json = await res.json(); // safer than text + parse
 
         if (!res.ok) {
             throw new Error(json?.error || "Failed to send message");
