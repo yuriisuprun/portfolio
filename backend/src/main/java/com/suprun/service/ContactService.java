@@ -18,7 +18,11 @@ public class ContactService {
     }
 
     public void processContact(ContactRequest request) {
-        log.info("Contact message received from {}", maskEmail(request.getEmail()));
+        // Avoid PII in INFO logs (Render logs are often treated as semi-public). Keep details behind DEBUG.
+        log.info("Contact message received");
+        if (log.isDebugEnabled()) {
+            log.debug("Contact message received from {}", maskEmail(request.getEmail()));
+        }
         emailService.sendContactEmail(request);
     }
 

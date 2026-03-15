@@ -111,8 +111,8 @@ public class EmailService {
             switch (provider) {
                 case SMTP -> sendViaSmtp(req, subject, html);
                 case RESEND -> sendViaResend(req, subject, html);
-                case LOG -> log.info("Email provider=LOG; contact message suppressed (nameLen={}, from={}, messageLen={})",
-                        lengthOrZero(req.getName()), maskEmail(req.getEmail()), lengthOrZero(req.getMessage()));
+                case LOG -> log.info("Email provider=LOG; contact message received (nameLen={}, emailDomain={}, messageLen={})",
+                        lengthOrZero(req.getName()), emailDomain(req.getEmail()), lengthOrZero(req.getMessage()));
                 default -> log.warn("Email provider resolved to unexpected value {}; skipping send.", provider);
             }
         } catch (MailException e) {
@@ -171,6 +171,22 @@ public class EmailService {
             return local.charAt(0) + "*@" + domain;
         }
         return "" + local.charAt(0) + "***" + local.charAt(local.length() - 1) + "@" + domain;
+    }
+
+    private static String emailDomain(String email) {
+        if (email == null) {
+            return "<null>";
+        }
+        String e = email.trim();
+        if (e.isEmpty()) {
+            return "<empty>";
+        }
+        int at = e.indexOf('@');
+        if (at < 0 || at == e.length() - 1) {
+            return "<invalid>";
+        }
+        String domain = e.substring(at + 1).trim();
+        return domain.isEmpty() ? "<invalid>" : domain;
     }
 
     private void sendViaSmtp(ContactRequest req, String subject, String html) throws Exception {

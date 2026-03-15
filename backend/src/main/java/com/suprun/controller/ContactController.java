@@ -2,12 +2,16 @@ package com.suprun.controller;
 
 import com.suprun.dto.ContactRequest;
 import com.suprun.service.ContactService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/contact")
 public class ContactController {
+
+    private static final Logger log = LoggerFactory.getLogger(ContactController.class);
 
     private final ContactService contactService;
 
@@ -41,8 +45,7 @@ public class ContactController {
             );
 
         } catch (Exception e) {
-
-            e.printStackTrace();
+            log.error("Failed to process contact message.", e);
 
             return ResponseEntity.status(500)
                     .body(java.util.Map.of("error", "Server error"));
