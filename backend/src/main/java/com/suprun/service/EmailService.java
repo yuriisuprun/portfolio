@@ -111,8 +111,8 @@ public class EmailService {
             switch (provider) {
                 case SMTP -> sendViaSmtp(req, subject, html);
                 case RESEND -> sendViaResend(req, subject, html);
-                case LOG -> log.info("Email provider=LOG; contact message: name='{}' email='{}' message='{}'",
-                        nullToEmpty(req.getName()), nullToEmpty(req.getEmail()), nullToEmpty(req.getMessage()));
+                case LOG -> log.info("Email provider=LOG; contact message suppressed (nameLen={}, from={}, messageLen={})",
+                        lengthOrZero(req.getName()), maskEmail(req.getEmail()), lengthOrZero(req.getMessage()));
                 default -> log.warn("Email provider resolved to unexpected value {}; skipping send.", provider);
             }
         } catch (MailException e) {
@@ -141,6 +141,36 @@ public class EmailService {
 
     private static String nullToEmpty(String s) {
         return (s == null) ? "" : s;
+    }
+
+    private static int lengthOrZero(String s) {
+        return (s == null) ? 0 : s.length();
+    }
+
+    private static String maskEmail(String email) {
+        if (email == null) {
+            return "<null>";
+        }
+        String e = email.trim();
+        if (e.isEmpty()) {
+            return "<empty>";
+        }
+        int at = e.indexOf('@');
+        if (at <= 0) {
+            return "<invalid>";
+        }
+        String local = e.substring(0, at);
+        String domain = e.substring(at + 1);
+        if (domain.isEmpty()) {
+            return "<invalid>";
+        }
+        if (local.length() == 1) {
+            return "*@" + domain;
+        }
+        if (local.length() == 2) {
+            return local.charAt(0) + "*@" + domain;
+        }
+        return "" + local.charAt(0) + "***" + local.charAt(local.length() - 1) + "@" + domain;
     }
 
     private void sendViaSmtp(ContactRequest req, String subject, String html) throws Exception {
@@ -272,7 +302,8 @@ public class EmailService {
         String render = System.getenv("RENDER");
         String renderServiceId = System.getenv("RENDER_SERVICE_ID");
         if ((render != null && !render.isBlank()) || (renderServiceId != null && !renderServiceId.isBlank())) {
-            log.warn("Detected Render environment; defaulting app.email.provider=LOG (SMTP is often blocked).");
+            log.warn("Detected Render environment; defaulting app.email.provider=LOG (SMTP is often blocked). " +
+                    "To send emails, set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=smtp to attempt SMTP.");
             return Provider.LOG;
         }
 

@@ -18,7 +18,33 @@ public class ContactService {
     }
 
     public void processContact(ContactRequest request) {
-        log.info("Contact message received from {}", request.getEmail());
+        log.info("Contact message received from {}", maskEmail(request.getEmail()));
         emailService.sendContactEmail(request);
+    }
+
+    private static String maskEmail(String email) {
+        if (email == null) {
+            return "<null>";
+        }
+        String e = email.trim();
+        if (e.isEmpty()) {
+            return "<empty>";
+        }
+        int at = e.indexOf('@');
+        if (at <= 0) {
+            return "<invalid>";
+        }
+        String local = e.substring(0, at);
+        String domain = e.substring(at + 1);
+        if (domain.isEmpty()) {
+            return "<invalid>";
+        }
+        if (local.length() == 1) {
+            return "*@" + domain;
+        }
+        if (local.length() == 2) {
+            return local.charAt(0) + "*@" + domain;
+        }
+        return "" + local.charAt(0) + "***" + local.charAt(local.length() - 1) + "@" + domain;
     }
 }
