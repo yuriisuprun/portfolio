@@ -1,4 +1,5 @@
-const API_URL = "/api/contact"; // relative path to Next.js API route
+// contactApi.js
+const API_URL = "/api/contact"; // Relative path to Next.js API route
 
 export async function sendContact(data) {
     try {
@@ -8,13 +9,10 @@ export async function sendContact(data) {
             body: JSON.stringify(data),
         });
 
-        // Make parsing safer
         const text = await res.text();
         const json = text ? JSON.parse(text) : {};
 
-        if (!res.ok) {
-            throw new Error(json?.error || "Failed to send message");
-        }
+        if (!res.ok) throw new Error(json?.error || "Failed to send message");
 
         return json;
     } catch (err) {
