@@ -1,6 +1,8 @@
 package com.suprun.service;
 
 import com.suprun.dto.ContactRequest;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final boolean enabled;
-    private final String to;
+    private final String[] to;
     private final String from;
     private final boolean failFast;
     private final Duration cooldown;
@@ -57,8 +59,21 @@ public class EmailService {
     ) {
         this.mailSender = mailSender;
         this.enabled = enabled;
-        this.to = (to == null) ? "" : to.trim();
-        this.from = (from == null) ? "" : from.trim();
+
+        String fromNorm = normalizeAddressHeader(from);
+        String[] toNorm = normalizeAddressList(to);
+        if (toNorm.length == 0) {
+            // Common prod misconfig: MAIL_FROM is set but MAIL_TO is missing. Default to FROM so the contact form
+            // still works out-of-the-box (can be overridden by MAIL_TO/app.email.to).
+            String[] fallback = normalizeAddressList(fromNorm);
+            if (fallback.length > 0) {
+                toNorm = fallback;
+                log.warn("app.email.to is empty; defaulting recipient to app.email.from. Set MAIL_TO/app.email.to to override.");
+            }
+        }
+
+        this.to = toNorm;
+        this.from = fromNorm;
         this.failFast = failFast;
         this.cooldown = Duration.ofSeconds(Math.max(0L, cooldownSeconds));
 
@@ -70,6 +85,11 @@ public class EmailService {
                 .defaultHeader("Authorization", "Bearer " + nullToEmpty(resendApiKey).trim())
                 .build()
                 : null;
+
+        log.info("Email config: enabled={}, provider={}, toCount={}, hasFrom={}", this.enabled, this.provider, this.to.length, !this.from.isBlank());
+        if (this.enabled && this.provider == Provider.SMTP && isLikelySmtpBlockedEnv()) {
+            log.warn("Running on a platform that often blocks outbound SMTP; if emails do not arrive, set RESEND_API_KEY and keep MAIL_PROVIDER=auto (or set MAIL_PROVIDER=resend).");
+        }
     }
 
     @Async
@@ -79,7 +99,7 @@ public class EmailService {
             log.info("Email sending disabled (app.email.enabled=false)");
             return;
         }
-        if (to.isBlank()) {
+        if (to.length == 0) {
             log.warn("Email not sent because app.email.to is empty. Set MAIL_TO/app.email.to to enable contact emails.");
             return;
         }
@@ -206,7 +226,7 @@ public class EmailService {
         helper.setText(html, true);
 
         mailSender.send(message);
-        log.info("Contact email sent to {} (provider=SMTP)", to);
+        log.info("Contact email sent to {} recipient(s) (provider=SMTP)", to.length);
     }
 
     private void sendViaResend(ContactRequest req, String subject, String html) {
@@ -225,7 +245,7 @@ public class EmailService {
 
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("from", effectiveFrom);
-        payload.put("to", new String[]{to});
+        payload.put("to", to);
         payload.put("subject", subject);
         payload.put("html", html);
 
@@ -244,9 +264,9 @@ public class EmailService {
 
         Object id = (resp == null) ? null : resp.get("id");
         if (id != null) {
-            log.info("Contact email sent to {} (provider=RESEND, id={})", to, id);
+            log.info("Contact email sent to {} recipient(s) (provider=RESEND, id={})", to.length, id);
         } else {
-            log.info("Contact email sent to {} (provider=RESEND)", to);
+            log.info("Contact email sent to {} recipient(s) (provider=RESEND)", to.length);
         }
     }
 
@@ -314,15 +334,90 @@ public class EmailService {
             return Provider.RESEND;
         }
 
-        // Render (and many PaaS) block outbound SMTP ports; avoid repeated connect timeouts by default.
+        // Default to SMTP if no HTTP provider is configured. (Some platforms block SMTP; cooldown will prevent
+        // repeated connect timeouts and logs will point to using RESEND_API_KEY instead.)
+        return Provider.SMTP;
+    }
+
+    private static boolean isLikelySmtpBlockedEnv() {
+        // Heuristic only: used for logging hints, not for behavior.
         String render = System.getenv("RENDER");
         String renderServiceId = System.getenv("RENDER_SERVICE_ID");
         if ((render != null && !render.isBlank()) || (renderServiceId != null && !renderServiceId.isBlank())) {
-            log.warn("Detected Render environment; defaulting app.email.provider=LOG (SMTP is often blocked). " +
-                    "To send emails, set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=smtp to attempt SMTP.");
-            return Provider.LOG;
+            return true;
         }
+        String vercel = System.getenv("VERCEL");
+        if (vercel != null && !vercel.isBlank()) {
+            return true;
+        }
+        return false;
+    }
 
-        return Provider.SMTP;
+    private static String normalizeAddressHeader(String raw) {
+        String s = (raw == null) ? "" : raw.trim();
+        if (s.isEmpty()) {
+            return "";
+        }
+        try {
+            InternetAddress[] parsed = InternetAddress.parse(s, false);
+            if (parsed.length == 0) {
+                return "";
+            }
+            // Preserve display name if present; it is useful for Resend, and SMTP can handle it as well.
+            return parsed[0].toUnicodeString();
+        } catch (AddressException ignored) {
+            // Keep the original (best-effort) rather than failing startup.
+            return s;
+        }
+    }
+
+    private static String[] normalizeAddressList(String raw) {
+        String s = (raw == null) ? "" : raw.trim();
+        if (s.isEmpty()) {
+            return new String[0];
+        }
+        try {
+            InternetAddress[] parsed = InternetAddress.parse(s, false);
+            if (parsed.length == 0) {
+                return new String[0];
+            }
+            String[] out = new String[parsed.length];
+            for (int i = 0; i < parsed.length; i++) {
+                // For recipients, send only the mailbox address (avoid "Name <addr>" for providers that dislike it).
+                String addr = parsed[i].getAddress();
+                out[i] = (addr == null) ? "" : addr.trim();
+            }
+            int n = 0;
+            for (String v : out) {
+                if (v != null && !v.isBlank()) {
+                    out[n++] = v;
+                }
+            }
+            if (n == out.length) {
+                return out;
+            }
+            String[] trimmed = new String[n];
+            System.arraycopy(out, 0, trimmed, 0, n);
+            return trimmed;
+        } catch (AddressException ignored) {
+            // Accept comma-separated values as-is.
+            String[] parts = s.split(",");
+            int n = 0;
+            for (String p : parts) {
+                String v = (p == null) ? "" : p.trim();
+                if (!v.isBlank()) {
+                    parts[n++] = v;
+                }
+            }
+            if (n == 0) {
+                return new String[0];
+            }
+            if (n == parts.length) {
+                return parts;
+            }
+            String[] trimmed = new String[n];
+            System.arraycopy(parts, 0, trimmed, 0, n);
+            return trimmed;
+        }
     }
 }
