@@ -88,7 +88,11 @@ public class EmailService {
 
         log.info("Email config: enabled={}, provider={}, toCount={}, hasFrom={}", this.enabled, this.provider, this.to.length, !this.from.isBlank());
         if (this.enabled && this.provider == Provider.SMTP && isLikelySmtpBlockedEnv()) {
-            log.warn("Running on a platform that often blocks outbound SMTP; if emails do not arrive, set RESEND_API_KEY and keep MAIL_PROVIDER=auto (or set MAIL_PROVIDER=resend).");
+            if (requested == Provider.SMTP) {
+                log.info("MAIL_PROVIDER=smtp selected. Note: this platform often blocks outbound SMTP; if emails do not arrive, switch to RESEND_API_KEY + MAIL_PROVIDER=auto (or MAIL_PROVIDER=resend).");
+            } else {
+                log.warn("MAIL_PROVIDER=auto resolved to SMTP. This platform often blocks outbound SMTP; if emails do not arrive, set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=resend.");
+            }
         }
     }
 
