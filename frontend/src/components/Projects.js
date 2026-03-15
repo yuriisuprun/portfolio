@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
-const API_URL = "https://yuriisuprun.onrender.com/api/repos";
+const API_URL = "/api/repos";
 const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 const BOOT_INTERVAL_MS = 1200;

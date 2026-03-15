@@ -5,9 +5,9 @@ export async function sendContact(data) {
         const res = await fetch(API_URL, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         });
 
         const text = await res.text();
@@ -18,7 +18,6 @@ export async function sendContact(data) {
         }
 
         return json;
-
     } catch (err) {
         console.error("sendContact error:", err);
         throw err;
