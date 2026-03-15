@@ -55,7 +55,11 @@ public class EmailService {
             @Value("${app.email.cooldown-seconds:900}") long cooldownSeconds,
             @Value("${app.email.provider:auto}") String provider,
             @Value("${app.email.resend.api-key:}") String resendApiKey,
-            @Value("${app.email.resend.base-url:https://api.resend.com}") String resendBaseUrl
+            @Value("${app.email.resend.base-url:https://api.resend.com}") String resendBaseUrl,
+            @Value("${spring.mail.host:}") String smtpHost,
+            @Value("${spring.mail.port:0}") int smtpPort,
+            @Value("${spring.mail.username:}") String smtpUsername,
+            @Value("${spring.mail.password:}") String smtpPassword
     ) {
         this.mailSender = mailSender;
         this.enabled = enabled;
@@ -78,7 +82,13 @@ public class EmailService {
         this.cooldown = Duration.ofSeconds(Math.max(0L, cooldownSeconds));
 
         Provider requested = parseProvider(provider);
-        this.provider = resolveProvider(requested, resendApiKey);
+        SmtpConfigStatus smtpStatus = smtpConfigStatus(smtpHost, smtpPort, smtpUsername, smtpPassword);
+        if (this.enabled && requested == Provider.AUTO && smtpStatus.misconfigured()) {
+            log.warn("SMTP looks misconfigured (host='{}', port={}, usernameSet={}, passwordSet={}). " +
+                            "Fix spring.mail.* / MAIL_HOST/MAIL_PORT/MAIL_USER/MAIL_PASSWORD, or set RESEND_API_KEY + MAIL_PROVIDER=auto.",
+                    nullToEmpty(smtpHost).trim(), smtpPort, hasText(smtpUsername), hasText(smtpPassword));
+        }
+        this.provider = resolveProvider(requested, resendApiKey, smtpStatus.configured());
         this.resendClient = (this.provider == Provider.RESEND)
                 ? restClientBuilder
                 .baseUrl((resendBaseUrl == null || resendBaseUrl.isBlank()) ? "https://api.resend.com" : resendBaseUrl.trim())
@@ -331,7 +341,7 @@ public class EmailService {
         }
     }
 
-    private static Provider resolveProvider(Provider requested, String resendApiKey) {
+    private static Provider resolveProvider(Provider requested, String resendApiKey, boolean smtpConfigured) {
         if (requested != Provider.AUTO) {
             return requested;
         }
@@ -341,18 +351,41 @@ public class EmailService {
             return Provider.RESEND;
         }
 
-        // Many PaaS platforms block outbound SMTP (25/465/587). For AUTO, default to LOG there to avoid
-        // repeated connect timeouts; a warning will direct the user to configure Resend or explicitly force SMTP.
+        // If SMTP is configured, prefer trying it even on PaaS. If it is actually blocked, the connectivity
+        // failure cooldown will prevent repeated long timeouts.
+        if (smtpConfigured) {
+            return Provider.SMTP;
+        }
+
+        // No provider config: on platforms that often block SMTP, default to LOG to avoid burning threads/time.
         if (isLikelySmtpBlockedEnv()) {
             return Provider.LOG;
         }
 
-        // Default to SMTP if no HTTP provider is configured.
-        return Provider.SMTP;
+        // Otherwise, still default to LOG; without SMTP config we have nothing reliable to send with.
+        return Provider.LOG;
+    }
+
+    private record SmtpConfigStatus(boolean configured, boolean misconfigured) {
+    }
+
+    private static SmtpConfigStatus smtpConfigStatus(String host, int port, String username, String password) {
+        boolean hostOk = hasText(host) && port > 0;
+        boolean userSet = hasText(username);
+        boolean passSet = hasText(password);
+        boolean misconfigured = hostOk && (userSet ^ passSet);
+        // For AUTO we only consider SMTP "configured" when creds are present; host/port defaults alone are not enough.
+        boolean configured = hostOk && userSet && passSet;
+        return new SmtpConfigStatus(configured, misconfigured);
+    }
+
+    private static boolean hasText(String s) {
+        return s != null && !s.isBlank();
     }
 
     private static boolean isLikelySmtpBlockedEnv() {
-        // Heuristic only: used for logging hints, not for behavior.
+        // Heuristic only: used to decide whether AUTO should default to LOG when neither SMTP nor HTTP providers
+        // are configured, and to emit startup hints.
         String render = System.getenv("RENDER");
         String renderServiceId = System.getenv("RENDER_SERVICE_ID");
         if ((render != null && !render.isBlank()) || (renderServiceId != null && !renderServiceId.isBlank())) {
