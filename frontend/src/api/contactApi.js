@@ -1,17 +1,13 @@
-const API_URL =
-    process.env.NODE_ENV === "development"
-        ? "http://localhost:8080/api/contact"
-        : "https://portfolio.onrender.com/api/contact";
+const API_URL = "/api/contact";
 
 export async function sendContact(data) {
     try {
         const res = await fetch(API_URL, {
             method: "POST",
-            mode: "cors",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(data)
         });
 
         const text = await res.text();
