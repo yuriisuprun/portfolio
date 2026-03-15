@@ -9,7 +9,14 @@ export async function sendContact(data) {
         });
 
         const text = await res.text();
-        const json = text ? JSON.parse(text) : {};
+        let json = {};
+        if (text) {
+            try {
+                json = JSON.parse(text);
+            } catch {
+                json = {};
+            }
+        }
 
         if (!res.ok) throw new Error(json?.error || "Failed to send message");
 
