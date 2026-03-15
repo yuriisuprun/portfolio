@@ -7,11 +7,12 @@ export async function sendContact(data) {
     try {
         const res = await fetch(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify(data),
         });
-
-        if (res.status === 204) return {};
 
         const text = await res.text();
         const json = text ? JSON.parse(text) : {};
@@ -21,6 +22,7 @@ export async function sendContact(data) {
         }
 
         return json;
+
     } catch (err) {
         console.error("sendContact error:", err);
         throw err;
