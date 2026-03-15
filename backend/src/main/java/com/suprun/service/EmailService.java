@@ -44,6 +44,7 @@ public class EmailService {
     private final String smtpHost;
     private final int smtpPort;
     private final String smtpUsernameMasked;
+    private final boolean assumeSmtpBlocked;
 
     // When SMTP is blocked by the hosting provider, avoid burning threads/time on repeated 10s connect timeouts.
     private final AtomicLong disabledUntilEpochMs = new AtomicLong(0L);
@@ -62,13 +63,15 @@ public class EmailService {
             @Value("${spring.mail.host:}") String smtpHost,
             @Value("${spring.mail.port:0}") int smtpPort,
             @Value("${spring.mail.username:}") String smtpUsername,
-            @Value("${spring.mail.password:}") String smtpPassword
+            @Value("${spring.mail.password:}") String smtpPassword,
+            @Value("${app.email.smtp.assume-blocked:false}") boolean assumeSmtpBlocked
     ) {
         this.mailSender = mailSender;
         this.enabled = enabled;
         this.smtpHost = nullToEmpty(smtpHost).trim();
         this.smtpPort = smtpPort;
         this.smtpUsernameMasked = maskEmail(smtpUsername);
+        this.assumeSmtpBlocked = assumeSmtpBlocked;
 
         String fromNorm = normalizeAddressHeader(from);
         String[] toNorm = normalizeAddressList(to);
@@ -94,7 +97,8 @@ public class EmailService {
                             "Fix spring.mail.* / MAIL_HOST/MAIL_PORT/MAIL_USER/MAIL_PASSWORD, or set RESEND_API_KEY + MAIL_PROVIDER=auto.",
                     nullToEmpty(smtpHost).trim(), smtpPort, hasText(smtpUsername), hasText(smtpPassword));
         }
-        this.provider = resolveProvider(requested, resendApiKey, smtpStatus.configured());
+        boolean smtpBlockedLikely = this.assumeSmtpBlocked || isLikelySmtpBlockedEnv();
+        this.provider = resolveProvider(requested, resendApiKey, smtpStatus.configured(), smtpBlockedLikely);
         this.resendClient = (this.provider == Provider.RESEND)
                 ? restClientBuilder
                 .baseUrl((resendBaseUrl == null || resendBaseUrl.isBlank()) ? "https://api.resend.com" : resendBaseUrl.trim())
@@ -115,7 +119,10 @@ public class EmailService {
             }
         }
         if (this.enabled && requested == Provider.AUTO && this.provider == Provider.LOG) {
-            if (isLikelySmtpBlockedEnv()) {
+            if (smtpStatus.configured() && smtpBlockedLikely) {
+                log.warn("MAIL_PROVIDER=auto resolved to LOG because outbound SMTP is likely blocked here and no HTTP provider is configured. " +
+                        "Set RESEND_API_KEY + MAIL_PROVIDER=auto (recommended), or force SMTP by setting MAIL_PROVIDER=smtp (not recommended on this platform).");
+            } else if (smtpBlockedLikely) {
                 log.warn("MAIL_PROVIDER=auto resolved to LOG. This environment often blocks outbound SMTP and no HTTP provider is configured. " +
                         "Set RESEND_API_KEY + MAIL_PROVIDER=auto (recommended), or configure SMTP via MAIL_USER/MAIL_PASSWORD (and optionally set MAIL_PROVIDER=smtp).");
             } else {
@@ -123,7 +130,7 @@ public class EmailService {
                         "Set RESEND_API_KEY (recommended) or configure SMTP via MAIL_HOST/MAIL_PORT/MAIL_USER/MAIL_PASSWORD.");
             }
         }
-        if (this.enabled && this.provider == Provider.SMTP && isLikelySmtpBlockedEnv()) {
+        if (this.enabled && this.provider == Provider.SMTP && smtpBlockedLikely) {
             if (requested == Provider.SMTP) {
                 log.info("MAIL_PROVIDER=smtp selected. Note: this platform often blocks outbound SMTP; if emails do not arrive, switch to RESEND_API_KEY + MAIL_PROVIDER=auto (or MAIL_PROVIDER=resend).");
             } else {
@@ -372,7 +379,7 @@ public class EmailService {
         }
     }
 
-    private static Provider resolveProvider(Provider requested, String resendApiKey, boolean smtpConfigured) {
+    private static Provider resolveProvider(Provider requested, String resendApiKey, boolean smtpConfigured, boolean smtpBlockedLikely) {
         if (requested != Provider.AUTO) {
             return requested;
         }
@@ -380,6 +387,12 @@ public class EmailService {
         // Prefer HTTP providers when configured.
         if (resendApiKey != null && !resendApiKey.isBlank()) {
             return Provider.RESEND;
+        }
+
+        // Many PaaS vendors block outbound SMTP. In AUTO mode, avoid spending thread time on repeated connect
+        // timeouts and default to LOG unless the user explicitly forces SMTP via MAIL_PROVIDER=smtp.
+        if (smtpBlockedLikely) {
+            return Provider.LOG;
         }
 
         // If SMTP is configured, prefer trying it. If the hosting platform blocks SMTP egress, the send path
