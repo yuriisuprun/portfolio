@@ -115,7 +115,12 @@ public class EmailService {
             }
         }
         if (this.enabled && requested == Provider.AUTO && this.provider == Provider.LOG && isLikelySmtpBlockedEnv()) {
-            log.warn("MAIL_PROVIDER=auto resolved to LOG because this environment likely blocks outbound SMTP. Set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=smtp if your platform/network allows SMTP.");
+            if (smtpStatus.configured()) {
+                log.warn("MAIL_PROVIDER=auto resolved to LOG because this environment likely blocks outbound SMTP (even though SMTP credentials are set). " +
+                        "Set RESEND_API_KEY + MAIL_PROVIDER=auto (recommended) or set MAIL_PROVIDER=smtp to force SMTP anyway.");
+            } else {
+                log.warn("MAIL_PROVIDER=auto resolved to LOG because this environment likely blocks outbound SMTP. Set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=smtp if your platform/network allows SMTP.");
+            }
         }
         if (this.enabled && this.provider == Provider.SMTP && isLikelySmtpBlockedEnv()) {
             if (requested == Provider.SMTP) {
@@ -314,7 +319,7 @@ public class EmailService {
         disabledUntilEpochMs.updateAndGet(prev -> Math.max(prev, until));
         log.warn("SMTP connectivity failure connecting to {}; disabling email sending for {}s. Root cause: {}",
                 smtpTarget(), cooldown.toSeconds(), rootCauseMessage(e));
-        log.warn("Verify outbound connectivity from the host: it must be able to reach {}. If your hosting provider blocks SMTP egress, switch to an HTTP provider (set RESEND_API_KEY + MAIL_PROVIDER=auto/resend).",
+        log.warn("Verify outbound connectivity from the host: it must be able to reach {}. If your hosting provider blocks SMTP egress, switch to an HTTP provider (set RESEND_API_KEY + MAIL_PROVIDER=auto or MAIL_PROVIDER=resend).",
                 smtpTarget());
     }
 
@@ -376,15 +381,15 @@ public class EmailService {
             return Provider.RESEND;
         }
 
-        // If SMTP is configured, prefer trying it even on PaaS. If it is actually blocked, the connectivity
-        // failure cooldown will prevent repeated long timeouts.
-        if (smtpConfigured) {
-            return Provider.SMTP;
-        }
-
-        // No provider config: on platforms that often block SMTP, default to LOG to avoid burning threads/time.
+        // Many PaaS networks block outbound SMTP. In such environments AUTO should not pick SMTP by default,
+        // even if credentials are present. Users can still force it with MAIL_PROVIDER=smtp.
         if (isLikelySmtpBlockedEnv()) {
             return Provider.LOG;
+        }
+
+        // If SMTP is configured and we're not in a likely-blocked environment, prefer trying it.
+        if (smtpConfigured) {
+            return Provider.SMTP;
         }
 
         // Otherwise, still default to LOG; without SMTP config we have nothing reliable to send with.
