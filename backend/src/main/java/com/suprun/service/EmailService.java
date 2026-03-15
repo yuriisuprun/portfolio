@@ -11,6 +11,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.time.Duration;
+import java.util.concurrent.atomic.AtomicLong;
+
 @Service
 public class EmailService {
 
@@ -21,19 +26,25 @@ public class EmailService {
     private final String to;
     private final String from;
     private final boolean failFast;
+    private final Duration cooldown;
+
+    // When SMTP is blocked by the hosting provider, avoid burning threads/time on repeated 10s connect timeouts.
+    private final AtomicLong disabledUntilEpochMs = new AtomicLong(0L);
 
     public EmailService(
             JavaMailSender mailSender,
             @Value("${app.email.enabled:true}") boolean enabled,
             @Value("${app.email.to:}") String to,
             @Value("${app.email.from:}") String from,
-            @Value("${app.email.fail-fast:false}") boolean failFast
+            @Value("${app.email.fail-fast:false}") boolean failFast,
+            @Value("${app.email.cooldown-seconds:900}") long cooldownSeconds
     ) {
         this.mailSender = mailSender;
         this.enabled = enabled;
         this.to = (to == null) ? "" : to.trim();
         this.from = (from == null) ? "" : from.trim();
         this.failFast = failFast;
+        this.cooldown = Duration.ofSeconds(Math.max(0L, cooldownSeconds));
     }
 
     @Async
@@ -45,6 +56,14 @@ public class EmailService {
         }
         if (to.isBlank()) {
             log.warn("Email not sent because app.email.to is empty. Set MAIL_TO/app.email.to to enable contact emails.");
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        long disabledUntil = disabledUntilEpochMs.get();
+        if (disabledUntil > now) {
+            log.warn("Email sending temporarily disabled for {}s (last SMTP connectivity failure).",
+                    Math.max(0, (disabledUntil - now) / 1000));
             return;
         }
 
@@ -82,7 +101,11 @@ public class EmailService {
 
         } catch (MailException e) {
             // Common on PaaS: outbound SMTP ports can be blocked; don't crash async execution.
-            log.error("Failed to send contact email (SMTP).", e);
+            if (isConnectivityFailure(e)) {
+                tripCooldown(now, e);
+            } else {
+                log.error("Failed to send contact email (SMTP).", e);
+            }
             if (failFast) {
                 throw e;
             }
@@ -96,5 +119,47 @@ public class EmailService {
 
     private static String nullToEmpty(String s) {
         return (s == null) ? "" : s;
+    }
+
+    private void tripCooldown(long nowEpochMs, Throwable e) {
+        if (cooldown.isZero() || cooldown.isNegative()) {
+            log.warn("SMTP connectivity failure (cooldown disabled). Root cause: {}", rootCauseMessage(e));
+            return;
+        }
+
+        long until = nowEpochMs + cooldown.toMillis();
+        disabledUntilEpochMs.updateAndGet(prev -> Math.max(prev, until));
+        log.warn("SMTP connectivity failure; disabling email sending for {}s. Root cause: {}",
+                cooldown.toSeconds(), rootCauseMessage(e));
+    }
+
+    private static boolean isConnectivityFailure(Throwable t) {
+        Throwable cur = t;
+        while (cur != null) {
+            if (cur instanceof SocketTimeoutException || cur instanceof ConnectException) {
+                return true;
+            }
+            // Angus Mail/Jakarta Mail connect exceptions are usually nested; match by class name to avoid hard dependency.
+            String cn = cur.getClass().getName();
+            if ("org.eclipse.angus.mail.util.MailConnectException".equals(cn)) {
+                return true;
+            }
+            cur = cur.getCause();
+        }
+        return false;
+    }
+
+    private static String rootCauseMessage(Throwable t) {
+        Throwable cur = t;
+        Throwable last = t;
+        while (cur != null) {
+            last = cur;
+            cur = cur.getCause();
+        }
+        String msg = last.getMessage();
+        if (msg == null || msg.isBlank()) {
+            return last.getClass().getName();
+        }
+        return last.getClass().getSimpleName() + ": " + msg;
     }
 }
