@@ -19,6 +19,12 @@ public class ContactController {
         this.contactService = contactService;
     }
 
+    // Preflight handler
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> cors() {
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping
     public ResponseEntity<?> sendContact(@RequestBody ContactRequest request) {
 
