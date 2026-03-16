@@ -19,7 +19,6 @@ public class CorsConfig {
     public CorsConfig(
             @Value("${app.cors.allowed-origin-patterns:http://localhost:3000,https://yuriisuprun.vercel.app,https://*.vercel.app}") String patterns
     ) {
-        // Comma-separated list (works well with Render/Vercel env vars).
         this.allowedOriginPatterns = Arrays.stream((patterns == null) ? new String[0] : patterns.split(","))
                 .map(String::trim)
                 .filter(s -> !s.isBlank())
@@ -30,8 +29,6 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        // Use origin patterns so Vercel preview deployments (https://<id>.vercel.app) can still call the API.
-        // For custom domains, set CORS_ALLOWED_ORIGIN_PATTERNS (mapped to app.cors.allowed-origin-patterns).
         config.setAllowedOriginPatterns(allowedOriginPatterns);
         config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
