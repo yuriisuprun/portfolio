@@ -1,8 +1,8 @@
 import { SITE_CONFIG } from "../config/siteConfig";
 
 const HERO_COPY = {
-  en: { role: "Software Engineer" },
-  it: { role: "Ingegnere Software" },
+  en: { role: "Software engineer passionate about solving real-world problems with code" },
+  it: { role: "Ingegnere software appassionato di risolvere problemi del mondo reale con il codice" },
 };
 
 function HeroLink({ href, external = false, children }) {
