@@ -30,7 +30,7 @@ export default function Hero({ language = "en" }) {
     <section className="flex items-center min-h-[70vh]">
       <div className="flex items-center gap-10">
         <img
-          src="/myphoto.png"
+          src="/myphoto.jpg"
           alt={SITE_CONFIG.name}
           className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg"
         />
