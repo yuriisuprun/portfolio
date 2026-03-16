@@ -10,9 +10,7 @@ import java.util.Objects;
 @Service
 public class ContactService {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(ContactService.class);
-
+    private static final Logger log = LoggerFactory.getLogger(ContactService.class);
     private static final String MASKED_NULL = "<null>";
     private static final String MASKED_EMPTY = "<empty>";
     private static final String MASKED_INVALID = "<invalid>";
@@ -23,44 +21,27 @@ public class ContactService {
         this.emailService = emailService;
     }
 
-    public void processContact(ContactRequest request) {
-        Objects.requireNonNull(request, "request");
-
-        // Avoid PII in INFO logs (Render logs are often treated as semi-public). Keep details behind DEBUG.
+    public void processContact(ContactRequest req) {
+        Objects.requireNonNull(req, "request");
         log.info("Contact message received");
         if (log.isDebugEnabled()) {
-            log.debug("Contact message received from {}", maskEmail(request.getEmail()));
+            log.debug("Contact message received from {}", maskEmail(req.getEmail()));
         }
-        emailService.sendContactEmail(request);
+        emailService.sendContactEmail(req);
     }
 
     private static String maskEmail(String email) {
-        if (email == null) {
-            return MASKED_NULL;
-        }
+        if (email == null) return MASKED_NULL;
+        String e = email.trim();
+        if (e.isEmpty()) return MASKED_EMPTY;
+        int at = e.indexOf('@');
+        if (at <= 0 || at == e.length() - 1) return MASKED_INVALID;
 
-        String trimmed = email.trim();
-        if (trimmed.isEmpty()) {
-            return MASKED_EMPTY;
-        }
-
-        int at = trimmed.indexOf('@');
-        if (at <= 0 || at == trimmed.length() - 1) {
-            return MASKED_INVALID;
-        }
-
-        String local = trimmed.substring(0, at);
-        String domain = trimmed.substring(at + 1);
-        if (domain.isEmpty()) {
-            return MASKED_INVALID;
-        }
-
-        if (local.length() == 1) {
-            return "*@" + domain;
-        }
-        if (local.length() == 2) {
-            return local.charAt(0) + "*@" + domain;
-        }
-        return "" + local.charAt(0) + "***" + local.charAt(local.length() - 1) + "@" + domain;
+        String local = e.substring(0, at), domain = e.substring(at + 1);
+        return switch (local.length()) {
+            case 1 -> "*@" + domain;
+            case 2 -> local.charAt(0) + "*@" + domain;
+            default -> local.charAt(0) + "***" + local.charAt(local.length() - 1) + "@" + domain;
+        };
     }
 }

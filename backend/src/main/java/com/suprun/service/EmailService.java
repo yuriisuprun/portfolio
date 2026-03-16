@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.*;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -28,9 +29,7 @@ public class EmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
-    private enum Provider {
-        AUTO, SMTP, RESEND, LOG
-    }
+    private enum Provider { AUTO, SMTP, RESEND, LOG }
 
     private final JavaMailSender mailSender;
     private final boolean enabled;
@@ -38,16 +37,13 @@ public class EmailService {
     private final String from;
     private final boolean failFast;
     private final Duration cooldown;
-
     private final Provider provider;
-    private final RestClient resendClient; // null unless provider=RESEND
+    private final RestClient resendClient;
     private final String smtpHost;
     private final int smtpPort;
     private final String smtpUsernameMasked;
     private final boolean assumeSmtpBlocked;
-
-    // When SMTP is blocked by the hosting provider, avoid burning threads/time on repeated 10s connect timeouts.
-    private final AtomicLong disabledUntilEpochMs = new AtomicLong(0L);
+    private final AtomicLong disabledUntil = new AtomicLong();
 
     public EmailService(
             JavaMailSender mailSender,
@@ -68,440 +64,150 @@ public class EmailService {
     ) {
         this.mailSender = mailSender;
         this.enabled = enabled;
-        this.smtpHost = nullToEmpty(smtpHost).trim();
+        this.smtpHost = trimOrEmpty(smtpHost);
         this.smtpPort = smtpPort;
         this.smtpUsernameMasked = maskEmail(smtpUsername);
         this.assumeSmtpBlocked = assumeSmtpBlocked;
-
-        String fromNorm = normalizeAddressHeader(from);
-        String[] toNorm = normalizeAddressList(to);
-        if (toNorm.length == 0) {
-            // Common prod misconfig: MAIL_FROM is set but MAIL_TO is missing. Default to FROM so the contact form
-            // still works out-of-the-box (can be overridden by MAIL_TO/app.email.to).
-            String[] fallback = normalizeAddressList(fromNorm);
-            if (fallback.length > 0) {
-                toNorm = fallback;
-                log.warn("app.email.to is empty; defaulting recipient to app.email.from. Set MAIL_TO/app.email.to to override.");
-            }
-        }
-
-        this.to = toNorm;
-        this.from = fromNorm;
+        this.from = normalizeAddressHeader(from);
+        this.to = normalizeAddressList(to.length() > 0 ? to : this.from);
         this.failFast = failFast;
-        this.cooldown = Duration.ofSeconds(Math.max(0L, cooldownSeconds));
+        this.cooldown = Duration.ofSeconds(Math.max(0, cooldownSeconds));
 
         Provider requested = parseProvider(provider);
-        SmtpConfigStatus smtpStatus = smtpConfigStatus(smtpHost, smtpPort, smtpUsername, smtpPassword);
-        if (this.enabled && requested == Provider.AUTO && smtpStatus.misconfigured()) {
-            log.warn("SMTP looks misconfigured (host='{}', port={}, usernameSet={}, passwordSet={}). " +
-                            "Fix spring.mail.* / MAIL_HOST/MAIL_PORT/MAIL_USER/MAIL_PASSWORD, or set RESEND_API_KEY + MAIL_PROVIDER=auto.",
-                    nullToEmpty(smtpHost).trim(), smtpPort, hasText(smtpUsername), hasText(smtpPassword));
-        }
-        boolean smtpBlockedLikely = this.assumeSmtpBlocked || isLikelySmtpBlockedEnv();
-        this.provider = resolveProvider(requested, resendApiKey, smtpStatus.configured(), smtpBlockedLikely);
-        this.resendClient = (this.provider == Provider.RESEND)
+        boolean smtpConfigured = smtpHost != null && !smtpHost.isBlank() && smtpPort > 0 && smtpUsername != null && !smtpUsername.isBlank() && smtpPassword != null && !smtpPassword.isBlank();
+        this.provider = resolveProvider(requested, resendApiKey, smtpConfigured, assumeSmtpBlocked || likelySmtpBlocked());
+        this.resendClient = this.provider == Provider.RESEND
                 ? restClientBuilder
-                .baseUrl((resendBaseUrl == null || resendBaseUrl.isBlank()) ? "https://api.resend.com" : resendBaseUrl.trim())
-                .defaultHeader("Authorization", "Bearer " + nullToEmpty(resendApiKey).trim())
+                .baseUrl(trimOrEmpty(resendBaseUrl, "https://api.resend.com"))
+                .defaultHeader("Authorization", "Bearer " + trimOrEmpty(resendApiKey))
                 .build()
                 : null;
 
         log.info("Email config: enabled={}, provider={}, toCount={}, hasFrom={}", this.enabled, this.provider, this.to.length, !this.from.isBlank());
-        if (this.enabled && (this.provider == Provider.SMTP || requested == Provider.SMTP || requested == Provider.AUTO)) {
-            log.info("SMTP target: {} (username={})", smtpTarget(), smtpUsernameMasked);
-            if (this.smtpPort == 25) {
-                log.warn("SMTP port 25 is commonly blocked by cloud providers/hosting networks. Prefer port 587 (STARTTLS) or 465 (SMTPS) if your provider supports it.");
-            }
-            String preferIpv4 = System.getProperty("java.net.preferIPv4Stack");
-            if (preferIpv4 == null || preferIpv4.isBlank()) {
-                // If the host has broken IPv6, Java may attempt IPv6 first and time out.
-                log.info("Tip: if SMTP connect works locally but times out on the host, try setting JAVA_OPTS=-Djava.net.preferIPv4Stack=true on the remote runtime.");
-            }
-        }
-        if (this.enabled && requested == Provider.AUTO && this.provider == Provider.LOG) {
-            if (smtpStatus.configured() && smtpBlockedLikely) {
-                log.warn("MAIL_PROVIDER=auto resolved to LOG because outbound SMTP is likely blocked here and no HTTP provider is configured. " +
-                        "Set RESEND_API_KEY + MAIL_PROVIDER=auto (recommended), or force SMTP by setting MAIL_PROVIDER=smtp (not recommended on this platform).");
-            } else if (smtpBlockedLikely) {
-                log.warn("MAIL_PROVIDER=auto resolved to LOG. This environment often blocks outbound SMTP and no HTTP provider is configured. " +
-                        "Set RESEND_API_KEY + MAIL_PROVIDER=auto (recommended), or configure SMTP via MAIL_USER/MAIL_PASSWORD (and optionally set MAIL_PROVIDER=smtp).");
-            } else {
-                log.warn("MAIL_PROVIDER=auto resolved to LOG because no email provider is configured. " +
-                        "Set RESEND_API_KEY (recommended) or configure SMTP via MAIL_HOST/MAIL_PORT/MAIL_USER/MAIL_PASSWORD.");
-            }
-        }
-        if (this.enabled && this.provider == Provider.SMTP && smtpBlockedLikely) {
-            if (requested == Provider.SMTP) {
-                log.info("MAIL_PROVIDER=smtp selected. Note: this platform often blocks outbound SMTP; if emails do not arrive, switch to RESEND_API_KEY + MAIL_PROVIDER=auto (or MAIL_PROVIDER=resend).");
-            } else {
-                log.warn("MAIL_PROVIDER=auto resolved to SMTP. This platform often blocks outbound SMTP; if emails do not arrive, set RESEND_API_KEY (recommended) or set MAIL_PROVIDER=resend.");
-            }
-        }
     }
 
     @Async
     public void sendContactEmail(ContactRequest req) {
+        if (!enabled || to.length == 0) return;
 
-        if (!enabled) {
-            log.info("Email sending disabled (app.email.enabled=false)");
-            return;
-        }
-        if (to.length == 0) {
-            log.warn("Email not sent because app.email.to is empty. Set MAIL_TO/app.email.to to enable contact emails.");
-            return;
-        }
+        if (provider == Provider.SMTP && disabledUntil.get() > System.currentTimeMillis()) return;
 
-        long now = System.currentTimeMillis();
-        // Cooldown only applies to SMTP connectivity failures; don't block non-SMTP providers.
-        if (provider == Provider.SMTP) {
-            long disabledUntil = disabledUntilEpochMs.get();
-            if (disabledUntil > now) {
-                log.warn("Email sending temporarily disabled for {}s (last SMTP connectivity failure).",
-                        Math.max(0, (disabledUntil - now) / 1000));
-                return;
-            }
-        }
-
-        String safeName = HtmlUtils.htmlEscape(nullToEmpty(req.getName()));
-        String safeEmail = HtmlUtils.htmlEscape(nullToEmpty(req.getEmail()));
-        String safeMessage = HtmlUtils.htmlEscape(nullToEmpty(req.getMessage())).replace("\n", "<br/>");
+        String safeName = HtmlUtils.htmlEscape(trimOrEmpty(req.getName()));
+        String safeEmail = HtmlUtils.htmlEscape(trimOrEmpty(req.getEmail()));
+        String safeMessage = HtmlUtils.htmlEscape(trimOrEmpty(req.getMessage())).replace("\n", "<br/>");
         String subject = "Portfolio Contact: " + safeName;
-        String html = """
-                <h2>New Contact Message</h2>
-                <p><b>Name:</b> %s</p>
-                <p><b>Email:</b> %s</p>
-                <p><b>Message:</b></p>
-                <p>%s</p>
-                """.formatted(safeName, safeEmail, safeMessage);
+        String html = "<h2>New Contact Message</h2><p><b>Name:</b> " + safeName + "</p><p><b>Email:</b> " + safeEmail + "</p><p><b>Message:</b></p><p>" + safeMessage + "</p>";
 
         try {
             switch (provider) {
-                case SMTP -> sendViaSmtp(req, subject, html);
-                case RESEND -> sendViaResend(req, subject, html);
-                case LOG -> log.info("Email provider=LOG; contact message received (nameLen={}, emailDomain={}, messageLen={})",
-                        lengthOrZero(req.getName()), emailDomain(req.getEmail()), lengthOrZero(req.getMessage()));
-                default -> log.warn("Email provider resolved to unexpected value {}; skipping send.", provider);
-            }
-        } catch (MailException e) {
-            // Common on PaaS: outbound SMTP ports can be blocked; don't crash async execution.
-            if (isConnectivityFailure(e)) {
-                tripCooldown(now, e);
-            } else {
-                log.error("Failed to send contact email (SMTP).", e);
-            }
-            if (failFast) {
-                throw e;
-            }
-        } catch (RestClientException e) {
-            // HTTP provider failures: log and optionally fail-fast.
-            log.error("Failed to send contact email (Resend).", e);
-            if (failFast) {
-                throw e;
+                case SMTP -> sendSmtp(req, subject, html);
+                case RESEND -> sendResend(req, subject, html);
+                case LOG -> log.info("Email provider=LOG; contact message received (nameLen={}, emailDomain={}, messageLen={})", safeName.length(), emailDomain(req.getEmail()), safeMessage.length());
             }
         } catch (Exception e) {
-            log.error("Failed to build/send contact email.", e);
-            if (failFast) {
-                throw new RuntimeException("Email failed", e);
-            }
+            handleSendException(e);
         }
     }
 
-    private static String nullToEmpty(String s) {
-        return (s == null) ? "" : s;
-    }
-
-    private static int lengthOrZero(String s) {
-        return (s == null) ? 0 : s.length();
-    }
-
-    private static String maskEmail(String email) {
-        if (email == null) {
-            return "<null>";
-        }
-        String e = email.trim();
-        if (e.isEmpty()) {
-            return "<empty>";
-        }
-        int at = e.indexOf('@');
-        if (at <= 0) {
-            return "<invalid>";
-        }
-        String local = e.substring(0, at);
-        String domain = e.substring(at + 1);
-        if (domain.isEmpty()) {
-            return "<invalid>";
-        }
-        if (local.length() == 1) {
-            return "*@" + domain;
-        }
-        if (local.length() == 2) {
-            return local.charAt(0) + "*@" + domain;
-        }
-        return "" + local.charAt(0) + "***" + local.charAt(local.length() - 1) + "@" + domain;
-    }
-
-    private static String emailDomain(String email) {
-        if (email == null) {
-            return "<null>";
-        }
-        String e = email.trim();
-        if (e.isEmpty()) {
-            return "<empty>";
-        }
-        int at = e.indexOf('@');
-        if (at < 0 || at == e.length() - 1) {
-            return "<invalid>";
-        }
-        String domain = e.substring(at + 1).trim();
-        return domain.isEmpty() ? "<invalid>" : domain;
-    }
-
-    private void sendViaSmtp(ContactRequest req, String subject, String html) throws Exception {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
+    private void sendSmtp(ContactRequest req, String subject, String html) throws Exception {
+        MimeMessage msg = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
         helper.setTo(to);
-        if (!from.isBlank()) {
-            helper.setFrom(from);
-        }
-        if (req.getEmail() != null && !req.getEmail().isBlank()) {
-            // Best-effort: let you hit "Reply" in your inbox to respond to the sender.
-            helper.setReplyTo(req.getEmail().trim());
-        }
-
+        if (!from.isBlank()) helper.setFrom(from);
+        if (req.getEmail() != null && !req.getEmail().isBlank()) helper.setReplyTo(req.getEmail().trim());
         helper.setSubject(subject);
         helper.setText(html, true);
-
-        mailSender.send(message);
+        mailSender.send(msg);
         log.info("Contact email sent to {} recipient(s) (provider=SMTP)", to.length);
     }
 
-    private void sendViaResend(ContactRequest req, String subject, String html) {
-        if (resendClient == null) {
-            throw new IllegalStateException("Resend client not configured");
-        }
-
-        // Resend requires a valid `from`. If the user didn't configure one, default to the sandbox sender
-        // so setting only RESEND_API_KEY + MAIL_TO still works out-of-the-box.
-        String effectiveFrom = from;
-        if (effectiveFrom.isBlank()) {
-            effectiveFrom = "Portfolio <onboarding@resend.dev>";
-            log.warn("app.email.from is empty; defaulting to '{}' for provider=RESEND. Set MAIL_FROM/app.email.from to override.",
-                    effectiveFrom);
-        }
+    private void sendResend(ContactRequest req, String subject, String html) {
+        if (resendClient == null) throw new IllegalStateException("Resend client not configured");
+        String effectiveFrom = from.isBlank() ? "Portfolio <onboarding@resend.dev>" : from;
 
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("from", effectiveFrom);
         payload.put("to", to);
         payload.put("subject", subject);
         payload.put("html", html);
+        if (req.getEmail() != null && !req.getEmail().isBlank()) payload.put("reply_to", req.getEmail().trim());
 
-        if (req.getEmail() != null && !req.getEmail().isBlank()) {
-            // Resend API parameter name is `reply_to` (SDK uses replyTo).
-            payload.put("reply_to", req.getEmail().trim());
-        }
-
-        // Resend: POST https://api.resend.com/emails with Authorization: Bearer ...
-        Map<?, ?> resp = resendClient.post()
-                .uri("/emails")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(payload)
-                .retrieve()
-                .body(Map.class);
-
-        Object id = (resp == null) ? null : resp.get("id");
-        if (id != null) {
-            log.info("Contact email sent to {} recipient(s) (provider=RESEND, id={})", to.length, id);
-        } else {
-            log.info("Contact email sent to {} recipient(s) (provider=RESEND)", to.length);
-        }
+        Map<?, ?> resp = resendClient.post().uri("/emails").contentType(MediaType.APPLICATION_JSON).body(payload).retrieve().body(Map.class);
+        Object id = resp != null ? resp.get("id") : null;
+        log.info("Contact email sent to {} recipient(s) (provider=RESEND{})", to.length, id != null ? ", id=" + id : "");
     }
 
-    private void tripCooldown(long nowEpochMs, Throwable e) {
-        if (cooldown.isZero() || cooldown.isNegative()) {
-            log.warn("SMTP connectivity failure connecting to {} (cooldown disabled). Root cause: {}", smtpTarget(), rootCauseMessage(e));
-            return;
-        }
-
-        long until = nowEpochMs + cooldown.toMillis();
-        disabledUntilEpochMs.updateAndGet(prev -> Math.max(prev, until));
-        log.warn("SMTP connectivity failure connecting to {}; disabling email sending for {}s. Root cause: {}",
-                smtpTarget(), cooldown.toSeconds(), rootCauseMessage(e));
-        log.warn("Verify outbound connectivity from the host: it must be able to reach {}. If your hosting provider blocks SMTP egress, switch to an HTTP provider (set RESEND_API_KEY + MAIL_PROVIDER=auto or MAIL_PROVIDER=resend).",
-                smtpTarget());
+    private void handleSendException(Exception e) {
+        if (isConnectivityFailure(e)) tripCooldown(System.currentTimeMillis(), e);
+        log.error("Failed to send contact email.", e);
+        if (failFast) throw new RuntimeException(e);
     }
 
-    private static boolean isConnectivityFailure(Throwable t) {
-        Throwable cur = t;
-        while (cur != null) {
-            if (cur instanceof SocketTimeoutException || cur instanceof ConnectException) {
-                return true;
-            }
-            // Angus Mail/Jakarta Mail connect exceptions are usually nested; match by class name to avoid hard dependency.
-            String cn = cur.getClass().getName();
-            if ("org.eclipse.angus.mail.util.MailConnectException".equals(cn)) {
-                return true;
-            }
-            cur = cur.getCause();
-        }
-        return false;
+    // --- Utilities ---
+    private static String trimOrEmpty(String s) { return s == null ? "" : s.trim(); }
+    private static String trimOrEmpty(String s, String fallback) { return s == null || s.isBlank() ? fallback : s.trim(); }
+
+    private static Provider parseProvider(String s) {
+        if (s == null || s.isBlank()) return Provider.AUTO;
+        try { return Provider.valueOf(s.trim().toUpperCase()); }
+        catch (IllegalArgumentException e) { log.warn("Unknown provider '{}', defaulting to AUTO", s); return Provider.AUTO; }
     }
 
-    private String smtpTarget() {
-        String host = (smtpHost == null || smtpHost.isBlank()) ? "<unset>" : smtpHost;
-        int port = smtpPort <= 0 ? -1 : smtpPort;
-        return host + ":" + port;
+    private static Provider resolveProvider(Provider requested, String resendApiKey, boolean smtpConfigured, boolean smtpBlocked) {
+        if (requested != Provider.AUTO) return requested;
+        if (resendApiKey != null && !resendApiKey.isBlank()) return Provider.RESEND;
+        if (smtpBlocked) return Provider.LOG;
+        return smtpConfigured ? Provider.SMTP : Provider.LOG;
     }
 
-    private static String rootCauseMessage(Throwable t) {
-        Throwable cur = t;
-        Throwable last = t;
-        while (cur != null) {
-            last = cur;
-            cur = cur.getCause();
-        }
-        String msg = last.getMessage();
-        if (msg == null || msg.isBlank()) {
-            return last.getClass().getName();
-        }
-        return last.getClass().getSimpleName() + ": " + msg;
-    }
+    private boolean likelySmtpBlocked() { return System.getenv("RENDER") != null || System.getenv("VERCEL") != null; }
 
-    private static Provider parseProvider(String raw) {
-        if (raw == null || raw.isBlank()) {
-            return Provider.AUTO;
-        }
+    private static String normalizeAddressHeader(String s) {
         try {
-            return Provider.valueOf(raw.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            log.warn("Unknown app.email.provider='{}'; falling back to AUTO", raw);
-            return Provider.AUTO;
-        }
-    }
-
-    private static Provider resolveProvider(Provider requested, String resendApiKey, boolean smtpConfigured, boolean smtpBlockedLikely) {
-        if (requested != Provider.AUTO) {
-            return requested;
-        }
-
-        // Prefer HTTP providers when configured.
-        if (resendApiKey != null && !resendApiKey.isBlank()) {
-            return Provider.RESEND;
-        }
-
-        // Many PaaS vendors block outbound SMTP. In AUTO mode, avoid spending thread time on repeated connect
-        // timeouts and default to LOG unless the user explicitly forces SMTP via MAIL_PROVIDER=smtp.
-        if (smtpBlockedLikely) {
-            return Provider.LOG;
-        }
-
-        // If SMTP is configured, prefer trying it. If the hosting platform blocks SMTP egress, the send path
-        // will log a connectivity failure and trip a cooldown to avoid repeated timeouts.
-        if (smtpConfigured) {
-            return Provider.SMTP;
-        }
-
-        // Otherwise, still default to LOG; without SMTP config we have nothing reliable to send with.
-        return Provider.LOG;
-    }
-
-    private record SmtpConfigStatus(boolean configured, boolean misconfigured) {
-    }
-
-    private static SmtpConfigStatus smtpConfigStatus(String host, int port, String username, String password) {
-        boolean hostOk = hasText(host) && port > 0;
-        boolean userSet = hasText(username);
-        boolean passSet = hasText(password);
-        boolean misconfigured = hostOk && (userSet ^ passSet);
-        // For AUTO we only consider SMTP "configured" when creds are present; host/port defaults alone are not enough.
-        boolean configured = hostOk && userSet && passSet;
-        return new SmtpConfigStatus(configured, misconfigured);
-    }
-
-    private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
-    }
-
-    private static boolean isLikelySmtpBlockedEnv() {
-        // Heuristic only: used to decide whether AUTO should default to LOG when neither SMTP nor HTTP providers
-        // are configured, and to emit startup hints.
-        String render = System.getenv("RENDER");
-        String renderServiceId = System.getenv("RENDER_SERVICE_ID");
-        if ((render != null && !render.isBlank()) || (renderServiceId != null && !renderServiceId.isBlank())) {
-            return true;
-        }
-        String vercel = System.getenv("VERCEL");
-        if (vercel != null && !vercel.isBlank()) {
-            return true;
-        }
-        return false;
-    }
-
-    private static String normalizeAddressHeader(String raw) {
-        String s = (raw == null) ? "" : raw.trim();
-        if (s.isEmpty()) {
-            return "";
-        }
-        try {
-            InternetAddress[] parsed = InternetAddress.parse(s, false);
-            if (parsed.length == 0) {
-                return "";
-            }
-            // Preserve display name if present; it is useful for Resend, and SMTP can handle it as well.
-            return parsed[0].toUnicodeString();
-        } catch (AddressException ignored) {
-            // Keep the original (best-effort) rather than failing startup.
-            return s;
-        }
+            InternetAddress[] parsed = InternetAddress.parse(s == null ? "" : s.trim(), false);
+            return parsed.length > 0 ? parsed[0].toUnicodeString() : "";
+        } catch (AddressException e) { return trimOrEmpty(s); }
     }
 
     private static String[] normalizeAddressList(String raw) {
-        String s = (raw == null) ? "" : raw.trim();
-        if (s.isEmpty()) {
-            return new String[0];
-        }
         try {
-            InternetAddress[] parsed = InternetAddress.parse(s, false);
-            if (parsed.length == 0) {
-                return new String[0];
-            }
-            String[] out = new String[parsed.length];
-            for (int i = 0; i < parsed.length; i++) {
-                // For recipients, send only the mailbox address (avoid "Name <addr>" for providers that dislike it).
-                String addr = parsed[i].getAddress();
-                out[i] = (addr == null) ? "" : addr.trim();
-            }
-            int n = 0;
-            for (String v : out) {
-                if (v != null && !v.isBlank()) {
-                    out[n++] = v;
-                }
-            }
-            if (n == out.length) {
-                return out;
-            }
-            String[] trimmed = new String[n];
-            System.arraycopy(out, 0, trimmed, 0, n);
-            return trimmed;
-        } catch (AddressException ignored) {
-            // Accept comma-separated values as-is.
-            String[] parts = s.split(",");
-            int n = 0;
-            for (String p : parts) {
-                String v = (p == null) ? "" : p.trim();
-                if (!v.isBlank()) {
-                    parts[n++] = v;
-                }
-            }
-            if (n == 0) {
-                return new String[0];
-            }
-            if (n == parts.length) {
-                return parts;
-            }
-            String[] trimmed = new String[n];
-            System.arraycopy(parts, 0, trimmed, 0, n);
-            return trimmed;
+            InternetAddress[] parsed = InternetAddress.parse(trimOrEmpty(raw), false);
+            return parsed.length == 0 ? new String[0] : java.util.Arrays.stream(parsed).map(a -> trimOrEmpty(a.getAddress())).filter(a -> !a.isBlank()).toArray(String[]::new);
+        } catch (AddressException e) { return java.util.Arrays.stream(trimOrEmpty(raw).split(",")).map(String::trim).filter(a -> !a.isBlank()).toArray(String[]::new); }
+    }
+
+    private void tripCooldown(long now, Throwable e) {
+        long until = now + cooldown.toMillis();
+        disabledUntil.updateAndGet(prev -> Math.max(prev, until));
+        log.warn("SMTP connectivity failure; email sending disabled for {}s. Root cause: {}", cooldown.toSeconds(), e.getMessage());
+    }
+
+    private static boolean isConnectivityFailure(Throwable t) {
+        while (t != null) {
+            if (t instanceof SocketTimeoutException || t instanceof ConnectException || "org.eclipse.angus.mail.util.MailConnectException".equals(t.getClass().getName())) return true;
+            t = t.getCause();
         }
+        return false;
+    }
+
+    private static String emailDomain(String email) {
+        if (email == null || email.isBlank()) return "<null>";
+        int at = email.indexOf('@');
+        if (at < 0 || at == email.length() - 1) return "<invalid>";
+        return email.substring(at + 1);
+    }
+
+    private static String maskEmail(String email) {
+        if (email == null) return "<null>";
+        String e = email.trim();
+        if (e.isEmpty()) return "<empty>";
+        int at = e.indexOf('@');
+        if (at <= 0 || at == e.length() - 1) return "<invalid>";
+        String local = e.substring(0, at), domain = e.substring(at + 1);
+        return switch (local.length()) {
+            case 1 -> "*@" + domain;
+            case 2 -> local.charAt(0) + "*@" + domain;
+            default -> local.charAt(0) + "***" + local.charAt(local.length() - 1) + "@" + domain;
+        };
     }
 }
