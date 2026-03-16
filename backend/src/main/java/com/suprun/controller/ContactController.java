@@ -2,10 +2,15 @@ package com.suprun.controller;
 
 import com.suprun.dto.ContactRequest;
 import com.suprun.service.ContactService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contact")
@@ -15,40 +20,45 @@ public class ContactController {
 
     private final ContactService contactService;
 
+    private static final Map<String, Object> SUCCESS_BODY = Map.of("success", true);
+    private static final String ERROR_ALL_FIELDS_REQUIRED = "All fields required";
+    private static final String ERROR_INVALID_REQUEST = "Invalid request data";
+    private static final String ERROR_SERVER = "Server error";
+
     public ContactController(ContactService contactService) {
         this.contactService = contactService;
     }
 
     @PostMapping
-    public ResponseEntity<?> sendContact(@RequestBody ContactRequest request) {
+    public ResponseEntity<Map<String, ?>> sendContact(@Valid @RequestBody ContactRequest request, BindingResult bindingResult) {
 
         // Honeypot bot protection
-        if (request.getWebsite() != null && !request.getWebsite().isEmpty()) {
+        if (StringUtils.hasText(request.getWebsite())) {
             return ResponseEntity.ok().build();
         }
 
-        // Validate fields
-        if (request.getName() == null || request.getName().isEmpty() ||
-                request.getEmail() == null || request.getEmail().isEmpty() ||
-                request.getMessage() == null || request.getMessage().isEmpty()) {
-
-            return ResponseEntity.badRequest()
-                    .body(java.util.Map.of("error", "All fields required"));
+        if (bindingResult.hasErrors()) {
+            // Keep responses intentionally generic to avoid leaking validation rules / anti-bot behavior.
+            String message = hasNotBlankViolations(bindingResult) ? ERROR_ALL_FIELDS_REQUIRED : ERROR_INVALID_REQUEST;
+            return ResponseEntity.badRequest().body(Map.of("error", message));
         }
 
         try {
 
             contactService.processContact(request);
 
-            return ResponseEntity.ok(
-                    java.util.Map.of("success", true)
-            );
+            return ResponseEntity.ok(SUCCESS_BODY);
 
         } catch (Exception e) {
             log.error("Failed to process contact message.", e);
 
             return ResponseEntity.status(500)
-                    .body(java.util.Map.of("error", "Server error"));
+                    .body(Map.of("error", ERROR_SERVER));
         }
+    }
+
+    private static boolean hasNotBlankViolations(BindingResult bindingResult) {
+        return bindingResult.getFieldErrors().stream()
+                .anyMatch(error -> "NotBlank".equals(error.getCode()));
     }
 }
