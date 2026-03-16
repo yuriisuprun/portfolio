@@ -13,7 +13,7 @@ export default function About({ language }) {
             description:
                 "Sono Yurii e sono un Software Engineer appassionato di costruire sistemi scalabili e affidabili. La mia principale area di competenza riguarda Java, Spring Boot e le architetture a microservizi, unite a tecnologie cloud-native come AWS, Docker e Kubernetes. Ho anche esperienza nello sviluppo di interfacce utente, che mi consente di comprendere meglio l’intero stack applicativo e di offrire soluzioni coerenti. Sono sempre aperto ad adottare nuove tecnologie quando si dimostrano la scelta migliore per il problema o i requisiti del progetto.\n" +
                 "\n" +
-                "Nel corso degli anni ho contribuito alla progettazione e alla modernizzazione di piattaforme complesse in diversi settori (Assicurazioni, Viaggi, Finanza, ecc.), con una forte attenzione alla clean architecture, alle prestazioni e alla manutenibilità a lungo termine. Mi piace imparare nuove tecnologie, risolvere problemi complessi e collaborare con team multiculturali per realizzare software di alta qualità.."
+                "Nel corso degli anni ho contribuito alla progettazione e alla modernizzazione di piattaforme complesse in diversi settori (Assicurazioni, Viaggi, Finanza, ecc.), con una forte attenzione alla clean architecture, alle prestazioni e alla manutenibilità a lungo termine. Mi piace imparare nuove tecnologie, risolvere problemi complessi e collaborare con team multiculturali per realizzare software di alta qualità."
         }
     };
 
