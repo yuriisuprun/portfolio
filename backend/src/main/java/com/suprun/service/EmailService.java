@@ -8,13 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.HtmlUtils;
 
 import java.net.ConnectException;
@@ -29,7 +27,7 @@ public class EmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
-    private enum Provider { AUTO, SMTP, RESEND, LOG }
+    private enum Provider {AUTO, SMTP, RESEND, LOG}
 
     private final JavaMailSender mailSender;
     private final boolean enabled;
@@ -39,10 +37,6 @@ public class EmailService {
     private final Duration cooldown;
     private final Provider provider;
     private final RestClient resendClient;
-    private final String smtpHost;
-    private final int smtpPort;
-    private final String smtpUsernameMasked;
-    private final boolean assumeSmtpBlocked;
     private final AtomicLong disabledUntil = new AtomicLong();
 
     public EmailService(
@@ -64,10 +58,6 @@ public class EmailService {
     ) {
         this.mailSender = mailSender;
         this.enabled = enabled;
-        this.smtpHost = trimOrEmpty(smtpHost);
-        this.smtpPort = smtpPort;
-        this.smtpUsernameMasked = maskEmail(smtpUsername);
-        this.assumeSmtpBlocked = assumeSmtpBlocked;
         this.from = normalizeAddressHeader(from);
         this.to = normalizeAddressList(to.length() > 0 ? to : this.from);
         this.failFast = failFast;
@@ -102,7 +92,8 @@ public class EmailService {
             switch (provider) {
                 case SMTP -> sendSmtp(req, subject, html);
                 case RESEND -> sendResend(req, subject, html);
-                case LOG -> log.info("Email provider=LOG; contact message received (nameLen={}, emailDomain={}, messageLen={})", safeName.length(), emailDomain(req.getEmail()), safeMessage.length());
+                case LOG ->
+                        log.info("Email provider=LOG; contact message received (nameLen={}, emailDomain={}, messageLen={})", safeName.length(), emailDomain(req.getEmail()), safeMessage.length());
             }
         } catch (Exception e) {
             handleSendException(e);
@@ -143,14 +134,22 @@ public class EmailService {
         if (failFast) throw new RuntimeException(e);
     }
 
-    // --- Utilities ---
-    private static String trimOrEmpty(String s) { return s == null ? "" : s.trim(); }
-    private static String trimOrEmpty(String s, String fallback) { return s == null || s.isBlank() ? fallback : s.trim(); }
+    private static String trimOrEmpty(String s) {
+        return s == null ? "" : s.trim();
+    }
+
+    private static String trimOrEmpty(String s, String fallback) {
+        return s == null || s.isBlank() ? fallback : s.trim();
+    }
 
     private static Provider parseProvider(String s) {
         if (s == null || s.isBlank()) return Provider.AUTO;
-        try { return Provider.valueOf(s.trim().toUpperCase()); }
-        catch (IllegalArgumentException e) { log.warn("Unknown provider '{}', defaulting to AUTO", s); return Provider.AUTO; }
+        try {
+            return Provider.valueOf(s.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            log.warn("Unknown provider '{}', defaulting to AUTO", s);
+            return Provider.AUTO;
+        }
     }
 
     private static Provider resolveProvider(Provider requested, String resendApiKey, boolean smtpConfigured, boolean smtpBlocked) {
@@ -160,20 +159,26 @@ public class EmailService {
         return smtpConfigured ? Provider.SMTP : Provider.LOG;
     }
 
-    private boolean likelySmtpBlocked() { return System.getenv("RENDER") != null || System.getenv("VERCEL") != null; }
+    private boolean likelySmtpBlocked() {
+        return System.getenv("RENDER") != null || System.getenv("VERCEL") != null;
+    }
 
     private static String normalizeAddressHeader(String s) {
         try {
             InternetAddress[] parsed = InternetAddress.parse(s == null ? "" : s.trim(), false);
             return parsed.length > 0 ? parsed[0].toUnicodeString() : "";
-        } catch (AddressException e) { return trimOrEmpty(s); }
+        } catch (AddressException e) {
+            return trimOrEmpty(s);
+        }
     }
 
     private static String[] normalizeAddressList(String raw) {
         try {
             InternetAddress[] parsed = InternetAddress.parse(trimOrEmpty(raw), false);
             return parsed.length == 0 ? new String[0] : java.util.Arrays.stream(parsed).map(a -> trimOrEmpty(a.getAddress())).filter(a -> !a.isBlank()).toArray(String[]::new);
-        } catch (AddressException e) { return java.util.Arrays.stream(trimOrEmpty(raw).split(",")).map(String::trim).filter(a -> !a.isBlank()).toArray(String[]::new); }
+        } catch (AddressException e) {
+            return java.util.Arrays.stream(trimOrEmpty(raw).split(",")).map(String::trim).filter(a -> !a.isBlank()).toArray(String[]::new);
+        }
     }
 
     private void tripCooldown(long now, Throwable e) {
@@ -184,7 +189,8 @@ public class EmailService {
 
     private static boolean isConnectivityFailure(Throwable t) {
         while (t != null) {
-            if (t instanceof SocketTimeoutException || t instanceof ConnectException || "org.eclipse.angus.mail.util.MailConnectException".equals(t.getClass().getName())) return true;
+            if (t instanceof SocketTimeoutException || t instanceof ConnectException || "org.eclipse.angus.mail.util.MailConnectException".equals(t.getClass().getName()))
+                return true;
             t = t.getCause();
         }
         return false;
