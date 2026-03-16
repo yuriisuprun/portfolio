@@ -23,7 +23,7 @@ export default function About({ language }) {
     const t = text[language];
 
     return (
-        <section className="py-20 max-w-2xl mx-auto px-4">
+        <section className="py-20 max-w-5xl mx-auto px-4">
             <h2 className="text-3xl font-bold mb-6">{t.title}</h2>
             {t.description.map((paragraph, idx) => (
                 <p
