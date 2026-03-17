@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { sendContact } from "../api/contactApi";
+import {useState} from "react";
+import {sendContact} from "../api/contactApi"; // make sure this path matches your project
 
-export default function Contacts({ language }) {
+export default function Contacts({language}) {
     const text = {
         en: {
             title: "Contacts",
@@ -9,7 +9,7 @@ export default function Contacts({ language }) {
             send: "Send Message",
             success: "Message sent successfully.",
             error: "Failed to send message.",
-            fields: { name: "Name", email: "Email", message: "Message" },
+            fields: {name: "Name", email: "Email", message: "Message"},
         },
         it: {
             title: "Contatti",
@@ -17,19 +17,19 @@ export default function Contacts({ language }) {
             send: "Invia Messaggio",
             success: "Messaggio inviato.",
             error: "Errore durante l'invio.",
-            fields: { name: "Nome", email: "Email", message: "Messaggio" },
+            fields: {name: "Nome", email: "Email", message: "Messaggio"},
         },
     };
 
     const t = text[language] ?? text.en;
 
-    const [form, setForm] = useState({ name: "", email: "", message: "", website: "" });
+    const [form, setForm] = useState({name: "", email: "", message: "", website: ""});
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
     const [errorMessage, setErrorMessage] = useState("");
 
     function update(e) {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        setForm({...form, [e.target.name]: e.target.value});
     }
 
     async function submit(e) {
@@ -41,9 +41,8 @@ export default function Contacts({ language }) {
         try {
             await sendContact(form);
             setStatus("success");
-            setForm({ name: "", email: "", message: "", website: "" });
+            setForm({name: "", email: "", message: "", website: ""});
         } catch (err) {
-            console.error("Contact form error:", err);
             setStatus("error");
             setErrorMessage(err.message || t.error);
         }
@@ -52,18 +51,18 @@ export default function Contacts({ language }) {
     }
 
     return (
-        <section className="py-20 max-w-2xl">
-            <h2 className="text-3xl mb-6">{t.title}</h2>
-            <p className="mb-8 text-gray-600 dark:text-gray-400">{t.description}</p>
+        <section className="py-12 px-4 sm:px-6 max-w-xl mx-auto">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t.title}</h2>
+            <p className="mb-6 text-gray-600 dark:text-gray-400">{t.description}</p>
 
-            <form onSubmit={submit} className="space-y-6">
+            <form onSubmit={submit} className="space-y-4">
                 <input
                     name="name"
                     required
                     placeholder={t.fields.name}
                     value={form.name}
                     onChange={update}
-                    className="w-full p-3 border"
+                    className="w-full p-3 border rounded"
                 />
                 <input
                     name="email"
@@ -72,7 +71,7 @@ export default function Contacts({ language }) {
                     placeholder={t.fields.email}
                     value={form.email}
                     onChange={update}
-                    className="w-full p-3 border"
+                    className="w-full p-3 border rounded"
                 />
                 <textarea
                     name="message"
@@ -81,19 +80,18 @@ export default function Contacts({ language }) {
                     placeholder={t.fields.message}
                     value={form.message}
                     onChange={update}
-                    className="w-full p-3 border"
+                    className="w-full p-3 border rounded"
                 />
-
-                {/* Honeypot */}
+                {/* Honeypot field */}
                 <input
                     name="website"
                     value={form.website}
                     onChange={update}
-                    style={{ display: "none" }}
+                    style={{display: "none"}}
                     autoComplete="off"
                 />
 
-                <button disabled={loading} className="border border-green-500 px-6 py-2">
+                <button disabled={loading} className="border border-green-500 px-6 py-2 rounded">
                     {loading ? "..." : t.send}
                 </button>
 
