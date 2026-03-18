@@ -68,7 +68,7 @@ function ProfileImage() {
         <img
             src="/myphoto.jpg"
             alt={SITE_CONFIG.name}
-            className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg"
+            className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg mt-6 sm:mt-14"
         />
     );
 }
