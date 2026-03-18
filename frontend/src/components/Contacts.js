@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {sendContact} from "../api/contactApi"; // make sure this path matches your project
+import {sendContact} from "../api/contactApi";
 
 export default function Contacts({language}) {
     const text = {
