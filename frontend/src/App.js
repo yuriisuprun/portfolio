@@ -67,7 +67,7 @@ function App() {
                         <Route path="/contacts" element={<Contacts language={language}/>}/>
                     </Routes>
                 </main>
-                <Footer/>
+                <Footer language={language} />
             </div>
         </div>
     );
