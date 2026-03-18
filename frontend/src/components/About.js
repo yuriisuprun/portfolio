@@ -3,7 +3,7 @@ export default function About({ language }) {
         en: {
             title: "About Me",
             description: [
-                "I'm Yurii, and I'm a Software Engineer passionate about building scalable and reliable systems. " +
+                "My name is Yurii, and I'm a Software Engineer passionate about building scalable and reliable systems. " +
                 "My primary expertise lies in Java, Spring Boot, and microservices architectures, combined with cloud-native " +
                 "technologies such as AWS, Docker, and Kubernetes.",
                 "I also have experience contributing to user interface development, which helps me better understand the full " +
@@ -19,7 +19,7 @@ export default function About({ language }) {
         it: {
             title: "Chi Sono",
             description: [
-                "Sono Yurii e sono un Software Engineer appassionato di costruire sistemi scalabili e affidabili. La mia " +
+                "Mi chiamo Yurii e sono un Software Engineer appassionato di costruire sistemi scalabili e affidabili. La mia " +
                 "principale area di competenza riguarda Java, Spring Boot e le architetture a microservizi, unite a tecnologie " +
                 "cloud-native come AWS, Docker e Kubernetes.",
                 "Ho anche esperienza nello sviluppo di interfacce utente, che mi consente di comprendere meglio l’intero stack " +
