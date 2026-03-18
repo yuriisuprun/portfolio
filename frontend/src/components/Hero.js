@@ -3,10 +3,12 @@ import { SITE_CONFIG } from "../config/siteConfig";
 
 const HERO_COPY = {
     en: {
-        role: "Software engineer passionate about solving real-world problems with code",
+        role: "My name is Yurii, and I'm a software engineer. I create and develop diverse, interactive, and " +
+            "engaging solutions. I am passionate about solving real-world problems with code",
     },
     it: {
-        role: "Ingegnere software appassionato di risolvere problemi del mondo reale con il codice",
+        role: "Mi chiamo Yurii e sono un ingegnere del software. Creo e sviluppo soluzioni diverse, interattive e " +
+            "coinvolgenti. Sono appassionato di risolvere problemi reali tramite il codice",
     },
 };
 
@@ -75,7 +77,7 @@ function HeroContent({ role }) {
     return (
         <div className="flex-1 space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-5xl font-bold">
-                {SITE_CONFIG.name}
+                {/*{SITE_CONFIG.name}*/}
             </h1>
 
             <p className="text-sm sm:text-lg text-gray-600 dark:text-gray-400">
