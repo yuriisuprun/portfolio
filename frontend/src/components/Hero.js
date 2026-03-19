@@ -4,11 +4,11 @@ import {SITE_CONFIG} from "../config/siteConfig";
 const HERO_COPY = {
     en: {
         role:
-            "My name is Yurii, and I'm a software engineer. I create interactive, scalable, and engaging web solutions.",
+            "Hi, I’m Yurii, a software engineer who builds interactive, scalable, and engaging software solutions.",
     },
     it: {
         role:
-            "Mi chiamo Yurii e sono un ingegnere del software. Creo soluzioni web interattive, scalabili e coinvolgenti.",
+            "Ciao, sono Yurii, un ingegnere del software che crea soluzioni software interattive, scalabili e coinvolgenti.",
     },
 };
 
