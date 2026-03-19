@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Navigate, Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -7,6 +7,7 @@ import Projects from "./components/Projects";
 import About from "./components/About";
 import Contacts from "./components/Contacts";
 import Footer from "./components/Footer";
+import SEO from "./components/SEO";
 
 const STORAGE_KEYS = {
     darkMode: "darkMode",
@@ -61,13 +62,77 @@ function App() {
                 <main className="flex-grow">
                     <Routes>
                         <Route path="/" element={<Navigate to="/home"/>}/>
-                        <Route path="/home" element={<Hero language={language}/>}/>
-                        <Route path="/about" element={<About language={language}/>}/>
-                        <Route path="/projects" element={<Projects language={language}/>}/>
-                        <Route path="/contacts" element={<Contacts language={language}/>}/>
+                        <Route
+                            path="/home"
+                            element={
+                                <>
+                                    <SEO
+                                        title={language === "en" ? "Home - Yurii Suprun" : "Home - Yurii Suprun"}
+                                        description={
+                                            language === "en"
+                                                ? "Yurii Suprun - Software Engineer, creating interactive and scalable web solutions."
+                                                : "Yurii Suprun - Ingegnere del software, creo soluzioni web interattive e scalabili."
+                                        }
+                                        keywords="software engineer, portfolio, Yurii Suprun, web development"
+                                    />
+                                    <Hero language={language}/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/about"
+                            element={
+                                <>
+                                    <SEO
+                                        title={language === "en" ? "About Me - Yurii Suprun" : "Chi Sono - Yurii Suprun"}
+                                        description={
+                                            language === "en"
+                                                ? "Learn more about Yurii Suprun, a software engineer skilled in full-stack development and cloud technologies."
+                                                : "Scopri Yurii Suprun, ingegnere del software esperto in sviluppo full-stack e tecnologie cloud."
+                                        }
+                                        keywords="about, software engineer, Yurii Suprun, portfolio"
+                                    />
+                                    <About language={language}/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/projects"
+                            element={
+                                <>
+                                    <SEO
+                                        title={language === "en" ? "Projects - Yurii Suprun" : "Progetti - Yurii Suprun"}
+                                        description={
+                                            language === "en"
+                                                ? "Explore projects by Yurii Suprun including GitHub repositories and web development works."
+                                                : "Esplora i progetti di Yurii Suprun, inclusi repository GitHub e lavori di sviluppo web."
+                                        }
+                                        keywords="projects, GitHub, software development, Yurii Suprun"
+                                    />
+                                    <Projects language={language}/>
+                                </>
+                            }
+                        />
+                        <Route
+                            path="/contacts"
+                            element={
+                                <>
+                                    <SEO
+                                        title={language === "en" ? "Contacts - Yurii Suprun" : "Contatti - Yurii Suprun"}
+                                        description={
+                                            language === "en"
+                                                ? "Get in touch with Yurii Suprun for collaboration or project inquiries."
+                                                : "Contatta Yurii Suprun per collaborazioni o richieste di progetto."
+                                        }
+                                        keywords="contact, email, Yurii Suprun, collaboration"
+                                    />
+                                    <Contacts language={language}/>
+                                </>
+                            }
+                        />
                     </Routes>
                 </main>
-                <Footer language={language} />
+                <Footer language={language}/>
             </div>
         </div>
     );

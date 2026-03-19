@@ -1,5 +1,5 @@
 import React from "react";
-import { SITE_CONFIG } from "../config/siteConfig";
+import {SITE_CONFIG} from "../config/siteConfig";
 
 const HERO_COPY = {
     en: {
@@ -33,7 +33,7 @@ const HERO_LINKS = [
     },
 ];
 
-const HeroLink = React.memo(function HeroLink({ href, external, children }) {
+const HeroLink = React.memo(function HeroLink({href, external, children}) {
     const baseProps = {
         href,
         className: "hover:underline",
@@ -52,13 +52,14 @@ function useHeroCopy(language) {
     return HERO_COPY[language] ?? HERO_COPY.en;
 }
 
-export default function Hero({ language = "en" }) {
-    const { role } = useHeroCopy(language);
+export default function Hero({language = "en"}) {
+    const {role} = useHeroCopy(language);
 
     return (
-        <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
-            <ProfileImage />
-            <HeroContent role={role} />
+        <section
+            className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
+            <ProfileImage/>
+            <HeroContent role={role}/>
         </section>
     );
 }
@@ -67,13 +68,13 @@ function ProfileImage() {
     return (
         <img
             src="/myphoto.jpg"
-            alt={SITE_CONFIG.name}
+            alt="Yurii Suprun - Software Engineer"
             className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg mt-6 sm:mt-14"
         />
     );
 }
 
-function HeroContent({ role }) {
+function HeroContent({role}) {
     return (
         <div className="flex-1 space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-5xl font-bold">
@@ -84,7 +85,7 @@ function HeroContent({ role }) {
                 {role}
             </p>
 
-            <HeroLinks />
+            <HeroLinks/>
         </div>
     );
 }
@@ -92,7 +93,7 @@ function HeroContent({ role }) {
 function HeroLinks() {
     return (
         <div className="space-y-1">
-            {HERO_LINKS.map(({ key, label, getHref, external }) => (
+            {HERO_LINKS.map(({key, label, getHref, external}) => (
                 <p key={key} className="dark:text-green-400 text-sm sm:text-base">
                     &gt;{" "}
                     <HeroLink href={getHref(SITE_CONFIG)} external={external}>
