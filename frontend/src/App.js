@@ -8,60 +8,21 @@ import About from "./components/About";
 import Contacts from "./components/Contacts";
 import Footer from "./components/Footer";
 import SEO from "./components/SEO";
-
-const STORAGE_KEYS = {
-    darkMode: "darkMode",
-    language: "language",
-};
-
-const DEFAULT_LANGUAGE = "en";
-const SUPPORTED_LANGUAGES = new Set(["en", "it"]);
-
-function readStoredBoolean(key, fallback = false) {
-    const raw = localStorage.getItem(key);
-    if (raw === null) return fallback;
-    try {
-        const parsed = JSON.parse(raw);
-        return typeof parsed === "boolean" ? parsed : fallback;
-    } catch {
-        return fallback;
-    }
-}
-
-function readStoredLanguage(key, fallback = DEFAULT_LANGUAGE) {
-    const raw = localStorage.getItem(key);
-    return raw && SUPPORTED_LANGUAGES.has(raw) ? raw : fallback;
-}
+import useDarkMode from "./hooks/useDarkMode";
+import useLanguage from "./hooks/useLanguage";
 
 function App() {
-    const [dark, setDark] = useState(() =>
-        readStoredBoolean(STORAGE_KEYS.darkMode, false)
-    );
-    const [language, setLanguage] = useState(() =>
-        readStoredLanguage(STORAGE_KEYS.language, DEFAULT_LANGUAGE)
-    );
-
-    useEffect(() => {
-        document.documentElement.classList.toggle("dark", dark);
-        localStorage.setItem(STORAGE_KEYS.darkMode, JSON.stringify(dark));
-    }, [dark]);
-
-    useEffect(() => {
-        localStorage.setItem(STORAGE_KEYS.language, language);
-    }, [language]);
+    const [dark, setDark] = useDarkMode();
+    const [language, setLanguage] = useLanguage();
 
     return (
-        <div className="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-black dark:text-gray-200">
+        <div
+            className="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-black dark:text-gray-200 transition-colors">
             <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col flex-grow">
-                <Navbar
-                    dark={dark}
-                    setDark={setDark}
-                    language={language}
-                    setLanguage={setLanguage}
-                />
+                <Navbar dark={dark} setDark={setDark} language={language} setLanguage={setLanguage}/>
                 <main className="flex-grow">
                     <Routes>
-                        <Route path="/" element={<Navigate to="/home"/>}/>
+                        <Route path="/" element={<Navigate to="/home" replace/>}/>
                         <Route
                             path="/home"
                             element={
