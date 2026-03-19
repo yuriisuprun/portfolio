@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { sendContact } from "../api/contactApi";
+import {useState, useCallback} from "react";
+import {sendContact} from "../api/contactApi";
 
 const TEXT = {
     en: {
@@ -37,7 +37,7 @@ const INITIAL_FORM_STATE = {
     website: "", // honeypot
 };
 
-export default function Contacts({ language = "en" }) {
+export default function Contacts({language = "en"}) {
     const t = TEXT[language] ?? TEXT.en;
 
     const [form, setForm] = useState(INITIAL_FORM_STATE);
@@ -46,8 +46,8 @@ export default function Contacts({ language = "en" }) {
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleChange = useCallback((e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        const {name, value} = e.target;
+        setForm((prev) => ({...prev, [name]: value}));
     }, []);
 
     const resetForm = () => setForm(INITIAL_FORM_STATE);
@@ -85,8 +85,7 @@ export default function Contacts({ language = "en" }) {
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    placeholder={t.fields.name}
-                />
+                    placeholder={t.fields.name}/>
 
                 <InputField
                     id="email"
@@ -94,16 +93,14 @@ export default function Contacts({ language = "en" }) {
                     type="email"
                     value={form.email}
                     onChange={handleChange}
-                    placeholder={t.fields.email}
-                />
+                    placeholder={t.fields.email}/>
 
                 <TextAreaField
                     id="message"
                     name="message"
                     value={form.message}
                     onChange={handleChange}
-                    placeholder={t.fields.message}
-                />
+                    placeholder={t.fields.message}/>
 
                 {/* Honeypot */}
                 <input
@@ -112,14 +109,12 @@ export default function Contacts({ language = "en" }) {
                     onChange={handleChange}
                     className="hidden"
                     autoComplete="off"
-                    tabIndex={-1}
-                />
+                    tabIndex={-1}/>
 
                 <button
                     type="submit"
                     disabled={loading}
-                    className="border border-green-500 px-6 py-2 rounded flex items-center justify-center disabled:opacity-50"
-                >
+                    className="border border-green-500 px-6 py-2 rounded flex items-center justify-center disabled:opacity-50">
                     {loading ? t.sending : t.send}
                 </button>
 
@@ -135,7 +130,7 @@ export default function Contacts({ language = "en" }) {
     );
 }
 
-function InputField({ id, name, type = "text", value, onChange, placeholder }) {
+function InputField({id, name, type = "text", value, onChange, placeholder}) {
     return (
         <>
             <label htmlFor={id} className="sr-only">
@@ -149,13 +144,12 @@ function InputField({ id, name, type = "text", value, onChange, placeholder }) {
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full p-3 border rounded"
-            />
+                className="w-full p-3 border rounded"/>
         </>
     );
 }
 
-function TextAreaField({ id, name, value, onChange, placeholder }) {
+function TextAreaField({id, name, value, onChange, placeholder}) {
     return (
         <>
             <label htmlFor={id} className="sr-only">
@@ -169,8 +163,7 @@ function TextAreaField({ id, name, value, onChange, placeholder }) {
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full p-3 border rounded"
-            />
+                className="w-full p-3 border rounded"/>
         </>
     );
 }
