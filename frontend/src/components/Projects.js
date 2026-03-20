@@ -6,8 +6,8 @@ const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 
 const TRANSLATIONS = {
-  en: { title: "Projects", view: "View Code", info: "Backend hosted on free tier...", error: "Failed to load repositories" },
-  it: { title: "Progetti", view: "Vedi Codice", info: "Backend ospitato su piano gratuito...", error: "Caricamento repository fallito" },
+  en: { title: "My projects on GitHub", view: "View Code", info: "Backend hosted on free tier...", error: "Failed to load repositories" },
+  it: { title: "I miei progetti su GitHub", view: "Vedi Codice", info: "Backend ospitato su piano gratuito...", error: "Caricamento repository fallito" },
 };
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";
