@@ -101,11 +101,9 @@ export default function Contacts({language = "en"}) {
                 <input name="website" value={form.website} onChange={handleChange} className="hidden" autoComplete="off"
                        tabIndex={-1}/>
 
-                <button
-                    type="submit"
+                <button type="submit"
                     disabled={loading}
-                    className="w-full bg-green-500 text-white py-3 rounded hover:bg-green-600 disabled:opacity-50 transition-colors duration-200"
-                >
+                    className="w-full bg-green-500 text-white py-3 rounded hover:bg-green-600 disabled:opacity-50 transition-colors duration-200">
                     {loading ? t.sending : t.send}
                 </button>
 
@@ -124,21 +122,18 @@ function ContactLinks({links, directText}) {
                 {links.map(({key, label, href, icon}) => (
                     <li key={key}>
                         {href ? (
-                            <a
-                                href={href}
-                                target={key !== "phone" && key !== "email" ? "_blank" : "_self"}
-                                rel={key !== "phone" && key !== "email" ? "noopener noreferrer" : undefined}
-                                className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded hover:bg-green-50 dark:hover:bg-green-900 transition-colors duration-200"
-                                aria-label={label}
-                            >
+                            <a href={href}
+                               target={key !== "phone" && key !== "email" ? "_blank" : "_self"}
+                               rel={key !== "phone" && key !== "email" ? "noopener noreferrer" : undefined}
+                               className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded hover:bg-green-50 dark:hover:bg-green-900 transition-colors duration-200"
+                               aria-label={label}>
                                 <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5"/>
                                 {label}
                             </a>
                         ) : (
                             <span
                                 className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded bg-gray-100 dark:bg-gray-800 cursor-default"
-                                aria-label={label}
-                            >
+                                aria-label={label}>
                 <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5"/>
                                 {label}
               </span>
