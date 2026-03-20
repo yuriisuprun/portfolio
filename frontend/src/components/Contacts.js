@@ -45,7 +45,7 @@ export default function Contacts({language = "en"}) {
             {key: "linkedin", label: "LinkedIn", href: SITE_CONFIG.linkedin, icon: "linkedin"},
             {key: "github", label: "GitHub", href: SITE_CONFIG.github, icon: "github"},
             {key: "email", label: SITE_CONFIG.email, href: `mailto:${SITE_CONFIG.email}`, icon: "email"},
-            {key: "phone", label: SITE_CONFIG.phone, icon: "phone"}, // unclickable
+            // {key: "phone", label: SITE_CONFIG.phone, icon: "phone"}, // unclickable
         ],
         []
     );
