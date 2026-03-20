@@ -4,24 +4,24 @@ import { SITE_CONFIG } from "../config/siteConfig";
 
 const TEXT = {
     en: {
-        title: "Contacts",
-        description: "Feel free to reach out if you'd like to collaborate.",
+        title: "Contact Me",
+        description: "I'm always open to collaborating. Send me a message or reach out directly.",
         send: "Send Message",
         sending: "Sending...",
-        success: "Message sent successfully.",
-        error: "Failed to send message.",
-        fields: { name: "Name", email: "Email", message: "Message" },
-        direct: "Or reach me directly via:",
+        success: "Message sent successfully!",
+        error: "Oops! Something went wrong. Please try again.",
+        fields: { name: "Your Name", email: "Your Email", message: "Your Message" },
+        direct: "Reach me directly via:",
     },
     it: {
-        title: "Contatti",
-        description: "Sentiti libero di contattarmi se vuoi collaborare.",
+        title: "Contattami",
+        description: "Sono sempre disponibile per collaborazioni. Inviami un messaggio o contattami direttamente.",
         send: "Invia Messaggio",
         sending: "Invio...",
-        success: "Messaggio inviato.",
-        error: "Errore durante l'invio.",
-        fields: { name: "Nome", email: "Email", message: "Messaggio" },
-        direct: "Oppure contattami direttamente tramite:",
+        success: "Messaggio inviato con successo!",
+        error: "Ops! Qualcosa è andato storto. Riprova.",
+        fields: { name: "Il tuo nome", email: "La tua email", message: "Il tuo messaggio" },
+        direct: "Contattami direttamente tramite:",
     },
 };
 
@@ -36,7 +36,7 @@ const CONTACT_LINKS = [
     { key: "linkedin", label: "LinkedIn", href: SITE_CONFIG.linkedin, icon: "linkedin" },
     { key: "github", label: "GitHub", href: SITE_CONFIG.github, icon: "github" },
     { key: "email", label: SITE_CONFIG.email, href: `mailto:${SITE_CONFIG.email}`, icon: "email" },
-    { key: "phone", label: SITE_CONFIG.phone, href: `tel:${SITE_CONFIG.phone}`, icon: "phone" },
+    { key: "phone", label: SITE_CONFIG.phone, icon: "phone" }, // unclickable phone
 ];
 
 export default function Contacts({ language = "en" }) {
@@ -56,7 +56,7 @@ export default function Contacts({ language = "en" }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (form.website) return; // honeypot check
+        if (form.website) return; // honeypot
 
         setLoading(true);
         setStatus(null);
@@ -75,33 +75,43 @@ export default function Contacts({ language = "en" }) {
     };
 
     return (
-        <section className="py-12 px-4 sm:px-6 max-w-xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">{t.title}</h2>
-            <p className="mb-6 text-gray-600 dark:text-gray-400">{t.description}</p>
+        <section className="py-16 px-4 sm:px-6 max-w-2xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-900 dark:text-gray-100">{t.title}</h2>
+            <p className="mb-8 text-gray-700 dark:text-gray-300">{t.description}</p>
 
             {/* Direct Contact Links */}
-            <div className="mb-8">
-                <p className="font-semibold mb-2">{t.direct}</p>
-                <ul className="space-y-2">
+            <div className="mb-10">
+                <p className="font-semibold mb-3">{t.direct}</p>
+                <ul className="flex flex-wrap gap-4">
                     {CONTACT_LINKS.map(({ key, label, href, icon }) => (
                         <li key={key}>
-                            <a
-                                href={href}
-                                target={key !== "phone" && key !== "email" ? "_blank" : "_self"}
-                                rel={key !== "phone" && key !== "email" ? "noopener noreferrer" : undefined}
-                                className="flex items-center gap-2 text-green-600 dark:text-green-400 hover:underline"
-                                aria-label={label}
-                            >
-                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5" />
-                                {label}
-                            </a>
+                            {href ? (
+                                <a
+                                    href={href}
+                                    target={key !== "phone" && key !== "email" ? "_blank" : "_self"}
+                                    rel={key !== "phone" && key !== "email" ? "noopener noreferrer" : undefined}
+                                    className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded hover:bg-green-50 dark:hover:bg-green-900 transition-colors duration-200"
+                                    aria-label={label}
+                                >
+                                    <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5" />
+                                    {label}
+                                </a>
+                            ) : (
+                                <span
+                                    className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded bg-gray-100 dark:bg-gray-800 cursor-default"
+                                    aria-label={label}
+                                >
+                  <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5" />
+                                    {label}
+                </span>
+                            )}
                         </li>
                     ))}
                 </ul>
             </div>
 
             {/* Contact Form */}
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                 <InputField
                     id="name"
                     name="name"
@@ -135,12 +145,12 @@ export default function Contacts({ language = "en" }) {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="border border-green-500 px-6 py-2 rounded flex items-center justify-center disabled:opacity-50"
+                    className="w-full bg-green-500 text-white py-3 rounded hover:bg-green-600 disabled:opacity-50 transition-colors duration-200"
                 >
                     {loading ? t.sending : t.send}
                 </button>
-                {status === "success" && <p className="text-green-500">{t.success}</p>}
-                {status === "error" && <p className="text-red-500">{errorMessage}</p>}
+                {status === "success" && <p className="text-green-600 font-medium mt-2">{t.success}</p>}
+                {status === "error" && <p className="text-red-600 font-medium mt-2">{errorMessage}</p>}
             </form>
         </section>
     );
@@ -158,7 +168,7 @@ function InputField({ id, name, type = "text", value, onChange, placeholder }) {
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full p-3 border rounded"
+                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 focus:outline-none transition"
             />
         </>
     );
@@ -176,7 +186,7 @@ function TextAreaField({ id, name, value, onChange, placeholder }) {
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="w-full p-3 border rounded"
+                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 focus:outline-none transition resize-none"
             />
         </>
     );
