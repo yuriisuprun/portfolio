@@ -18,8 +18,6 @@ final class ClientIpResolver {
             remoteNorm = "";
         }
 
-        // Only trust forwarded headers when the direct peer address looks like a local/private proxy.
-        // This prevents trivial bypasses where a client sets X-Forwarded-For arbitrarily on a direct connection.
         if (!remoteNorm.isEmpty() && isLikelyProxyAddress(remoteNorm)) {
             String xff = headerValue(request, "X-Forwarded-For");
             if (!xff.isEmpty()) {

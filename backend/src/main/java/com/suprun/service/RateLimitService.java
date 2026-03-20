@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RateLimitService {
 
     private static final int DEFAULT_LIMIT = 5;
-    private static final long DEFAULT_WINDOW_SECONDS = 60; // fixed window
+    private static final long DEFAULT_WINDOW_SECONDS = 60;
     private static final long DEFAULT_MAX_KEYS = 10_000;
 
     private final int limit;
@@ -40,8 +40,6 @@ public class RateLimitService {
         this.limit = limit;
         this.windowSeconds = windowSeconds;
 
-        // We key by (client + windowStart) to avoid having to coordinate "resets" across threads.
-        // Expiry keeps memory bounded even under many distinct client keys.
         this.counters = Caffeine.newBuilder()
                 .expireAfterWrite(windowSeconds * 2, TimeUnit.SECONDS)
                 .maximumSize(maxKeys)

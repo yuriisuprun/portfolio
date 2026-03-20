@@ -32,13 +32,11 @@ public class ContactController {
     @PostMapping
     public ResponseEntity<Map<String, ?>> sendContact(@Valid @RequestBody ContactRequest request, BindingResult bindingResult) {
 
-        // Honeypot bot protection
         if (StringUtils.hasText(request.getWebsite())) {
             return ResponseEntity.ok().build();
         }
 
         if (bindingResult.hasErrors()) {
-            // Keep responses intentionally generic to avoid leaking validation rules / anti-bot behavior.
             String message = hasNotBlankViolations(bindingResult) ? ERROR_ALL_FIELDS_REQUIRED : ERROR_INVALID_REQUEST;
             return ResponseEntity.badRequest().body(Map.of("error", message));
         }

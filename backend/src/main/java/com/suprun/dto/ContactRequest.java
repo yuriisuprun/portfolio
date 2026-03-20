@@ -18,7 +18,7 @@ public class ContactRequest {
     @Size(max = 2000)
     private String message;
 
-    // Honeypot field (invisible to humans)
+    // Honeypot field
     private String website;
 
     public String getName() { return name; }
