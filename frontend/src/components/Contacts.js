@@ -55,30 +55,27 @@ export default function Contacts({language = "en"}) {
         setForm((prev) => ({...prev, [name]: value}));
     }, []);
 
-    const resetForm = useCallback(() => setForm(INITIAL_FORM_STATE), []);
+    // const resetForm = useCallback(() => setForm(INITIAL_FORM_STATE), []);
 
-    const handleSubmit = useCallback(
-        async (e) => {
-            e.preventDefault();
-            if (form.website) return; // honeypot
+    const handleSubmit = useCallback(async (e) => {
+        e.preventDefault();
+        if (form.website) return;
 
-            setLoading(true);
-            setStatus(null);
-            setErrorMessage("");
+        setLoading(true);
+        setStatus(null);
+        setErrorMessage("");
 
-            try {
-                await sendContact(form);
-                setStatus("success");
-                resetForm();
-            } catch (error) {
-                setStatus("error");
-                setErrorMessage(error?.message || t.error);
-            } finally {
-                setLoading(false);
-            }
-        },
-        [form, resetForm, t.error]
-    );
+        try {
+            await sendContact(form);
+            setStatus("success");
+            setForm(INITIAL_FORM_STATE);
+        } catch (err) {
+            setStatus("error");
+            setErrorMessage(err?.message || t.error);
+        } finally {
+            setLoading(false);
+        }
+    }, [form, t.error]);
 
     return (
         <section className="py-16 px-4 sm:px-6 max-w-2xl mx-auto">

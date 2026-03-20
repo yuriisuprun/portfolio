@@ -25,7 +25,7 @@ public class ContactService {
         Objects.requireNonNull(req, "request");
         log.info("Contact message received");
         if (log.isDebugEnabled()) {
-            log.debug("Contact message received from {}", maskEmail(req.getEmail()));
+            log.debug("Contact from {}", maskEmail(req.getEmail()));
         }
         emailService.sendContactEmail(req);
     }
