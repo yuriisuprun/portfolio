@@ -24,7 +24,7 @@ const HERO_COPY = {
 const HERO_LINKS = [
     {key: "github", label: "GitHub", href: SITE_CONFIG.github, external: true},
     {key: "linkedin", label: "LinkedIn", href: SITE_CONFIG.linkedin, external: true},
-    {key: "email", label: "Email", href: `mailto:${SITE_CONFIG.email}`, external: false},
+    {key: "email", label: "iursuprun@gmail.com", external: false},
 ];
 
 const getRoleText = (language = "en") => HERO_COPY[language]?.role || HERO_COPY.en.role;
@@ -52,7 +52,12 @@ const HeroLinkItem = memo(({label, href, external, iconKey}) => {
                 alt={`${label} icon`}
                 className="w-4 h-4"
             />
-            <a href={href} {...linkProps} aria-label={label} className="hover:underline">
+            <a
+                href={href}
+                {...linkProps}
+                aria-label={label}
+                className={iconKey === "email" ? "hover:no-underline" : "hover:underline"}
+            >
                 {label}
             </a>
         </p>

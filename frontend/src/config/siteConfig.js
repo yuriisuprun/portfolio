@@ -4,5 +4,5 @@ export const SITE_CONFIG = {
     email: "iursuprun@gmail.com",
     phone: "+393513082792",
     github: "https://github.com/yuriisuprun",
-    linkedin: "https://linkedin.com/in/yurii-suprun"
+    linkedin: "https://www.linkedin.com/in/yurii-suprun/"
 };
