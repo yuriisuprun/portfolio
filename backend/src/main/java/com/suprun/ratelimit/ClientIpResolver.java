@@ -2,135 +2,159 @@ package com.suprun.ratelimit;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 final class ClientIpResolver {
+
+    private static final String UNKNOWN = "<unknown>";
+    private static final String X_FORWARDED_FOR = "X-Forwarded-For";
+    private static final String X_REAL_IP = "X-Real-IP";
 
     private ClientIpResolver() {
     }
 
     static String resolve(HttpServletRequest request) {
         if (request == null) {
-            return "<unknown>";
+            return UNKNOWN;
         }
 
-        String remoteAddr = request.getRemoteAddr();
-        String remoteNorm = (remoteAddr == null || remoteAddr.isBlank()) ? "" : normalizeIp(remoteAddr.trim());
-        if (remoteNorm.isEmpty() || "<unknown>".equals(remoteNorm)) {
-            remoteNorm = "";
+        String remoteIp = normalizeIp(request.getRemoteAddr());
+
+        if (isEmptyOrUnknown(remoteIp)) {
+            return UNKNOWN;
         }
 
-        if (!remoteNorm.isEmpty() && isLikelyProxyAddress(remoteNorm)) {
-            String xff = headerValue(request, "X-Forwarded-For");
-            if (!xff.isEmpty()) {
-                String first = xff.split(",")[0].trim();
-                if (!first.isEmpty()) {
-                    return normalizeIp(first);
-                }
-            }
-
-            String xri = headerValue(request, "X-Real-IP");
-            if (!xri.isEmpty()) {
-                return normalizeIp(xri.trim());
-            }
+        if (isLikelyProxyAddress(remoteIp)) {
+            return extractFromHeaders(request)
+                    .orElse(remoteIp);
         }
 
-        return remoteNorm.isEmpty() ? "<unknown>" : remoteNorm;
+        return remoteIp;
     }
 
-    private static String headerValue(HttpServletRequest request, String name) {
-        String v = request.getHeader(name);
-        return (v == null) ? "" : v.trim();
+    private static Optional<String> extractFromHeaders(HttpServletRequest request) {
+        return firstNonEmpty(
+                () -> extractFirstIp(header(request, X_FORWARDED_FOR)),
+                () -> normalizeIp(header(request, X_REAL_IP))
+        );
+    }
+
+    private static Optional<String> firstNonEmpty(SupplierWithValue... suppliers) {
+        for (SupplierWithValue supplier : suppliers) {
+            String value = supplier.get();
+            if (!isEmptyOrUnknown(value)) {
+                return Optional.of(value);
+            }
+        }
+        return Optional.empty();
+    }
+
+    @FunctionalInterface
+    private interface SupplierWithValue {
+        String get();
+    }
+
+    private static String extractFirstIp(String headerValue) {
+        if (isBlank(headerValue)) {
+            return "";
+        }
+        String first = headerValue.split(",")[0].trim();
+        return normalizeIp(first);
+    }
+
+    private static String header(HttpServletRequest request, String name) {
+        String value = request.getHeader(name);
+        return value == null ? "" : value.trim();
     }
 
     private static String normalizeIp(String raw) {
-        String s = raw.trim();
-        if (s.isEmpty()) {
-            return "<unknown>";
+        if (isBlank(raw)) {
+            return UNKNOWN;
         }
 
-        // Strip quotes.
-        if (s.length() >= 2 && s.startsWith("\"") && s.endsWith("\"")) {
-            s = s.substring(1, s.length() - 1).trim();
-        }
+        String s = stripQuotes(raw.trim());
 
-        // Strip IPv6 brackets and optional port: "[2001:db8::1]:1234".
+        // IPv6 with brackets: [::1]:1234
         if (s.startsWith("[")) {
-            int close = s.indexOf(']');
-            if (close > 0) {
-                return s.substring(1, close).trim();
+            int end = s.indexOf(']');
+            if (end > 0) {
+                return s.substring(1, end).trim();
             }
         }
 
-        // Strip IPv4 port: "1.2.3.4:1234".
-        if (s.indexOf('.') >= 0) {
-            int lastColon = s.lastIndexOf(':');
-            if (lastColon > 0) {
-                String maybePort = s.substring(lastColon + 1);
-                if (isAllDigits(maybePort)) {
-                    return s.substring(0, lastColon).trim();
-                }
+        // IPv4 with port
+        if (s.contains(".")) {
+            int colon = s.lastIndexOf(':');
+            if (colon > 0 && isAllDigits(s.substring(colon + 1))) {
+                return s.substring(0, colon).trim();
             }
         }
 
         return s;
     }
 
-    private static boolean isAllDigits(String s) {
-        if (s == null || s.isEmpty()) {
+    private static String stripQuotes(String s) {
+        if (s.length() >= 2 && s.startsWith("\"") && s.endsWith("\"")) {
+            return s.substring(1, s.length() - 1).trim();
+        }
+        return s;
+    }
+
+    private static boolean isLikelyProxyAddress(String ip) {
+        String lower = ip.toLowerCase();
+
+        // IPv6
+        if (lower.equals("::1") ||
+                lower.startsWith("fc") ||
+                lower.startsWith("fd") ||
+                lower.startsWith("fe80:")) {
+            return true;
+        }
+
+        // IPv4
+        String[] parts = ip.split("\\.");
+        if (parts.length != 4) {
             return false;
         }
+
+        int a = parseByte(parts[0]);
+        int b = parseByte(parts[1]);
+
+        if (a < 0 || b < 0) return false;
+
+        return a == 10 ||
+                a == 127 ||
+                (a == 192 && b == 168) ||
+                (a == 172 && b >= 16 && b <= 31);
+    }
+
+    private static int parseByte(String s) {
+        if (!isAllDigits(s)) return -1;
+
+        try {
+            int value = Integer.parseInt(s);
+            return (value >= 0 && value <= 255) ? value : -1;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    private static boolean isAllDigits(String s) {
+        if (isBlank(s)) return false;
+
         for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            if (c < '0' || c > '9') {
+            if (!Character.isDigit(s.charAt(i))) {
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean isLikelyProxyAddress(String ip) {
-        // IPv6 loopback/ULA/link-local.
-        String lower = ip.toLowerCase();
-        if (lower.equals("::1")) {
-            return true;
-        }
-        if (lower.startsWith("fc") || lower.startsWith("fd")) { // fc00::/7 (very rough but fine here)
-            return true;
-        }
-        if (lower.startsWith("fe80:")) { // link-local
-            return true;
-        }
-
-        // IPv4 RFC1918 + loopback.
-        String[] parts = ip.split("\\.");
-        if (parts.length != 4) {
-            return false;
-        }
-        int a = parseByte(parts[0]);
-        int b = parseByte(parts[1]);
-        if (a < 0 || b < 0) {
-            return false;
-        }
-        if (a == 10) {
-            return true;
-        }
-        if (a == 127) {
-            return true;
-        }
-        if (a == 192 && b == 168) {
-            return true;
-        }
-        return a == 172 && b >= 16 && b <= 31;
+    private static boolean isEmptyOrUnknown(String s) {
+        return isBlank(s) || UNKNOWN.equals(s);
     }
 
-    private static int parseByte(String s) {
-        if (!isAllDigits(s)) {
-            return -1;
-        }
-        try {
-            int v = Integer.parseInt(s);
-            return (v >= 0 && v <= 255) ? v : -1;
-        } catch (NumberFormatException ignored) {
-            return -1;
-        }
+    private static boolean isBlank(String s) {
+        return s == null || s.isBlank();
     }
 }
