@@ -5,7 +5,6 @@ const API_URL = "/api/repos";
 const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 
-// List the GitHub repo names you want to show
 const ALLOWED_REPOS = ["portfolio", "monolith-to-microservices", "bookmark-keeper", "comment-sender"];
 
 const TRANSLATIONS = {
