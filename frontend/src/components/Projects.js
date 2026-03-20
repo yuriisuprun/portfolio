@@ -5,9 +5,22 @@ const API_URL = "/api/repos";
 const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 
+// List the GitHub repo names you want to show
+const ALLOWED_REPOS = ["portfolio", "monolith-to-microservices", "bookmark-keeper"];
+
 const TRANSLATIONS = {
-  en: { title: "My projects on GitHub", view: "View Code", info: "Backend hosted on free tier...", error: "Failed to load repositories" },
-  it: { title: "I miei progetti su GitHub", view: "Vedi Codice", info: "Backend ospitato su piano gratuito...", error: "Caricamento repository fallito" },
+  en: {
+    title: "My projects on GitHub",
+    view: "View Code",
+    info: "Backend hosted on free tier...",
+    error: "Failed to load repositories",
+  },
+  it: {
+    title: "I miei progetti su GitHub",
+    view: "Vedi Codice",
+    info: "Backend ospitato su piano gratuito...",
+    error: "Caricamento repository fallito",
+  },
 };
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";
@@ -29,7 +42,10 @@ export default function Projects({ language = "en" }) {
         const res = await axios.get(API_URL, { signal: controller.signal });
         if (!isMounted) return;
         const data = Array.isArray(res.data) ? res.data : [];
-        setRepos(data.slice(0, REPO_LIMIT));
+
+        // Only include repos that are in the ALLOWED_REPOS list
+        const filtered = data.filter((repo) => ALLOWED_REPOS.includes(repo.name));
+        setRepos(filtered.slice(0, REPO_LIMIT));
       } catch (err) {
         if (!isMounted) return;
         setError(err);
@@ -51,6 +67,7 @@ export default function Projects({ language = "en" }) {
   return (
       <section className="py-16">
         <h2 className="text-3xl mb-10">{t.title}</h2>
+
         {loading && (
             <>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t.info}</p>
@@ -65,7 +82,11 @@ export default function Projects({ language = "en" }) {
               </div>
             </>
         )}
-        {!loading && error && <p className="text-sm text-red-600 dark:text-red-400">{t.error}</p>}
+
+        {!loading && error && (
+            <p className="text-sm text-red-600 dark:text-red-400">{t.error}</p>
+        )}
+
         {!loading && !error && (
             <div className={GRID_CLASSNAME}>
               {repos.map((repo) => (
