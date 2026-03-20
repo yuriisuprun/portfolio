@@ -25,9 +25,9 @@ export default function Footer({language = "en"}) {
             className="border-t border-gray-300 dark:border-terminal py-6 text-sm text-gray-500 text-center">
             © {year} | {text}{" "}
             <a href={AUTHOR.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline">
+               target="_blank"
+               rel="noopener noreferrer"
+               className="text-blue-500 hover:underline">
                 {AUTHOR.name}
             </a>{" "}
             {heart} ❤️
