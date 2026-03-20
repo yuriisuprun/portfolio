@@ -21,7 +21,7 @@ const TEXT = {
     },
 };
 
-export default function About({ language }) {
+export default function About({language}) {
     const t = TEXT[language] ?? TEXT.en;
 
     return (
