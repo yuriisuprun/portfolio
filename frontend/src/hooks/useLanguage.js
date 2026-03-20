@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
 const STORAGE_KEY = "language";
 const DEFAULT_LANGUAGE = "en";
