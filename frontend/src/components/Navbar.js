@@ -18,8 +18,7 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
         <nav className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-6 border-b border-gray-300 dark:border-terminal gap-4 sm:gap-0">
             <NavLink
                 to="/home"
-                className="font-bold text-xl text-gray-900 dark:text-green-400"
-            >
+                className="font-bold text-xl text-gray-900 dark:text-green-400">
                 Yurii Suprun
             </NavLink>
 
@@ -28,17 +27,14 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
                 aria-label="Toggle menu"
                 aria-expanded={menuOpen}
                 aria-controls="nav-menu"
-                onClick={() => setMenuOpen(!menuOpen)}
-            >
+                onClick={() => setMenuOpen(!menuOpen)}>
                 ☰
             </button>
 
-            <div
-                id="nav-menu"
+            <div id="nav-menu"
                 className={`flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 w-full sm:w-auto transition-all duration-200 ${
                     menuOpen ? "block" : "hidden sm:flex"
-                }`}
-            >
+                }`}>
                 {NAV_ITEMS.map((item) => (
                     <NavLink
                         key={item.to}
@@ -47,27 +43,22 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
                             isActive
                                 ? "font-semibold text-gray-900 dark:text-white"
                                 : "text-gray-500 hover:text-black dark:hover:text-white"
-                        }
-                    >
+                        }>
                         {isEnglish ? item.label.en : item.label.it}
                     </NavLink>
                 ))}
 
-                <button
-                    type="button"
+                <button type="button"
                     onClick={() => setLanguage(isEnglish ? "it" : "en")}
                     className="border px-2 py-1 text-sm border-gray-400 dark:border-green-400"
-                    aria-label={isEnglish ? "Switch to Italian" : "Switch to English"}
-                >
+                    aria-label={isEnglish ? "Switch to Italian" : "Switch to English"}>
                     {isEnglish ? "IT" : "EN"}
                 </button>
 
-                <button
-                    type="button"
+                <button type="button"
                     onClick={() => setDark(!dark)}
                     className="text-lg"
-                    aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-                >
+                    aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
                     {dark ? ICONS.sun : ICONS.moon}
                 </button>
             </div>

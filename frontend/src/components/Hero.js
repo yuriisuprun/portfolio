@@ -30,12 +30,10 @@ const HERO_LINKS = [
 const getRoleText = (language = "en") => HERO_COPY[language]?.role || HERO_COPY.en.role;
 
 const HeroImage = memo(() => (
-    <img
-        src="/myphoto.jpg"
+    <img src="/myphoto.jpg"
         alt="Yurii Suprun - Software Engineer"
         className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg mt-2 sm:mt-6"
-        loading="lazy"
-    />
+        loading="lazy"/>
 ));
 
 HeroImage.displayName = "HeroImage";
@@ -47,19 +45,14 @@ const HeroLinkItem = memo(({label, href, external, iconKey}) => {
 
     return (
         <p className="flex items-center gap-2 text-sm sm:text-base dark:text-green-400">
-            <img
-                src={`/icons/${iconKey}.png`}
+            <img src={`/icons/${iconKey}.png`}
                 alt={`${label} icon`}
-                className="w-4 h-4"
-            />
-            <a
-                href={href}
+                className="w-4 h-4"/>
+            <a href={href}
                 {...linkProps}
                 aria-label={label}
-                className={iconKey === "email" ? "hover:no-underline" : "hover:underline"}
-            >
-                {label}
-            </a>
+                className={iconKey === "email" ? "hover:no-underline" : "hover:underline"}>
+                {label}</a>
         </p>
     );
 });
@@ -76,13 +69,11 @@ HeroLinkItem.displayName = "HeroLinkItem";
 const HeroLinks = memo(({links}) => (
     <div className="space-y-1">
         {links.map(({key, label, href, external}) => (
-            <HeroLinkItem
-                key={key}
+            <HeroLinkItem key={key}
                 label={label}
                 href={href}
                 external={external}
-                iconKey={key}
-            />
+                iconKey={key}/>
         ))}
     </div>
 ));
