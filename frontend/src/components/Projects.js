@@ -11,13 +11,13 @@ const TRANSLATIONS = {
     en: {
         title: "My projects on GitHub",
         view: "View Code",
-        info: "Backend hosted on free tier...",
+        info: "Waking up the server… this may take a few seconds.",
         error: "Failed to load repositories",
     },
     it: {
         title: "I miei progetti su GitHub",
         view: "Vedi Codice",
-        info: "Backend ospitato su piano gratuito...",
+        info: "Avvio del server in corso… potrebbero volerci alcuni secondi.",
         error: "Caricamento repository fallito",
     },
 };
