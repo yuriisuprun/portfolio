@@ -5,7 +5,7 @@ const API_URL = "/api/repos";
 const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 
-const ALLOWED_REPOS = ["portfolio", "monolith-to-microservices", "bookmark-keeper", "comment-sender"];
+const ALLOWED_REPOS = ["portfolio", "monolith-to-microservices", "polaris", "comment-sender"];
 
 const TRANSLATIONS = {
     en: {
