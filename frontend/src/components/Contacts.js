@@ -78,10 +78,11 @@ export default function Contacts({language = "en"}) {
     return (
         <section className="py-16 px-4 sm:px-6 max-w-2xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-900 dark:text-gray-100">{t.title}</h2>
-            <p className="mb-8 text-gray-700 dark:text-gray-300">{t.description}</p>
 
             {/* Direct Contact Links */}
             <ContactLinks links={CONTACT_LINKS} directText={t.direct}/>
+
+            <p className="mb-2 text-gray-700 dark:text-gray-300">{t.description}</p>
 
             {/* Contact Form */}
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
@@ -111,7 +112,7 @@ export default function Contacts({language = "en"}) {
 
 function ContactLinks({links, directText}) {
     return (
-        <div className="mb-2"> {/* Reduced space below links */}
+        <div className="mb-8">
             <p className="font-semibold mb-3">{directText}</p>
             <ul className="flex flex-wrap gap-4">
                 {links.map(({key, label, href, icon}) => (
