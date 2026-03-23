@@ -6,15 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.HtmlUtils;
 
 import java.net.ConnectException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -63,8 +67,15 @@ public class EmailService {
         this.provider = resolve(provider, resendKey, smtpReady);
 
         this.resendClient = this.provider == Provider.RESEND
-                ? rest.baseUrl("https://api.resend.com")
+                ? rest
+                .baseUrl("https://api.resend.com")
                 .defaultHeader("Authorization", "Bearer " + resendKey)
+                .requestFactory(new JdkClientHttpRequestFactory(
+                        HttpClient.newBuilder()
+                                .connectTimeout(Duration.ofSeconds(10))
+                                .version(HttpClient.Version.HTTP_1_1)
+                                .build()
+                ))
                 .build()
                 : null;
 
@@ -88,7 +99,7 @@ public class EmailService {
     private void send(Content c, ContactRequest req) throws Exception {
         switch (provider) {
             case SMTP -> sendSmtp(c, req);
-            case RESEND -> sendResend(c, req);
+            case RESEND -> sendResendWithRetry(c, req);
             case LOG -> log.info("Email LOG: {}", c.subject);
         }
     }
@@ -105,6 +116,34 @@ public class EmailService {
         helper.setText(c.html, true);
 
         mailSender.send(msg);
+    }
+
+    /**
+     * Retry wrapper with exponential backoff
+     */
+    private void sendResendWithRetry(Content c, ContactRequest req) {
+        int attempts = 0;
+
+        while (true) {
+            try {
+                sendResend(c, req);
+                return;
+
+            } catch (Exception e) {
+                attempts++;
+
+                if (attempts >= 3 || !isConnectivityError(e)) {
+                    throw e;
+                }
+
+                log.warn("Resend attempt {} failed, retrying...", attempts, e);
+
+                try {
+                    Thread.sleep(1000L * attempts); // simple backoff
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
     }
 
     private void sendResend(Content c, ContactRequest req) {
@@ -137,8 +176,13 @@ public class EmailService {
     }
 
     private void handleError(Exception e) {
-        if (isConnectivityError(e)) tripCooldown();
+        if (isConnectivityError(e)) {
+            tripCooldown();
+            log.warn("Email disabled temporarily due to connectivity issues");
+        }
+
         log.error("Email failed", e);
+
         if (failFast) throw new RuntimeException(e);
     }
 
@@ -158,7 +202,11 @@ public class EmailService {
 
     private static boolean isConnectivityError(Throwable t) {
         while (t != null) {
-            if (t instanceof SocketTimeoutException || t instanceof ConnectException) return true;
+            if (t instanceof SocketTimeoutException ||
+                    t instanceof SocketException ||
+                    t instanceof ResourceAccessException) {
+                return true;
+            }
             t = t.getCause();
         }
         return false;
@@ -185,5 +233,6 @@ public class EmailService {
                 .toArray(String[]::new);
     }
 
-    private record Content(String subject, String html) {}
+    private record Content(String subject, String html) {
+    }
 }
