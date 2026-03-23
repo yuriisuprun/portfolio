@@ -1,7 +1,9 @@
-module.exports={
-  content:["./src/**/*.{js,jsx}"],
-  darkMode:"class",
-  theme:{extend:{}},
-  plugins:[]
-}
+export default {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: "class",
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
 
