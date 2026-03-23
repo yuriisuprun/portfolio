@@ -73,6 +73,5 @@ public class RateLimitService {
             int remaining,
             long resetEpochSecond,
             long retryAfterSeconds
-    ) {
-    }
+    ) {}
 }
