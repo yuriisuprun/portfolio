@@ -1,17 +1,14 @@
+@import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 body {
-  font-family: "Fira Mono", monospace;
+    font-family: "Fira Mono", monospace;
 }
 
 a {
-  transition: 0.2s;
+    transition: 0.2s;
 }
 
 .border-terminal {
-  border-color: #22c55e;
+    border-color: #22c55e;
 }
