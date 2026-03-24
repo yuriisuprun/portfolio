@@ -5,7 +5,12 @@ const API_URL = "/api/repos";
 const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 
-const ALLOWED_REPOS = ["portfolio", "monolith-to-microservices", "polaris", "comment-sender"];
+const ALLOWED_REPOS = [
+    "portfolio",
+    "polaris",
+    "monolith-to-microservices",
+    "comment-sender"
+];
 
 const TRANSLATIONS = {
     en: {
@@ -40,10 +45,20 @@ export default function Projects({language = "en"}) {
                 setLoading(true);
                 const res = await axios.get(API_URL, {signal: controller.signal});
                 if (!isMounted) return;
+
                 const data = Array.isArray(res.data) ? res.data : [];
 
-                const filtered = data.filter((repo) => ALLOWED_REPOS.includes(repo.name));
-                setRepos(filtered.slice(0, REPO_LIMIT));
+                const filtered = data.filter((repo) =>
+                    ALLOWED_REPOS.includes(repo.name)
+                );
+
+                const ordered = filtered.sort(
+                    (a, b) =>
+                        ALLOWED_REPOS.indexOf(a.name) -
+                        ALLOWED_REPOS.indexOf(b.name)
+                );
+
+                setRepos(ordered.slice(0, REPO_LIMIT));
             } catch (err) {
                 if (!isMounted) return;
                 setError(err);
@@ -68,7 +83,9 @@ export default function Projects({language = "en"}) {
 
             {loading && (
                 <>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t.info}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        {t.info}
+                    </p>
                     <div className={GRID_CLASSNAME}>
                         {Array.from({length: SKELETON_COUNT}).map((_, i) => (
                             <div key={i} className={`${CARD_CLASSNAME} animate-pulse`}>
@@ -82,7 +99,9 @@ export default function Projects({language = "en"}) {
             )}
 
             {!loading && error && (
-                <p className="text-sm text-red-600 dark:text-red-400">{t.error}</p>
+                <p className="text-sm text-red-600 dark:text-red-400">
+                    {t.error}
+                </p>
             )}
 
             {!loading && !error && (
@@ -90,13 +109,17 @@ export default function Projects({language = "en"}) {
                     {repos.map((repo) => (
                         <div key={repo.id} className={CARD_CLASSNAME}>
                             <h3 className="text-lg font-bold">{repo.name}</h3>
+
                             {repo.description && (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{repo.description}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                    {repo.description}
+                                </p>
                             )}
+
                             <a href={repo.html_url}
-                               target="_blank"
-                               rel="noreferrer"
-                               className="block mt-4 text-blue-600 dark:text-green-400">
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block mt-4 text-blue-600 dark:text-green-400">
                                 &gt; {t.view}
                             </a>
                         </div>
