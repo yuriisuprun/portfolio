@@ -1,4 +1,4 @@
-# Yurii Suprun - Portfolio
+# Yurii Suprun - Personal website
 
 Personal portfolio website with a React frontend and a Spring Boot backend.
 
