@@ -22,8 +22,8 @@ const HERO_COPY = {
 };
 
 const HERO_LINKS = [
-    {key: "github", label: "GitHub", href: SITE_CONFIG.github, external: true},
     {key: "linkedin", label: "LinkedIn", href: SITE_CONFIG.linkedin, external: true},
+    {key: "github", label: "GitHub", href: SITE_CONFIG.github, external: true},
     {key: "email", label: "iursuprun@gmail.com", external: false},
 ];
 
