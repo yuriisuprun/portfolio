@@ -15,7 +15,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.HtmlUtils;
 
-import java.net.ConnectException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.http.HttpClient;
@@ -83,34 +82,34 @@ public class EmailService {
     }
 
     @Async
-    public void sendContactEmail(ContactRequest req) {
+    public void sendContactEmail(ContactRequest contactRequest) {
         if (!enabled || to.length == 0) return;
         if (provider == Provider.SMTP && isCoolingDown()) return;
 
-        var content = buildContent(req);
+        var content = buildContent(contactRequest);
 
         try {
-            send(content, req);
+            send(content, contactRequest);
         } catch (Exception e) {
             handleError(e);
         }
     }
 
-    private void send(Content c, ContactRequest req) throws Exception {
+    private void send(Content c, ContactRequest contactRequest) throws Exception {
         switch (provider) {
-            case SMTP -> sendSmtp(c, req);
-            case RESEND -> sendResendWithRetry(c, req);
+            case SMTP -> sendSmtp(c, contactRequest);
+            case RESEND -> sendResendWithRetry(c, contactRequest);
             case LOG -> log.info("Email LOG: {}", c.subject);
         }
     }
 
-    private void sendSmtp(Content c, ContactRequest req) throws Exception {
+    private void sendSmtp(Content c, ContactRequest contactRequest) throws Exception {
         MimeMessage msg = mailSender.createMimeMessage();
         var helper = new MimeMessageHelper(msg, true, "UTF-8");
 
         helper.setTo(to);
         if (!from.isBlank()) helper.setFrom(from);
-        if (hasText(req.getEmail())) helper.setReplyTo(req.getEmail());
+        if (hasText(contactRequest.getEmail())) helper.setReplyTo(contactRequest.getEmail());
 
         helper.setSubject(c.subject);
         helper.setText(c.html, true);
@@ -118,15 +117,12 @@ public class EmailService {
         mailSender.send(msg);
     }
 
-    /**
-     * Retry wrapper with exponential backoff
-     */
-    private void sendResendWithRetry(Content c, ContactRequest req) {
+    private void sendResendWithRetry(Content content, ContactRequest contactRequest) {
         int attempts = 0;
 
         while (true) {
             try {
-                sendResend(c, req);
+                sendResend(content, contactRequest);
                 return;
 
             } catch (Exception e) {
@@ -146,25 +142,25 @@ public class EmailService {
         }
     }
 
-    private void sendResend(Content c, ContactRequest req) {
+    private void sendResend(Content content, ContactRequest contactRequest) {
         resendClient.post()
                 .uri("/emails")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Map.of(
                         "from", from.isBlank() ? "Portfolio <onboarding@resend.dev>" : from,
                         "to", to,
-                        "subject", c.subject,
-                        "html", c.html,
-                        "reply_to", req.getEmail()
+                        "subject", content.subject,
+                        "html", content.html,
+                        "reply_to", contactRequest.getEmail()
                 ))
                 .retrieve()
                 .body(Map.class);
     }
 
-    private Content buildContent(ContactRequest req) {
-        String name = esc(req.getName());
-        String email = esc(req.getEmail());
-        String msg = esc(req.getMessage()).replace("\n", "<br/>");
+    private Content buildContent(ContactRequest contactRequest) {
+        String name = esc(contactRequest.getName());
+        String email = esc(contactRequest.getEmail());
+        String msg = esc(contactRequest.getMessage()).replace("\n", "<br/>");
 
         return new Content(
                 "Portfolio Contact: " + name,
@@ -200,28 +196,28 @@ public class EmailService {
         return !resendKey.isBlank() ? Provider.RESEND : smtpReady ? Provider.SMTP : Provider.LOG;
     }
 
-    private static boolean isConnectivityError(Throwable t) {
-        while (t != null) {
-            if (t instanceof SocketTimeoutException ||
-                    t instanceof SocketException ||
-                    t instanceof ResourceAccessException) {
+    private static boolean isConnectivityError(Throwable throwable) {
+        while (throwable != null) {
+            if (throwable instanceof SocketTimeoutException ||
+                    throwable instanceof SocketException ||
+                    throwable instanceof ResourceAccessException) {
                 return true;
             }
-            t = t.getCause();
+            throwable = throwable.getCause();
         }
         return false;
     }
 
-    private static boolean hasText(String s) {
-        return s != null && !s.isBlank();
+    private static boolean hasText(String text) {
+        return text != null && !text.isBlank();
     }
 
-    private static String esc(String s) {
-        return HtmlUtils.htmlEscape(s == null ? "" : s.trim());
+    private static String esc(String str) {
+        return HtmlUtils.htmlEscape(str == null ? "" : str.trim());
     }
 
-    private static String normalize(String s) {
-        return s == null ? "" : s.trim();
+    private static String normalize(String str) {
+        return str == null ? "" : str.trim();
     }
 
     private static String[] normalizeList(String raw) {
@@ -229,7 +225,7 @@ public class EmailService {
                 ? new String[0]
                 : java.util.Arrays.stream(raw.split(","))
                 .map(String::trim)
-                .filter(v -> !v.isBlank())
+                .filter(value -> !value.isBlank())
                 .toArray(String[]::new);
     }
 
