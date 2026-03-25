@@ -6,7 +6,7 @@ const TEXT = {
         description: [
             "My name is Yurii, and I'm a Software Engineer passionate about building scalable and reliable backend systems...",
             "I also have experience contributing to user interface development, which helps me better understand the full application stack...",
-            "Over the years, I’ve contributed to designing and modernizing complex platforms across multiple domains...",
+            "Over the years, I’ve contributed to designing and modernizing complex platforms across multiple domains (Travel, Insurance, etc.)...",
             "I enjoy learning new technologies, solving challenging problems, and collaborating with multicultural teams to deliver high-quality software.",
         ],
     },
@@ -15,7 +15,7 @@ const TEXT = {
         description: [
             "Mi chiamo Yurii e sono un Software Engineer appassionato di costruire sistemi backend scalabili e affidabili...",
             "Ho anche esperienza nello sviluppo di interfacce utente, che mi consente di comprendere meglio l’intero stack applicativo...",
-            "Nel corso degli anni ho contribuito alla progettazione e alla modernizzazione di piattaforme complesse in diversi settori...",
+            "Nel corso degli anni ho contribuito alla progettazione e alla modernizzazione di piattaforme complesse in diversi settori (viaggi, assicurazioni, ecc.)...",
             "Mi piace imparare nuove tecnologie, risolvere problemi complessi e collaborare con team multiculturali per realizzare software di alta qualità.",
         ],
     },
