@@ -13,7 +13,7 @@ const TEXT = {
     it: {
         title: "Chi Sono",
         description: [
-            "Mi chiamo Yurii e sono un Software Engineer appassionato di costruire sistemi backend scalabili e affidabili…",
+            "Mi chiamo Yurii e sono un Software Engineer appassionato di costruire sistemi backend scalabili e affidabili...",
             "Ho anche esperienza nello sviluppo di interfacce utente, che mi consente di comprendere meglio l’intero stack applicativo...",
             "Nel corso degli anni ho contribuito alla progettazione e alla modernizzazione di piattaforme complesse in diversi settori...",
             "Mi piace imparare nuove tecnologie, risolvere problemi complessi e collaborare con team multiculturali per realizzare software di alta qualità.",
