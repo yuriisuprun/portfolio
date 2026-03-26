@@ -15,12 +15,16 @@ public class GithubService {
     @Value("${github.token}")
     private String githubToken;
 
+    private final RestTemplate restTemplate;
+
+    public GithubService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @Cacheable("repos")
     public Object getRepos() {
 
         String url = "https://api.github.com/users/yuriisuprun/repos";
-
-        RestTemplate rest = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + githubToken);
@@ -28,7 +32,7 @@ public class GithubService {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Object> response = rest.exchange(
+        ResponseEntity<Object> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 entity,
