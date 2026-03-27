@@ -6,8 +6,8 @@ const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 
 const ALLOWED_REPOS = [
-    "portfolio",
     "polaris",
+    "portfolio",
     "monolith-to-microservices",
     "comment-sender"
 ];
