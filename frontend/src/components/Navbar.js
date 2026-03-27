@@ -19,7 +19,7 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
             <NavLink
                 to="/home"
                 className="font-bold text-xl text-gray-900 dark:text-green-400">
-                Yurii Suprun
+                YS.
             </NavLink>
 
             <button
