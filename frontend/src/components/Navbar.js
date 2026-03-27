@@ -16,9 +16,7 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
 
     return (
         <nav className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-6 border-b border-gray-300 dark:border-terminal gap-4 sm:gap-0">
-            <NavLink
-                to="/home"
-                className="font-bold text-xl text-gray-900 dark:text-green-400">
+            <NavLink to="/home" className="font-bold text-xl text-gray-900 dark:text-green-400">
                 YS.
             </NavLink>
 
