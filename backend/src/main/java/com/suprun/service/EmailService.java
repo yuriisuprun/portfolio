@@ -132,7 +132,11 @@ public class EmailService {
                     throw e;
                 }
 
-                log.warn("Resend attempt {} failed, retrying...", attempts, e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Resend attempt {} failed, retrying...", attempts, e);
+                } else {
+                    log.warn("Resend attempt {} failed, retrying... ({})", attempts, e.toString());
+                }
 
                 try {
                     Thread.sleep(1000L * attempts); // simple backoff

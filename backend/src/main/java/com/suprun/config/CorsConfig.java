@@ -17,6 +17,13 @@ public class CorsConfig {
     private static final long DEFAULT_MAX_AGE_SECONDS = 3600L;
     private static final List<String> ALLOWED_METHODS = List.of("GET", "POST", "PUT", "DELETE", "OPTIONS");
     private static final List<String> ALLOWED_HEADERS = List.of("*");
+    private static final List<String> EXPOSED_HEADERS = List.of(
+            "X-Correlation-Id",
+            "X-RateLimit-Limit",
+            "X-RateLimit-Remaining",
+            "X-RateLimit-Reset",
+            "Retry-After"
+    );
 
     private static final String ALLOWED_ORIGIN_PATTERNS_PROPERTY =
             "${app.cors.allowed-origin-patterns:http://localhost:3000,https://yuriisuprun.vercel.app,https://*.vercel.app}";
@@ -42,6 +49,7 @@ public class CorsConfig {
         config.setAllowedOriginPatterns(allowedOriginPatterns);
         config.setAllowedMethods(ALLOWED_METHODS);
         config.setAllowedHeaders(ALLOWED_HEADERS);
+        config.setExposedHeaders(EXPOSED_HEADERS);
         config.setMaxAge(DEFAULT_MAX_AGE_SECONDS);
         return config;
     }

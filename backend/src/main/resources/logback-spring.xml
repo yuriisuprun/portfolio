@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Spring Boot will resolve springProperty values from env / application properties. -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="app"/>
+    <springProperty scope="context" name="ROOT_LEVEL" source="LOG_LEVEL_ROOT" defaultValue="INFO"/>
+    <springProperty scope="context" name="APP_LEVEL" source="LOG_LEVEL_APP" defaultValue="INFO"/>
+
+    <!-- Production-friendly single-line format that still reads well locally. -->
+    <property name="CONSOLE_PATTERN"
+              value="%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} level=%-5level app=${APP_NAME} thread=%thread logger=%logger{36} cid=%X{correlationId} trace=%X{traceId} span=%X{spanId} msg=%msg%n%ex{full}"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${CONSOLE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Keep request threads fast under load: log IO happens asynchronously. -->
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>8192</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+        <includeCallerData>false</includeCallerData>
+        <appender-ref ref="CONSOLE"/>
+    </appender>
+
+    <logger name="com.suprun" level="${APP_LEVEL}"/>
+
+    <!-- Avoid chatty frameworks by default; override via LOG_LEVEL_* env vars if needed. -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.apache.catalina" level="WARN"/>
+    <logger name="org.apache.tomcat" level="WARN"/>
+
+    <root level="${ROOT_LEVEL}">
+        <appender-ref ref="ASYNC_CONSOLE"/>
+    </root>
+</configuration>
