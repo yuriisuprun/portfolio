@@ -67,7 +67,7 @@ cd backend
 .\mvnw.cmd spring-boot:run
 ```
 
-Backend starts on `http://localhost:8080` (or `${PORT}` if set).
+Backend starts on `http://localhost:8082` (or `${PORT}` if set).
 
 ### 2) Start the frontend
 
@@ -80,7 +80,7 @@ npm start
 Frontend starts on `http://localhost:3000`.
 
 Notes:
-- In development, the frontend calls `/api/*` and proxies to `http://localhost:8080` via `frontend/package.json` (`proxy`).
+- In development, the frontend calls `/api/*` and proxies to `http://localhost:8082` via `frontend/package.json` (`proxy`).
 - In production (Vercel), `/api/*` is rewritten to the Render backend via `frontend/vercel.json`.
 
 ## API
@@ -126,7 +126,7 @@ Returns `204 No Content`. Used as a lightweight health check.
 The backend is configured via environment variables (see `backend/src/main/resources/application.properties`).
 
 Common:
-- `PORT`: server port (default `8080`)
+- `PORT`: server port (default `8082`)
 - `CORS_ALLOWED_ORIGIN_PATTERNS`: comma-separated allowed origin patterns  
   Default includes `http://localhost:3000`, the production Vercel domain, and `https://*.vercel.app`
 
@@ -160,7 +160,7 @@ Build and run the backend container:
 
 ```bash
 docker build -t portfolio-backend ./backend
-docker run --rm -p 8080:8080 portfolio-backend
+docker run --rm -p 8082:8082 portfolio-backend
 ```
 
 ## License
