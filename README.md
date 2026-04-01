@@ -1,6 +1,6 @@
 # Yurii Suprun - Personal website
 
-Personal portfolio website with a React frontend and a Spring Boot backend.
+My personal website with Spring Boot backend and React frontend.
 
 The backend powers:
 - the **Projects** page (fetches my GitHub repositories)
