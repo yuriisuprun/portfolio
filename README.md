@@ -12,15 +12,15 @@ The backend powers:
 [![React](https://img.shields.io/badge/React-19-blue?logo=react)]()
 [![React%20Router](https://img.shields.io/badge/React%20Router-7-red?logo=reactrouter)]()
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-blue?logo=tailwindcss)]()
-[![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)]()
-[![Spring%20Boot](https://img.shields.io/badge/Spring%20Boot-3.3-green?logo=springboot)]()
+[![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk)]()
+[![Spring%20Boot](https://img.shields.io/badge/Spring%20Boot-4.0-green?logo=springboot)]()
 
 ## Repository layout
 
 ```
 .
 ├── frontend/   # React + TailwindCSS
-└── backend/    # Spring Boot REST API (Maven, Java 17)
+└── backend/    # Spring Boot REST API (Maven, Java 21)
 ```
 
 ## Features
@@ -41,8 +41,8 @@ Frontend:
 - CRA (`react-scripts`)
 
 Backend:
-- Java 17
-- Spring Boot 3.3 (Spring MVC + Validation + Mail + Cache)
+- Java 21
+- Spring Boot 4.0 (Spring MVC + Validation + Mail + Cache)
 - Caffeine cache
 - Configurable CORS
 - Contact rate limiting (simple in-memory, IP-based)
@@ -51,7 +51,7 @@ Backend:
 
 Prerequisites:
 - Node.js (recommended version: 18+)
-- Java version: 17
+- Java version: 21
 
 ### 1) Start the backend
 

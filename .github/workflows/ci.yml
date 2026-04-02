@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "21"
           cache: maven
 
       - name: Run tests
@@ -54,4 +54,3 @@ jobs:
       - name: Run tests
         working-directory: frontend
         run: npm run test:ci
-
