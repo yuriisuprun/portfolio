@@ -9,6 +9,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.headerDoesNotExist;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -45,6 +46,25 @@ class GithubServiceTest {
 
         assertThat(result).isNotNull();
         assertThat(result.toString()).contains("repo1");
+    }
+
+    @Test
+    void getRepos_withoutToken_shouldNotSendAuthorizationHeader() {
+        ReflectionTestUtils.setField(githubService, "githubToken", "   ");
+
+        String mockResponse = "[]";
+
+        mockServer.expect(requestTo("https://api.github.com/users/yuriisuprun/repos"))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(headerDoesNotExist("Authorization"))
+                .andExpect(header("Accept", "application/vnd.github+json"))
+                .andRespond(withSuccess(mockResponse, MediaType.APPLICATION_JSON));
+
+        Object result = githubService.getRepos();
+
+        mockServer.verify();
+
+        assertThat(result).isNotNull();
     }
 
     @Test

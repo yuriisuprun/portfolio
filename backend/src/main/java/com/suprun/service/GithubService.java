@@ -7,12 +7,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class GithubService {
 
-    @Value("${github.token}")
+    @Value("${github.token:}")
     private String githubToken;
 
     private final RestTemplate restTemplate;
@@ -27,7 +28,9 @@ public class GithubService {
         String url = "https://api.github.com/users/yuriisuprun/repos";
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + githubToken);
+        if (StringUtils.hasText(githubToken)) {
+            headers.setBearerAuth(githubToken.trim());
+        }
         headers.set("Accept", "application/vnd.github+json");
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
