@@ -1,69 +1,124 @@
 const DEFAULT_BASE_URL = "https://yuriisuprun.onrender.com";
+const MAX_BODY_SIZE = 1024 * 1024; // 1MB
+const REQUEST_TIMEOUT_MS = 15000;
 
-const safeJsonParse = (text) => {
+/**
+ * Safely parse JSON
+ */
+function safeJsonParse(text) {
+  if (!text) return null;
   try {
-    return text ? JSON.parse(text) : null;
+    return JSON.parse(text);
   } catch {
     return null;
   }
-};
+}
 
-const readRawBody = (req, limit = 1024 * 1024) =>
-    new Promise((resolve, reject) => {
-      let total = 0;
-      const chunks = [];
+/**
+ * Read raw request body with size limit
+ */
+function readRawBody(req, limit = MAX_BODY_SIZE) {
+  return new Promise((resolve, reject) => {
+    let totalSize = 0;
+    const chunks = [];
 
-      req.on("data", (chunk) => {
-        total += chunk.length;
-        if (total > limit) {
-          req.destroy();
-          return reject(new Error("Body too large"));
-        }
-        chunks.push(chunk);
-      });
+    req.on("data", (chunk) => {
+      totalSize += chunk.length;
 
-      req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-      req.on("error", reject);
+      if (totalSize > limit) {
+        req.destroy();
+        return reject(new Error("Body too large"));
+      }
+
+      chunks.push(chunk);
     });
 
-module.exports = async (req, res) => {
-  if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+    req.on("end", () => {
+      const body = Buffer.concat(chunks).toString("utf8");
+      resolve(body);
+    });
 
-  const baseUrl = process.env.CONTACT_BASE_URL || DEFAULT_BASE_URL;
+    req.on("error", reject);
+  });
+}
 
-  let body =
-      typeof req.body === "string"
-          ? safeJsonParse(req.body)
-          : req.body;
-
-  if (!body) {
-    const raw = await readRawBody(req).catch(() => "");
-    body = safeJsonParse(raw) || {};
+/**
+ * Extract and normalize request body
+ */
+async function getRequestBody(req) {
+  if (typeof req.body === "string") {
+    return safeJsonParse(req.body);
   }
 
-  if (body?.website) return res.status(200).json({ ok: true });
+  if (req.body) {
+    return req.body;
+  }
 
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const raw = await readRawBody(req);
+    return safeJsonParse(raw) || {};
+  } catch {
+    return {};
+  }
+}
 
-    const r = await fetch(`${baseUrl}/api/contact`, {
+/**
+ * Send request to upstream contact API
+ */
+async function forwardToContactAPI(body, baseUrl) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`${baseUrl}/api/contact`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
       signal: controller.signal,
-    }).finally(() => clearTimeout(timeout));
+    });
 
-    const text = await r.text();
+    const text = await response.text();
     const parsed = safeJsonParse(text);
 
-    return res
-        .status(r.status)
-        .json(parsed && typeof parsed === "object" ? parsed : r.ok ? { ok: true } : { error: "Failed to send message" });
+    return {
+      status: response.status,
+      data:
+          parsed && typeof parsed === "object"
+              ? parsed
+              : response.ok
+                  ? { ok: true }
+                  : { error: "Failed to send message" },
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
-  } catch (e) {
-    console.error("Contact proxy error:", e);
+module.exports = async function handler(req, res) {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
+  // Allow only POST
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const baseUrl = process.env.CONTACT_BASE_URL || DEFAULT_BASE_URL;
+
+  const body = await getRequestBody(req);
+
+  // Honeypot spam protection
+  if (body?.website) {
+    return res.status(200).json({ ok: true });
+  }
+
+  try {
+    const { status, data } = await forwardToContactAPI(body, baseUrl);
+    return res.status(status).json(data);
+  } catch (error) {
+    console.error("Contact proxy error:", error);
     return res.status(500).json({ error: "Contact service unavailable" });
   }
 };
