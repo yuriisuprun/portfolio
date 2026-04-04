@@ -28,8 +28,8 @@ export default function Footer({language = "en"}) {
                target="_blank"
                rel="noopener noreferrer"
                className="text-blue-500 hover:underline">
-                {AUTHOR.name}
-            </a>{" "}
+                {AUTHOR.name}</a>
+            {" "}
             {heart} ❤️
         </footer>
     );
