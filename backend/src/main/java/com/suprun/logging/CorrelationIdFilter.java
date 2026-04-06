@@ -15,7 +15,7 @@ import java.security.SecureRandom;
 
 /**
  * Adds a lightweight correlation id to every request for log correlation.
- *
+ * <p>
  * In production, this lets to stitch together:
  * - controller/service logs
  * - async logs (with MDC propagation)
