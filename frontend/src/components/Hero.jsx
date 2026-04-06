@@ -95,8 +95,7 @@ const Hero = ({language = "en"}) => {
     const roleText = getRoleText(language);
 
     return (
-        <section
-            className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
+        <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
             <HeroImage/>
             <div className="flex-1 space-y-4 sm:space-y-6">
                 <p className="text-sm sm:text-lg text-gray-600 dark:text-gray-400">{roleText}</p>

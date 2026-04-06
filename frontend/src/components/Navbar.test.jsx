@@ -9,12 +9,10 @@ test('toggles the mobile menu button aria-expanded', async () => {
 
   render(
     <MemoryRouter>
-      <Navbar
-        dark={false}
+      <Navbar dark={false}
         setDark={vi.fn()}
         language="en"
-        setLanguage={vi.fn()}
-      />
+        setLanguage={vi.fn()}/>
     </MemoryRouter>
   );
 
@@ -31,12 +29,10 @@ test('invokes language toggle callback', async () => {
 
   render(
     <MemoryRouter>
-      <Navbar
-        dark={false}
+      <Navbar dark={false}
         setDark={vi.fn()}
         language="en"
-        setLanguage={setLanguage}
-      />
+        setLanguage={setLanguage}/>
     </MemoryRouter>
   );
 

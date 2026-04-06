@@ -20,8 +20,7 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
                 YS.
             </NavLink>
 
-            <button
-                className="sm:hidden text-lg border px-2 py-1 dark:border-green-400"
+            <button className="sm:hidden text-lg border px-2 py-1 dark:border-green-400"
                 aria-label="Toggle menu"
                 aria-expanded={menuOpen}
                 aria-controls="nav-menu"
@@ -29,8 +28,7 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
                 ☰
             </button>
 
-            <div id="nav-menu"
-                className={`flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 w-full sm:w-auto transition-all duration-200 ${
+            <div id="nav-menu" className={`flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 w-full sm:w-auto transition-all duration-200 ${
                     menuOpen ? "block" : "hidden sm:flex"
                 }`}>
                 {NAV_ITEMS.map((item) => (
@@ -46,15 +44,13 @@ const Navbar = ({ dark, setDark, language, setLanguage }) => {
                     </NavLink>
                 ))}
 
-                <button type="button"
-                    onClick={() => setLanguage(isEnglish ? "it" : "en")}
+                <button type="button" onClick={() => setLanguage(isEnglish ? "it" : "en")}
                     className="border px-2 py-1 text-sm border-gray-400 dark:border-green-400"
                     aria-label={isEnglish ? "Switch to Italian" : "Switch to English"}>
                     {isEnglish ? "IT" : "EN"}
                 </button>
 
-                <button type="button"
-                    onClick={() => setDark(!dark)}
+                <button type="button" onClick={() => setDark(!dark)}
                     className="text-lg"
                     aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}>
                     {dark ? ICONS.sun : ICONS.moon}
