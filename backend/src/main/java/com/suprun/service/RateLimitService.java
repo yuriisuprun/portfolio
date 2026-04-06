@@ -2,6 +2,7 @@ package com.suprun.service;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.suprun.dto.Decision;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -66,12 +67,4 @@ public class RateLimitService {
 
         return new Decision(allowed, limit, remaining, resetEpochSecond, retryAfterSeconds);
     }
-
-    public record Decision(
-            boolean allowed,
-            int limit,
-            int remaining,
-            long resetEpochSecond,
-            long retryAfterSeconds
-    ) {}
 }
