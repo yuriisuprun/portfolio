@@ -74,9 +74,7 @@ public class EmailService {
                                 .connectTimeout(Duration.ofSeconds(10))
                                 .version(HttpClient.Version.HTTP_1_1)
                                 .build()
-                ))
-                .build()
-                : null;
+                )).build() : null;
 
         log.info("Email provider={}, enabled={}", this.provider, enabled);
     }
@@ -103,7 +101,7 @@ public class EmailService {
         }
     }
 
-    private void sendSmtp(Content c, ContactRequest contactRequest) throws Exception {
+    private void sendSmtp(Content content, ContactRequest contactRequest) throws Exception {
         MimeMessage msg = mailSender.createMimeMessage();
         var helper = new MimeMessageHelper(msg, true, "UTF-8");
 
@@ -111,8 +109,8 @@ public class EmailService {
         if (!from.isBlank()) helper.setFrom(from);
         if (hasText(contactRequest.getEmail())) helper.setReplyTo(contactRequest.getEmail());
 
-        helper.setSubject(c.subject);
-        helper.setText(c.html, true);
+        helper.setSubject(content.subject);
+        helper.setText(content.html, true);
 
         mailSender.send(msg);
     }
