@@ -32,12 +32,12 @@ public class ContactService {
 
     private static String maskEmail(String email) {
         if (email == null) return MASKED_NULL;
-        String e = email.trim();
-        if (e.isEmpty()) return MASKED_EMPTY;
-        int at = e.indexOf('@');
-        if (at <= 0 || at == e.length() - 1) return MASKED_INVALID;
+        String trimmedEmail = email.trim();
+        if (trimmedEmail.isEmpty()) return MASKED_EMPTY;
+        int atIndex = trimmedEmail.indexOf('@');
+        if (atIndex <= 0 || atIndex == trimmedEmail.length() - 1) return MASKED_INVALID;
 
-        String local = e.substring(0, at), domain = e.substring(at + 1);
+        String local = trimmedEmail.substring(0, atIndex), domain = trimmedEmail.substring(atIndex + 1);
         return switch (local.length()) {
             case 1 -> "*@" + domain;
             case 2 -> local.charAt(0) + "*@" + domain;
