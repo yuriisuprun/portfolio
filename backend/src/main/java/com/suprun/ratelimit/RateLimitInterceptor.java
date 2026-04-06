@@ -1,5 +1,6 @@
 package com.suprun.ratelimit;
 
+import com.suprun.dto.Decision;
 import com.suprun.service.RateLimitService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,7 +50,7 @@ public class RateLimitInterceptor implements HandlerInterceptor {
         }
 
         String ip = ClientIpResolver.resolve(request);
-        RateLimitService.Decision decision = rateLimitService.check("contact:" + ip);
+        Decision decision = rateLimitService.check("contact:" + ip);
         if (decision.allowed()) {
             response.setHeader("X-RateLimit-Limit", Integer.toString(decision.limit()));
             response.setHeader("X-RateLimit-Remaining", Integer.toString(decision.remaining()));
