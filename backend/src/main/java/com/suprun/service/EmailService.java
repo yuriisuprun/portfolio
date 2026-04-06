@@ -1,6 +1,7 @@
 package com.suprun.service;
 
 import com.suprun.dto.ContactRequest;
+import com.suprun.dto.Content;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,14 +68,14 @@ public class EmailService {
 
         this.resendClient = this.provider == Provider.RESEND
                 ? rest
-                .baseUrl("https://api.resend.com")
-                .defaultHeader("Authorization", "Bearer " + resendKey)
-                .requestFactory(new JdkClientHttpRequestFactory(
-                        HttpClient.newBuilder()
-                                .connectTimeout(Duration.ofSeconds(10))
-                                .version(HttpClient.Version.HTTP_1_1)
-                                .build()
-                )).build() : null;
+                  .baseUrl("https://api.resend.com")
+                  .defaultHeader("Authorization", "Bearer " + resendKey)
+                  .requestFactory(new JdkClientHttpRequestFactory(
+                          HttpClient.newBuilder()
+                          .connectTimeout(Duration.ofSeconds(10))
+                          .version(HttpClient.Version.HTTP_1_1)
+                          .build()
+                  )).build() : null;
 
         log.info("Email provider={}, enabled={}", this.provider, enabled);
     }
@@ -93,11 +94,11 @@ public class EmailService {
         }
     }
 
-    private void send(Content c, ContactRequest contactRequest) throws Exception {
+    private void send(Content content, ContactRequest contactRequest) throws Exception {
         switch (provider) {
-            case SMTP -> sendSmtp(c, contactRequest);
-            case RESEND -> sendResendWithRetry(c, contactRequest);
-            case LOG -> log.info("Email LOG: {}", c.subject);
+            case SMTP -> sendSmtp(content, contactRequest);
+            case RESEND -> sendResendWithRetry(content, contactRequest);
+            case LOG -> log.info("Email LOG: {}", content.subject());
         }
     }
 
@@ -109,8 +110,8 @@ public class EmailService {
         if (!from.isBlank()) helper.setFrom(from);
         if (hasText(contactRequest.getEmail())) helper.setReplyTo(contactRequest.getEmail());
 
-        helper.setSubject(content.subject);
-        helper.setText(content.html, true);
+        helper.setSubject(content.subject());
+        helper.setText(content.html(), true);
 
         mailSender.send(msg);
     }
@@ -151,8 +152,8 @@ public class EmailService {
                 .body(Map.of(
                         "from", from.isBlank() ? "Portfolio <onboarding@resend.dev>" : from,
                         "to", to,
-                        "subject", content.subject,
-                        "html", content.html,
+                        "subject", content.subject(),
+                        "html", content.html(),
                         "reply_to", contactRequest.getEmail()
                 ))
                 .retrieve()
@@ -226,11 +227,8 @@ public class EmailService {
         return raw == null || raw.isBlank()
                 ? new String[0]
                 : java.util.Arrays.stream(raw.split(","))
-                .map(String::trim)
-                .filter(value -> !value.isBlank())
-                .toArray(String[]::new);
-    }
-
-    private record Content(String subject, String html) {
+                  .map(String::trim)
+                  .filter(value -> !value.isBlank())
+                  .toArray(String[]::new);
     }
 }
