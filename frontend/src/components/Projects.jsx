@@ -1,5 +1,7 @@
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
+import {useT} from "../i18n/i18n";
 
 const API_URL = "/api/repos";
 const REPO_LIMIT = 6;
@@ -9,29 +11,14 @@ const ALLOWED_REPOS = [
     "polaris",
     "portfolio",
     "monolith-to-microservices",
-    "comment-sender"
+    "comment-sender",
 ];
-
-const TRANSLATIONS = {
-    en: {
-        title: "My projects on GitHub",
-        view: "View Code",
-        info: "Waking up the server… this may take a few seconds.",
-        error: "Failed to load repositories",
-    },
-    it: {
-        title: "I miei progetti su GitHub",
-        view: "Vedi Codice",
-        info: "Avvio del server in corso… potrebbero volerci alcuni secondi.",
-        error: "Caricamento repository fallito",
-    },
-};
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";
 const CARD_CLASSNAME = "border border-gray-300 dark:border-terminal p-6 rounded";
 
-export default function Projects({language = "en"}) {
-    const t = useMemo(() => TRANSLATIONS[language] ?? TRANSLATIONS.en, [language]);
+export default function Projects({language}) {
+    const {t} = useT(language);
     const [repos, setRepos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -48,14 +35,10 @@ export default function Projects({language = "en"}) {
 
                 const data = Array.isArray(res.data) ? res.data : [];
 
-                const filtered = data.filter((repo) =>
-                    ALLOWED_REPOS.includes(repo.name)
-                );
+                const filtered = data.filter((repo) => ALLOWED_REPOS.includes(repo.name));
 
                 const ordered = filtered.sort(
-                    (a, b) =>
-                        ALLOWED_REPOS.indexOf(a.name) -
-                        ALLOWED_REPOS.indexOf(b.name)
+                    (a, b) => ALLOWED_REPOS.indexOf(a.name) - ALLOWED_REPOS.indexOf(b.name)
                 );
 
                 setRepos(ordered.slice(0, REPO_LIMIT));
@@ -79,12 +62,12 @@ export default function Projects({language = "en"}) {
 
     return (
         <section className="py-16">
-            <h2 className="text-3xl mb-10">{t.title}</h2>
+            <h2 className="text-3xl mb-10">{t("projects.title")}</h2>
 
             {loading && (
                 <>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                        {t.info}
+                        {t("projects.info")}
                     </p>
                     <div className={GRID_CLASSNAME}>
                         {Array.from({length: SKELETON_COUNT}).map((_, i) => (
@@ -100,7 +83,7 @@ export default function Projects({language = "en"}) {
 
             {!loading && error && (
                 <p className="text-sm text-red-600 dark:text-red-400">
-                    {t.error}
+                    {t("projects.error")}
                 </p>
             )}
 
@@ -120,7 +103,7 @@ export default function Projects({language = "en"}) {
                                 target="_blank"
                                 rel="noreferrer"
                                 className="block mt-4 text-blue-600 dark:text-green-400">
-                                &gt; {t.view}
+                                &gt; {t("projects.view")}
                             </a>
                         </div>
                     ))}
@@ -129,3 +112,8 @@ export default function Projects({language = "en"}) {
         </section>
     );
 }
+
+Projects.propTypes = {
+    language: PropTypes.oneOf(["en", "it"]),
+};
+

@@ -170,7 +170,7 @@ public class EmailService {
                 "<h2>New Contact</h2>" +
                         "<p><b>Name:</b> " + name + "</p>" +
                         "<p><b>Email:</b> " + email + "</p>" +
-                        "<p>" + msg + "</p>"
+                        "<p><b>Message:</b> " + msg + "</p>"
         );
     }
 
