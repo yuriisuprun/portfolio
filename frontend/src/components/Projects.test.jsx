@@ -47,7 +47,7 @@ test('shows loading state then renders filtered repos in configured order', asyn
     'polaris',
     'portfolio',
     'monolith-to-microservices',
-    'comment-sender',
+    'smart-trip-ai-application',
   ]);
 
   // Loading info should go away once finished.

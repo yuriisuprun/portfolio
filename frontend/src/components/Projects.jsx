@@ -11,7 +11,7 @@ const ALLOWED_REPOS = [
     "polaris",
     "portfolio",
     "monolith-to-microservices",
-    "comment-sender",
+    "smart-trip-ai-application",
 ];
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";
