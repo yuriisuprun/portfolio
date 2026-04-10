@@ -78,7 +78,7 @@ HeroLinks.propTypes = {
 };
 
 function Hero({language}) {
-    const {t} = useT(language);
+    const {t, tArray} = useT(language);
 
     const links = useMemo(
         () => [
@@ -105,22 +105,8 @@ function Hero({language}) {
     );
 
     const typewriterWords = useMemo(() => {
-        const value = t("hero.typewriterWords");
-
-        if (Array.isArray(value)) return value;
-
-        if (typeof value === "string" && value.includes("hero.typewriterWords")) {
-            return language === "it"
-                ? ["interattive", "scalabili", "coinvolgenti"]
-                : ["interactive", "scalable", "engaging"];
-        }
-
-        if (typeof value === "string") {
-            return value.split(",").map((w) => w.trim());
-        }
-
-        return [];
-    }, [t, language]);
+        return tArray("hero.typewriterWords");
+    }, [tArray]);
 
     return (
         <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
