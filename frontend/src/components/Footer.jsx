@@ -18,9 +18,9 @@ export default function Footer({language}) {
             <a href={AUTHOR.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 hover:underline">
-                {AUTHOR.name}
-            </a>{" "}
+                className="text-gray-700 hover:underline font-bold">
+                {AUTHOR.name}</a>
+            {" "}
             {t("footer.with")} {"\u2764\uFE0F"}
         </footer>
     );
