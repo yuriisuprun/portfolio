@@ -21,6 +21,6 @@ test('renders navbar and footer on a routed page', async () => {
     </MemoryRouter>
   );
 
-  expect(screen.getByRole('link', { name: 'YS.' })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: 'YURII SUPRUN' })).toBeInTheDocument();
   expect(await screen.findByRole('contentinfo')).toBeInTheDocument();
 });

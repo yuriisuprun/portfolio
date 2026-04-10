@@ -15,7 +15,7 @@ export const MESSAGES = {
       darkModeToDarkAria: "Switch to dark mode",
       localeIt: "IT",
       localeEn: "EN",
-      brand: "YS.",
+      brand: "YURII SUPRUN",
     },
     seo: {
       home: {
@@ -105,7 +105,7 @@ export const MESSAGES = {
       darkModeToDarkAria: "Passa alla modalita scura",
       localeIt: "IT",
       localeEn: "EN",
-      brand: "YS.",
+      brand: "YURII SUPRUN",
     },
     seo: {
       home: {
