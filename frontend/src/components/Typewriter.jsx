@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from "react";
+import React, {useEffect, useState, memo} from "react";
 import PropTypes from "prop-types";
 
 const Typewriter = memo(function Typewriter({
