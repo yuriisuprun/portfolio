@@ -49,7 +49,7 @@ export const MESSAGES = {
       roleSuffix:
         " who builds ",
       typewriterWords: ["interactive", "scalable", "engaging"],
-      roleSuffixEnd: "software solutions",
+      roleSuffixEnd: "solutions",
       imageAlt: "Yurii Suprun - Software Engineer",
       links: {
         linkedin: "LinkedIn",
