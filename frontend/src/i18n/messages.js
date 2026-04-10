@@ -47,7 +47,9 @@ export const MESSAGES = {
       rolePrefix: "Hi, I'm Yurii, a ",
       roleStrong: "software engineer",
       roleSuffix:
-        " who builds interactive, scalable, and engaging software solutions.",
+        " who builds ",
+      typewriterWords: ["interactive", "scalable", "engaging"],
+      roleSuffixEnd: "software solutions",
       imageAlt: "Yurii Suprun - Software Engineer",
       links: {
         linkedin: "LinkedIn",
@@ -135,7 +137,9 @@ export const MESSAGES = {
       rolePrefix: "Ciao, sono Yurii, un ",
       roleStrong: "ingegnere del software",
       roleSuffix:
-        " che crea soluzioni software interattive, scalabili e coinvolgenti.",
+        " che crea ",
+      typewriterWords: ["interattive", "scalabili", "coinvolgenti"],
+      roleSuffixEnd: "soluzioni",
       imageAlt: "Yurii Suprun - Software Engineer",
       links: {
         linkedin: "LinkedIn",
