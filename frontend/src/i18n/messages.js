@@ -44,8 +44,7 @@ export const MESSAGES = {
       },
     },
     hero: {
-      rolePrefix: "Hi, I'm Yurii, a ",
-      roleStrong: "software engineer",
+      rolePrefix: "Hi, I'm Yurii, a software engineer",
       roleSuffix:
         " who builds ",
       typewriterWords: ["interactive", "scalable", "engaging"],
@@ -134,8 +133,7 @@ export const MESSAGES = {
       },
     },
     hero: {
-      rolePrefix: "Ciao, sono Yurii, un ",
-      roleStrong: "ingegnere del software",
+      rolePrefix: "Ciao, sono Yurii, un ingegnere del software",
       roleSuffix:
         " che crea ",
       typewriterWords: ["interattive", "scalabili", "coinvolgenti"],

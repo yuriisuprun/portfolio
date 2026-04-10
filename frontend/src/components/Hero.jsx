@@ -115,7 +115,6 @@ function Hero({language}) {
             <div className="flex-1 space-y-4 sm:space-y-6">
                 <p className="text-sm sm:text-lg text-gray-600 dark:text-gray-400">
                     {t("hero.rolePrefix")}
-                    <strong>{t("hero.roleStrong")}</strong>
                     {t("hero.roleSuffix")}
 
                     <span className="text-gray-700 dark:text-gray-300 font-semibold">
