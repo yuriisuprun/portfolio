@@ -1,5 +1,5 @@
-// Centralized message catalog.
-// Keep values ASCII when possible to avoid editor/encoding surprises.
+// Centralized message catalog
+// Keep values ASCII when possible to avoid editor/encoding surprises
 
 export const MESSAGES = {
   en: {
