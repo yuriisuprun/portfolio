@@ -118,13 +118,11 @@ function Hero({language}) {
                     {t("hero.roleSuffix")}
 
                     <span className="text-gray-700 dark:text-gray-300 font-semibold">
-            <Typewriter words={typewriterWords}
-                typingSpeed={90}
-                pauseDuration={5000}/>
-          </span>
 
-                    {t("hero.roleSuffixEnd")}
-                </p>
+                        <Typewriter words={typewriterWords} typingSpeed={90} pauseDuration={5000}/>
+                    </span>
+
+                    {t("hero.roleSuffixEnd")}</p>
 
                 <HeroLinks links={links}/>
             </div>
