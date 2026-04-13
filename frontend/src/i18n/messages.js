@@ -148,10 +148,11 @@ export const MESSAGES = {
     about: {
       title: "Chi Sono",
       description: [
-        "Mi chiamo Yurii e sono un Software Engineer appassionato di costruire sistemi backend scalabili e affidabili...",
-        "Ho anche esperienza nello sviluppo di interfacce utente, che mi consente di comprendere meglio l'intero stack applicativo...",
-        "Nel corso degli anni ho contribuito alla progettazione e alla modernizzazione di piattaforme complesse in diversi settori (viaggi, assicurazioni, ecc.)...",
-        "Mi piace imparare nuove tecnologie, risolvere problemi complessi e collaborare con team multiculturali per realizzare software di alta qualita.",
+        "Mi chiamo Yurii e sono un ingegnere del software appassionato nello sviluppo di sistemi backend scalabili e affidabili.",
+        "Ho anche esperienza nel contribuire allo sviluppo di interfacce utente, oltre a lavorare con soluzioni basate " +
+        "sull’intelligenza artificiale, il che mi aiuta a comprendere meglio l’intero stack applicativo e i moderni sistemi intelligenti.",
+        "Nel corso degli anni, ho contribuito alla progettazione e alla modernizzazione di piattaforme complesse in diversi ambiti (viaggi, assicurazioni, ecc.).",
+        "Mi piace imparare nuove tecnologie, risolvere problemi complessi e collaborare con team multiculturali per realizzare software di alta qualità.",
       ],
     },
     projects: {
