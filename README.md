@@ -1,4 +1,4 @@
-# Yurii Suprun - Personal website
+# YURII SUPRUN - Personal website
 
 My personal website with Spring Boot backend and React frontend.
 
