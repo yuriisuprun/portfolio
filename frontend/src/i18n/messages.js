@@ -59,9 +59,9 @@ export const MESSAGES = {
     about: {
       title: "About Me",
       description: [
-        "My name is Yurii, and I'm a Software Engineer passionate about building scalable and reliable backend systems...",
-        "I also have experience contributing to user interface development, which helps me better understand the full application stack...",
-        "Over the years, I've contributed to designing and modernizing complex platforms across multiple domains (Travel, Insurance, etc.)...",
+        "My name is Yurii, and I'm a Software Engineer passionate about building scalable and reliable backend systems.",
+        "I also have experience contributing to user interface development, as well as working with AI-driven solutions, which helps me better understand the full application stack and modern intelligent systems.",
+        "Over the years, I've contributed to designing and modernizing complex platforms across multiple domains (Travel, Insurance, etc.).",
         "I enjoy learning new technologies, solving challenging problems, and collaborating with multicultural teams to deliver high-quality software.",
       ],
     },
