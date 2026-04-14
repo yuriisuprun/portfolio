@@ -18,7 +18,7 @@ test('shows loading state then renders filtered repos in configured order', asyn
     data: [
       { id: 1, name: 'portfolio', html_url: 'https://example.com/portfolio' },
       { id: 2, name: 'other-repo', html_url: 'https://example.com/other-repo' },
-      { id: 3, name: 'smart-trip-ai-application', html_url: 'https://example.com/smart-trip-ai-application' },
+      { id: 3, name: 'smart-trip', html_url: 'https://example.com/smart-trip' },
       {
         id: 4,
         name: 'monolith-to-microservices',
@@ -47,7 +47,7 @@ test('shows loading state then renders filtered repos in configured order', asyn
     'polaris',
     'portfolio',
     'monolith-to-microservices',
-    'smart-trip-ai-application',
+    'smart-trip',
   ]);
 
   // Loading info should go away once finished.
