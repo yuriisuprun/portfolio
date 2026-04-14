@@ -113,14 +113,14 @@ function ContactLinks({links, directText}) {
                                 rel={key !== "phone" && key !== "email" ? "noopener noreferrer" : undefined}
                                 className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded hover:bg-green-50 dark:hover:bg-green-900 transition-colors duration-200"
                                 aria-label={label}>
-                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5"/>
+                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 dark:invert"/>
                                 {label}
                             </a>
                         ) : (
                             <span
                                 className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded bg-gray-100 dark:bg-gray-800 cursor-default"
                                 aria-label={label}>
-                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5"/>
+                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 dark:invert"/>
                                 {label}
                             </span>
                         )}
@@ -184,4 +184,3 @@ TextAreaField.propTypes = {
     onChange: PropTypes.func.isRequired,
     placeholder: PropTypes.string.isRequired,
 };
-

@@ -30,7 +30,7 @@ const HeroLinkItem = memo(function HeroLinkItem({
         <p className="flex items-center gap-2 text-sm sm:text-base dark:text-green-400">
             <img src={`/icons/${iconKey}.png`}
                 alt={`${label} icon`}
-                className="w-4 h-4"/>
+                className="w-4 h-4 dark:invert"/>
             <a href={href}
                 {...linkProps}
                 aria-label={label}
