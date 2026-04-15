@@ -12,6 +12,7 @@ const ALLOWED_REPOS = [
     "portfolio",
     "monolith-to-microservices",
     "smart-trip",
+    "library-system",
 ];
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";

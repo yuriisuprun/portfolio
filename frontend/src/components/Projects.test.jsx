@@ -19,12 +19,9 @@ test('shows loading state then renders filtered repos in configured order', asyn
       { id: 1, name: 'portfolio', html_url: 'https://example.com/portfolio' },
       { id: 2, name: 'other-repo', html_url: 'https://example.com/other-repo' },
       { id: 3, name: 'smart-trip', html_url: 'https://example.com/smart-trip' },
-      {
-        id: 4,
-        name: 'monolith-to-microservices',
-        html_url: 'https://example.com/monolith-to-microservices',
-      },
+      {id: 4, name: 'monolith-to-microservices', html_url: 'https://example.com/monolith-to-microservices',},
       { id: 5, name: 'polaris', html_url: 'https://example.com/polaris' },
+      { id: 6, name: 'library-system', html_url: 'https://example.com/library-system' },
     ],
   });
 
@@ -48,6 +45,7 @@ test('shows loading state then renders filtered repos in configured order', asyn
     'portfolio',
     'monolith-to-microservices',
     'smart-trip',
+    'library-system',
   ]);
 
   // Loading info should go away once finished.
