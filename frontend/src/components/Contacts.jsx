@@ -150,7 +150,7 @@ function InputField({id, name, type = "text", value, onChange, placeholder}) {
                 {placeholder}
             </label>
             <input id={id} name={name} type={type} required value={value} onChange={onChange} placeholder={placeholder}
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 focus:outline-none transition"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-400 dark:focus:ring-green-500 focus:outline-none transition"
             />
         </>
     );
@@ -172,7 +172,7 @@ function TextAreaField({id, name, value, onChange, placeholder}) {
                 {placeholder}
             </label>
             <textarea id={id} name={name} rows={5} required value={value} onChange={onChange} placeholder={placeholder}
-                className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-green-400 focus:outline-none transition resize-none"/>
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-400 dark:focus:ring-green-500 focus:outline-none transition resize-none"/>
         </>
     );
 }
