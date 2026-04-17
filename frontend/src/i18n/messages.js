@@ -6,7 +6,7 @@ export const MESSAGES = {
     nav: {
       home: "HOME",
       about: "ABOUT",
-      projects: "Projects",
+      projects: "PROJECTS",
       contacts: "Contacts",
       toggleMenuAria: "Toggle menu",
       switchToItalianAria: "Switch to Italian",
@@ -95,7 +95,7 @@ export const MESSAGES = {
     nav: {
       home: "HOME",
       about: "CHI SONO",
-      projects: "Progetti",
+      projects: "PROGETTI",
       contacts: "Contatti",
       toggleMenuAria: "Apri/chiudi menu",
       switchToItalianAria: "Passa all'italiano",
