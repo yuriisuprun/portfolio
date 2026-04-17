@@ -5,7 +5,7 @@ export const MESSAGES = {
   en: {
     nav: {
       home: "Home",
-      about: "About",
+      about: "ABOUT",
       projects: "Projects",
       contacts: "Contacts",
       toggleMenuAria: "Toggle menu",
