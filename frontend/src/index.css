@@ -16,6 +16,10 @@ body {
     font-family: "Typewriter Condensed";
 }
 
+.font-typewriter-condensed {
+    font-family: "Typewriter Condensed", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
 a {
     transition: 0.2s;
 }

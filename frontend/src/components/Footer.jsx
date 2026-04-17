@@ -14,14 +14,18 @@ export default function Footer({language}) {
         <footer
             role="contentinfo"
             className="border-t border-gray-300 dark:border-terminal py-6 text-sm text-gray-500 text-center">
-            {"\u00A9"} {year} | {t("footer.designedBy")}{" "}
-            <a href={AUTHOR.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-700 hover:underline font-bold">
-                {AUTHOR.name}</a>
-            {" "}
-            {t("footer.with")} {"\u2764\uFE0F"}
+            {"\u00A9"} {year} |{" "}
+            <span className="font-typewriter-condensed">
+                {t("footer.designedBy")}{" "}
+                <a
+                    href={AUTHOR.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-700 hover:underline font-bold">
+                    {AUTHOR.name}
+                </a>{" "}
+                {t("footer.with")} {"\u2764\uFE0F"}
+            </span>
         </footer>
     );
 }
@@ -29,4 +33,3 @@ export default function Footer({language}) {
 Footer.propTypes = {
     language: PropTypes.oneOf(["en", "it"]),
 };
-
