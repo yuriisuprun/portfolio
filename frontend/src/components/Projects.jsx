@@ -63,11 +63,11 @@ export default function Projects({language}) {
 
     return (
         <section className="py-16">
-            <h2 className="text-3xl mb-10">{t("projects.title")}</h2>
+            <h2 className="text-3xl mb-10 leading-tight">{t("projects.title")}</h2>
 
             {loading && (
                 <>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    <p className="text-[0.95em] text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
                         {t("projects.info")}
                     </p>
                     <div className={GRID_CLASSNAME}>
@@ -83,7 +83,7 @@ export default function Projects({language}) {
             )}
 
             {!loading && error && (
-                <p className="text-sm text-red-600 dark:text-red-400">
+                <p className="text-[0.95em] text-red-600 dark:text-red-400 leading-relaxed">
                     {t("projects.error")}
                 </p>
             )}
@@ -92,10 +92,10 @@ export default function Projects({language}) {
                 <div className={GRID_CLASSNAME}>
                     {repos.map((repo) => (
                         <div key={repo.id} className={CARD_CLASSNAME}>
-                            <h3 className="text-lg font-bold">{repo.name}</h3>
+                            <h3 className="text-lg font-bold leading-snug">{repo.name}</h3>
 
                             {repo.description && (
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                <p className="text-[0.95em] text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
                                     {repo.description}
                                 </p>
                             )}
@@ -117,4 +117,3 @@ export default function Projects({language}) {
 Projects.propTypes = {
     language: PropTypes.oneOf(["en", "it"]),
 };
-

@@ -57,7 +57,7 @@ export default function Contacts({language}) {
 
     return (
         <section className="py-16 px-4 sm:px-6 max-w-2xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-900 dark:text-gray-100">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-900 dark:text-gray-100 leading-tight">
                 {t("contacts.title")}
             </h2>
 

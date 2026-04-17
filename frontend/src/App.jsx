@@ -47,7 +47,7 @@ function App() {
                 <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col flex-grow">
                     <Navbar dark={dark} setDark={setDark} language={language} setLanguage={setLanguage}/>
 
-                    <main className="flex-grow">
+                    <main className="flex-grow text-[17px] sm:text-[18px] leading-[1.7]">
                         <Routes>
                             <Route path="/" element={<Navigate to="/home" replace/>}/>
                             {routeConfig().map(({path, component, seoKey}) => (

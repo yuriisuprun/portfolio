@@ -1,11 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap");
-
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Use a single, explicit typeface everywhere. */
+@layer theme {
+    :root {
+        --font-sans: "Typewriter Condensed";
+        --font-mono: "Typewriter Condensed";
+        --default-font-family: "Typewriter Condensed";
+        --default-mono-font-family: "Typewriter Condensed";
+    }
+}
+
 body {
-    font-family: "Fira Mono", monospace;
+    font-family: "Typewriter Condensed";
 }
 
 a {

@@ -27,7 +27,7 @@ const HeroLinkItem = memo(function HeroLinkItem({
         : {};
 
     return (
-        <p className="flex items-center gap-2 text-sm sm:text-base dark:text-green-400">
+        <p className="flex items-center gap-2 dark:text-green-400">
             <img src={`/icons/${iconKey}.png`}
                 alt={`${label} icon`}
                 className="w-4 h-4 dark:invert"/>
@@ -113,7 +113,7 @@ function Hero({language}) {
             <HeroImage alt={t("hero.imageAlt")}/>
 
             <div className="flex-1 space-y-4 sm:space-y-6">
-                <p className="text-sm sm:text-lg text-gray-600 dark:text-gray-400">
+                <p className="text-[1.05em] sm:text-[1.2em] text-gray-600 dark:text-gray-400 leading-relaxed">
                     {t("hero.rolePrefix")}
                     {t("hero.roleSuffix")}
 
