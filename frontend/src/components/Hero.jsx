@@ -114,7 +114,11 @@ function Hero({language}) {
 
             <div className="flex-1 space-y-4 sm:space-y-6">
                 <p className="text-[1.05em] sm:text-[1.2em] text-gray-600 dark:text-gray-400 leading-relaxed">
-                    {t("hero.rolePrefix")}
+                    {language === 'it' ? (
+                        <>Ciao, sono <span className="font-bold">Yurii</span>, un ingegnere del software</>
+                    ) : (
+                        <>Hi, I'm <span className="font-bold">Yurii</span>, a software engineer</>
+                    )}
                     {t("hero.roleSuffix")}
 
                     <span className="text-gray-700 dark:text-gray-300 font-semibold">
