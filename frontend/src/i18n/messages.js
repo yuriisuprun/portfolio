@@ -94,7 +94,7 @@ export const MESSAGES = {
   it: {
     nav: {
       home: "HOME",
-      about: "Chi Sono",
+      about: "CHI SONO",
       projects: "Progetti",
       contacts: "Contatti",
       toggleMenuAria: "Apri/chiudi menu",
