@@ -4,7 +4,7 @@
 export const MESSAGES = {
   en: {
     nav: {
-      home: "Home",
+      home: "HOME",
       about: "ABOUT",
       projects: "Projects",
       contacts: "Contacts",
@@ -93,7 +93,7 @@ export const MESSAGES = {
   },
   it: {
     nav: {
-      home: "Home",
+      home: "HOME",
       about: "Chi Sono",
       projects: "Progetti",
       contacts: "Contatti",
