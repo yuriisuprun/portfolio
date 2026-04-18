@@ -3,9 +3,9 @@
 
     <!-- Y.S. text -->
     <text x="16" y="22"
-          font-family="Arial Black, Helvetica, sans-serif"
+          font-family="Typewriter Condensed"
           font-size="22"
-          font-weight="500"
+          font-weight="400"
           fill="#000000"
           text-anchor="middle"
           letter-spacing="-1">
