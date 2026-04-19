@@ -17,11 +17,7 @@ export default function Footer({language}) {
             {"\u00A9"} {year} |{" "}
             <span className="font-typewriter-condensed">
                 {t("footer.designedBy")}{" "}
-                <a
-                    href={AUTHOR.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-gray-700 hover:underline font-bold">
+                <a href={AUTHOR.link} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:underline font-bold">
                     {AUTHOR.name}
                 </a>{" "}
                 {t("footer.with")} {"\u2764\uFE0F"}
