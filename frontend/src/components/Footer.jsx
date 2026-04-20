@@ -11,9 +11,7 @@ export default function Footer({language}) {
     const year = new Date().getFullYear();
 
     return (
-        <footer
-            role="contentinfo"
-            className="border-t border-gray-300 dark:border-terminal py-6 text-sm text-gray-500 text-center">
+        <footer role="contentinfo" className="border-t border-gray-300 dark:border-terminal py-6 text-sm text-gray-500 text-center">
             {"\u00A9"} {year} |{" "}
             <span className="font-typewriter-condensed">
                 {t("footer.designedBy")}{" "}
