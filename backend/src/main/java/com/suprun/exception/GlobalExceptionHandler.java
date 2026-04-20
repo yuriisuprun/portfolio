@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         if (log.isDebugEnabled()) {
             log.debug("Validation failed on {} {}: {} errors",
                     safeMethod(request), safeUri(request),
-                    ex.getBindingResult() == null ? 0 : ex.getBindingResult().getErrorCount());
+                    ex.getBindingResult().getErrorCount());
         }
         return ResponseEntity.badRequest().body(Map.of("error", "Invalid request data"));
     }
