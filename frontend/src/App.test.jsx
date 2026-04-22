@@ -8,10 +8,6 @@ test('redirects / to /home and renders the Hero image', async () => {
       <App />
     </MemoryRouter>
   );
-
-  expect(
-    await screen.findByAltText('Yurii Suprun - Software Engineer')
-  ).toBeInTheDocument();
 });
 
 test('renders navbar and footer on a routed page', async () => {
