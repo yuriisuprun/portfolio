@@ -4,17 +4,17 @@ import {SITE_CONFIG} from "../config/siteConfig";
 import {useT} from "../i18n/i18n";
 import Typewriter from "./Typewriter";
 
-const HeroImage = memo(function HeroImage({alt}) {
-    return (
-        <img src="/myphoto.jpg" alt={alt}
-            className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg mt-2 sm:mt-6"
-            loading="lazy"/>
-    );
-});
-
-HeroImage.propTypes = {
-    alt: PropTypes.string.isRequired,
-};
+// const HeroImage = memo(function HeroImage({alt}) {
+//     return (
+//         <img src="/myphoto.jpg" alt={alt}
+//             className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg mt-2 sm:mt-6"
+//             loading="lazy"/>
+//     );
+// });
+//
+// HeroImage.propTypes = {
+//     alt: PropTypes.string.isRequired,
+// };
 
 const HeroLinkItem = memo(function HeroLinkItem({
                                                     label,
@@ -110,7 +110,7 @@ function Hero({language}) {
 
     return (
         <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
-            <HeroImage alt={t("hero.imageAlt")}/>
+            {/*<HeroImage alt={t("hero.imageAlt")}/>*/}
 
             <div className="flex-1 space-y-4 sm:space-y-6">
                 <p className="text-[1.05em] sm:text-[1.2em] text-gray-600 dark:text-gray-400 leading-relaxed">
