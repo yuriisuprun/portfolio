@@ -3,18 +3,6 @@ import PropTypes from "prop-types";
 import {SITE_CONFIG} from "../config/siteConfig";
 import {useT} from "../i18n/i18n";
 
-// const HeroImage = memo(function HeroImage({alt}) {
-//     return (
-//         <img src="/myphoto.jpg" alt={alt}
-//             className="w-32 h-32 rounded-full object-cover border-2 border-gray-400 shadow-lg mt-2 sm:mt-6"
-//             loading="lazy"/>
-//     );
-// });
-//
-// HeroImage.propTypes = {
-//     alt: PropTypes.string.isRequired,
-// };
-
 const HeroLinkItem = memo(function HeroLinkItem({
                                                     label,
                                                     href,
@@ -27,8 +15,7 @@ const HeroLinkItem = memo(function HeroLinkItem({
 
     return (
         <p className="flex items-center gap-2 dark:text-green-400">
-            <img src={`/icons/${iconKey}.png`}
-                alt={`${label} icon`}
+            <img src={`/icons/${iconKey}.png`} alt={`${label} icon`}
                 className="w-4 h-4 dark:invert"/>
             <a href={href}
                 {...linkProps}
