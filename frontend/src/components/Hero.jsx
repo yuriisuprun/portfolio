@@ -2,7 +2,6 @@ import React, {memo, useMemo} from "react";
 import PropTypes from "prop-types";
 import {SITE_CONFIG} from "../config/siteConfig";
 import {useT} from "../i18n/i18n";
-import Typewriter from "./Typewriter";
 
 // const HeroImage = memo(function HeroImage({alt}) {
 //     return (
@@ -108,6 +107,29 @@ function Hero({language}) {
         return tArray("hero.typewriterWords");
     }, [tArray]);
 
+    const descriptorText = useMemo(() => {
+        const words = Array.isArray(typewriterWords)
+            ? typewriterWords.filter((w) => typeof w === "string" && w.trim().length > 0)
+            : [];
+
+        if (words.length === 0) return "";
+
+        // Prefer a locale-aware conjunction ("a, b, and c") but keep a safe fallback.
+        try {
+            const intl = globalThis.Intl;
+            if (intl && typeof intl.ListFormat === "function") {
+                return new intl.ListFormat(language || "en", {
+                    style: "long",
+                    type: "conjunction",
+                }).format(words);
+            }
+        } catch {
+            // Ignore and fall back to a simple join.
+        }
+
+        return words.join(", ");
+    }, [typewriterWords, language]);
+
     return (
         <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
             {/*<HeroImage alt={t("hero.imageAlt")}/>*/}
@@ -122,9 +144,11 @@ function Hero({language}) {
                     {t("hero.roleSuffix")}
 
                     <span className="text-gray-700 dark:text-gray-300 font-semibold">
-                        <Typewriter words={typewriterWords} typingSpeed={90} pauseDuration={5000}/></span>
-
-                    {t("hero.roleSuffixEnd")}</p>
+                        {descriptorText}
+                    </span>
+                    {descriptorText ? " " : ""}
+                    {t("hero.roleSuffixEnd")}
+                </p>
 
                 <HeroLinks links={links}/>
             </div>
