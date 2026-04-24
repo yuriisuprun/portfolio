@@ -74,7 +74,7 @@ export const MESSAGES = {
     contacts: {
       title: "Contact Me",
       description:
-        "I'm always open to collaborating. Send me a message or reach out directly.",
+        "Send me a message or reach out directly.",
       send: "Send Message",
       sending: "Sending...",
       success: "Message sent successfully!",
