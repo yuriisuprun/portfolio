@@ -88,13 +88,17 @@
         --btn-bg: 0 0 0;
         --btn-fg: 255 255 255;
         --btn-line: 255 255 255;
-        --btn-grid-alpha: 0.1;
-        --btn-node-strong-alpha: 0.18;
-        --btn-node-soft-alpha: 0.14;
+        --btn-grid-alpha: 0.12;
+        --btn-node-strong-alpha: 0.22;
+        --btn-node-soft-alpha: 0.17;
         --btn-ring: 255 255 255;
         --btn-halo: 0 0 0;
 
-        box-shadow: 0 1px 0 rgb(255 255 255 / 0.08);
+        box-shadow:
+            inset 0 0 0 1px rgb(255 255 255 / 0.72),
+            0 0 0 1px rgb(255 255 255 / 0.22),
+            0 10px 28px rgb(0 0 0 / 0.6),
+            0 0 18px rgb(255 255 255 / 0.08);
     }
 
     .btn-circuit:hover:not(:disabled) {
@@ -105,8 +109,11 @@
     }
 
     .dark .btn-circuit:hover:not(:disabled) {
-        border-color: rgb(255 255 255 / 0.8);
-        box-shadow: 0 1px 0 rgb(255 255 255 / 0.1), 0 10px 24px rgb(0 0 0 / 0.55);
+        box-shadow:
+            inset 0 0 0 1px rgb(255 255 255 / 0.88),
+            0 0 0 1px rgb(255 255 255 / 0.3),
+            0 14px 36px rgb(0 0 0 / 0.7),
+            0 0 22px rgb(255 255 255 / 0.11);
     }
 
     .btn-circuit:active:not(:disabled) {
