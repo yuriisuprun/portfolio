@@ -164,7 +164,7 @@ export const MESSAGES = {
     contacts: {
       title: "Contattami",
       description:
-        "Sono sempre disponibile per collaborazioni. Inviami un messaggio o contattami direttamente.",
+        "Inviami un messaggio o contattami direttamente.",
       send: "Invia Messaggio",
       sending: "Invio...",
       success: "Messaggio inviato con successo!",
