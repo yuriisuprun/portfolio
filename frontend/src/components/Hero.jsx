@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { SITE_CONFIG } from "../config/siteConfig";
 import { useT } from "../i18n/i18n";
 
-const ICON_CLASSNAME = "w-4 h-4 dark:invert";
-const LINK_ROW_CLASSNAME = "flex items-center gap-2 dark:text-green-400";
+const ICON_CLASSNAME = "w-4 h-4 grayscale brightness-0 dark:invert";
+const LINK_ROW_CLASSNAME = "flex items-center gap-2 text-black/80 dark:text-white/80";
 
 function getExternalLinkProps(external) {
   return external ? { target: "_blank", rel: "noopener noreferrer" } : {};
@@ -153,11 +153,11 @@ function Hero({ language }) {
   return (
     <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
       <div className="flex-1 space-y-4 sm:space-y-6">
-        <p className="text-[1.05em] sm:text-[1.2em] text-gray-600 dark:text-gray-400 leading-relaxed">
+        <p className="text-[1.05em] sm:text-[1.2em] text-black/70 dark:text-white/70 leading-relaxed">
           {getGreeting(language)}
           {t("hero.roleSuffix")}
 
-          <span className="text-gray-700 dark:text-gray-300 font-semibold">
+          <span className="text-black/85 dark:text-white/85 font-semibold">
             {descriptorText}
           </span>
           {hasDescriptor ? " " : ""}

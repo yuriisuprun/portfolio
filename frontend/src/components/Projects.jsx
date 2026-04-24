@@ -16,7 +16,7 @@ const ALLOWED_REPOS = [
 ];
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";
-const CARD_CLASSNAME = "border border-gray-300 dark:border-terminal p-6 rounded";
+const CARD_CLASSNAME = "border border-black/20 dark:border-white/20 p-6 rounded";
 
 export default function Projects({language}) {
     const {t} = useT(language);
@@ -67,15 +67,15 @@ export default function Projects({language}) {
 
             {loading && (
                 <>
-                    <p className="text-[0.95em] text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
+                    <p className="text-[0.95em] text-black/70 dark:text-white/70 mb-6 leading-relaxed">
                         {t("projects.info")}
                     </p>
                     <div className={GRID_CLASSNAME}>
                         {Array.from({length: SKELETON_COUNT}).map((_, i) => (
                             <div key={i} className={`${CARD_CLASSNAME} animate-pulse`}>
-                                <div className="h-4 bg-gray-300 dark:bg-gray-700 w-2/3 mb-4"/>
-                                <div className="h-3 bg-gray-200 dark:bg-gray-600 mb-2"/>
-                                <div className="h-3 bg-gray-200 dark:bg-gray-600 w-5/6"/>
+                                <div className="h-4 bg-black/10 dark:bg-white/15 w-2/3 mb-4"/>
+                                <div className="h-3 bg-black/10 dark:bg-white/15 mb-2"/>
+                                <div className="h-3 bg-black/10 dark:bg-white/15 w-5/6"/>
                             </div>
                         ))}
                     </div>
@@ -83,7 +83,7 @@ export default function Projects({language}) {
             )}
 
             {!loading && error && (
-                <p className="text-[0.95em] text-red-600 dark:text-red-400 leading-relaxed">
+                <p className="text-[0.95em] text-black dark:text-white leading-relaxed" role="alert">
                     {t("projects.error")}
                 </p>
             )}
@@ -95,7 +95,7 @@ export default function Projects({language}) {
                             <h3 className="text-lg font-bold leading-snug">{repo.name}</h3>
 
                             {repo.description && (
-                                <p className="text-[0.95em] text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
+                                <p className="text-[0.95em] text-black/70 dark:text-white/70 mt-2 leading-relaxed">
                                     {repo.description}
                                 </p>
                             )}
@@ -103,7 +103,7 @@ export default function Projects({language}) {
                             <a href={repo.html_url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="block mt-4 text-blue-600 dark:text-green-400">
+                                className="block mt-4 underline underline-offset-4 hover:no-underline">
                                 &gt; {t("projects.view")}
                             </a>
                         </div>

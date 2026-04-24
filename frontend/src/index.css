@@ -12,8 +12,40 @@
     }
 }
 
-body {
-    font-family: "Typewriter Condensed";
+@layer base {
+    :root {
+        color-scheme: light;
+        --bw-bg: 255 255 255;
+        --bw-fg: 0 0 0;
+        --bw-focus: 0 0 0;
+    }
+
+    .dark {
+        color-scheme: dark;
+        --bw-bg: 0 0 0;
+        --bw-fg: 255 255 255;
+        --bw-focus: 255 255 255;
+    }
+
+    html,
+    body {
+        font-family: "Typewriter Condensed";
+        background: rgb(var(--bw-bg));
+        color: rgb(var(--bw-fg));
+    }
+
+    ::selection {
+        background: rgb(var(--bw-fg) / 0.18);
+    }
+
+    :focus-visible {
+        outline: 2px solid rgb(var(--bw-focus));
+        outline-offset: 3px;
+    }
+
+    a {
+        text-underline-offset: 0.2em;
+    }
 }
 
 .font-typewriter-condensed {
@@ -22,8 +54,4 @@ body {
 
 a {
     transition: 0.2s;
-}
-
-.border-terminal {
-    border-color: #22c55e;
 }

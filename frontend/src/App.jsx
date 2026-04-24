@@ -43,7 +43,7 @@ function App() {
     return (
         <I18nProvider locale={language} setLocale={setLanguage}>
             <div
-                className="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-black dark:text-gray-200 transition-colors">
+                className="min-h-screen flex flex-col bg-white text-black dark:bg-black dark:text-white transition-colors">
                 <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col flex-grow">
                     <Navbar dark={dark} setDark={setDark} language={language} setLanguage={setLanguage}/>
 

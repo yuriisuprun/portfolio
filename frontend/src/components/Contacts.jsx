@@ -57,13 +57,13 @@ export default function Contacts({language}) {
 
     return (
         <section className="py-16 px-4 sm:px-6 max-w-2xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-gray-900 dark:text-gray-100 leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-black dark:text-white leading-tight">
                 {t("contacts.title")}
             </h2>
 
             <ContactLinks links={contactLinks} directText={t("contacts.direct")}/>
 
-            <p className="mb-2 text-gray-700 dark:text-gray-300 font-typewriter-condensed">
+            <p className="mb-2 text-black/80 dark:text-white/80 font-typewriter-condensed">
                 {t("contacts.description")}
             </p>
 
@@ -81,15 +81,15 @@ export default function Contacts({language}) {
 
                 <button type="submit"
                     disabled={loading}
-                    className="w-full bg-green-500 text-white py-3 rounded hover:bg-green-600 disabled:opacity-50 transition-colors duration-200">
+                    className="w-full bg-black text-white py-3 rounded hover:bg-black/90 disabled:opacity-50 transition-colors duration-200 dark:bg-white dark:text-black dark:hover:bg-white/90">
                     {loading ? t("contacts.sending") : t("contacts.send")}
                 </button>
 
                 {status === "success" && (
-                    <p className="text-green-600 font-medium mt-2">{t("contacts.success")}</p>
+                    <p className="font-medium mt-2" role="status" aria-live="polite">{t("contacts.success")}</p>
                 )}
                 {status === "error" && (
-                    <p className="text-red-600 font-medium mt-2">{errorMessage}</p>
+                    <p className="font-medium mt-2" role="alert">{errorMessage}</p>
                 )}
             </form>
         </section>
@@ -111,16 +111,16 @@ function ContactLinks({links, directText}) {
                             <a href={href}
                                 target={key !== "phone" && key !== "email" ? "_blank" : "_self"}
                                 rel={key !== "phone" && key !== "email" ? "noopener noreferrer" : undefined}
-                                className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded hover:bg-green-50 dark:hover:bg-green-900 transition-colors duration-200"
+                                className="flex items-center gap-2 px-4 py-2 border border-black/30 dark:border-white/30 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200"
                                 aria-label={label}>
-                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 dark:invert"/>
+                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 grayscale brightness-0 dark:invert"/>
                                 {label}
                             </a>
                         ) : (
                             <span
-                                className="flex items-center gap-2 px-4 py-2 border border-green-500 rounded bg-gray-100 dark:bg-gray-800 cursor-default"
+                                className="flex items-center gap-2 px-4 py-2 border border-black/30 dark:border-white/30 rounded bg-black/5 dark:bg-white/10 cursor-default"
                                 aria-label={label}>
-                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 dark:invert"/>
+                                <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 grayscale brightness-0 dark:invert"/>
                                 {label}
                             </span>
                         )}
@@ -150,7 +150,7 @@ function InputField({id, name, type = "text", value, onChange, placeholder}) {
                 {placeholder}
             </label>
             <input id={id} name={name} type={type} required value={value} onChange={onChange} placeholder={placeholder}
-                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-400 dark:focus:ring-green-500 focus:outline-none transition font-typewriter-condensed"
+                className="w-full p-3 border border-black/20 dark:border-white/20 rounded bg-white dark:bg-black text-black dark:text-white placeholder-black/50 dark:placeholder-white/50 transition font-typewriter-condensed"
             />
         </>
     );
@@ -172,7 +172,7 @@ function TextAreaField({id, name, value, onChange, placeholder}) {
                 {placeholder}
             </label>
             <textarea id={id} name={name} rows={5} required value={value} onChange={onChange} placeholder={placeholder}
-                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-400 dark:focus:ring-green-500 focus:outline-none transition resize-none font-typewriter-condensed"/>
+                className="w-full p-3 border border-black/20 dark:border-white/20 rounded bg-white dark:bg-black text-black dark:text-white placeholder-black/50 dark:placeholder-white/50 transition resize-none font-typewriter-condensed"/>
         </>
     );
 }
