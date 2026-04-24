@@ -48,6 +48,92 @@
     }
 }
 
+@layer components {
+    /* White button with a subtle "circuit board" pattern in black. */
+    .btn-circuit {
+        --btn-bg: 255 255 255;
+        --btn-fg: 0 0 0;
+        --btn-line: 0 0 0;
+        --btn-grid-alpha: 0.08;
+        --btn-node-strong-alpha: 0.16;
+        --btn-node-soft-alpha: 0.12;
+        --btn-ring: 0 0 0;
+        --btn-halo: 255 255 255;
+
+        background-color: rgb(var(--btn-bg));
+        color: rgb(var(--btn-fg));
+        border: 1px solid rgb(var(--btn-line) / 0.55);
+        box-shadow: 0 1px 0 rgb(0 0 0 / 0.08);
+
+        /* Grid + nodes to hint "circuit traces" without hurting legibility. */
+        background-image:
+            linear-gradient(90deg, rgb(var(--btn-line) / var(--btn-grid-alpha)) 1px, transparent 1px),
+            linear-gradient(rgb(var(--btn-line) / var(--btn-grid-alpha)) 1px, transparent 1px),
+            radial-gradient(circle at 10px 10px, rgb(var(--btn-line) / var(--btn-node-strong-alpha)) 1.15px, transparent 1.25px),
+            radial-gradient(circle at 30px 22px, rgb(var(--btn-line) / var(--btn-node-soft-alpha)) 1px, transparent 1.05px),
+            radial-gradient(circle at 22px 34px, rgb(var(--btn-line) / var(--btn-node-soft-alpha)) 1px, transparent 1.05px);
+        background-size: 28px 28px, 28px 28px, 56px 56px, 56px 56px, 56px 56px;
+        background-position: 0 0, 0 0, 0 0, 14px 14px, 28px 0;
+
+        transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 120ms ease;
+    }
+
+    .dark .btn-circuit {
+        --btn-bg: 0 0 0;
+        --btn-fg: 255 255 255;
+        --btn-line: 255 255 255;
+        --btn-grid-alpha: 0.1;
+        --btn-node-strong-alpha: 0.18;
+        --btn-node-soft-alpha: 0.14;
+        --btn-ring: 255 255 255;
+        --btn-halo: 0 0 0;
+
+        box-shadow: 0 1px 0 rgb(255 255 255 / 0.08);
+    }
+
+    .btn-circuit:hover:not(:disabled) {
+        --btn-grid-alpha: 0.12;
+        --btn-node-strong-alpha: 0.24;
+        --btn-node-soft-alpha: 0.18;
+        border-color: rgb(0 0 0 / 0.75);
+        box-shadow: 0 1px 0 rgb(0 0 0 / 0.1), 0 8px 20px rgb(0 0 0 / 0.08);
+    }
+
+    .dark .btn-circuit:hover:not(:disabled) {
+        border-color: rgb(255 255 255 / 0.8);
+        box-shadow: 0 1px 0 rgb(255 255 255 / 0.1), 0 10px 24px rgb(0 0 0 / 0.55);
+    }
+
+    .btn-circuit:active:not(:disabled) {
+        transform: translateY(1px);
+        box-shadow: 0 0 0 rgb(0 0 0 / 0);
+    }
+
+    .btn-circuit:focus-visible {
+        outline: none;
+        /* Visible on both themes: ring contrasts with button, halo contrasts with page background. */
+        box-shadow:
+            0 0 0 3px rgb(var(--btn-ring) / 0.78),
+            0 0 0 6px rgb(var(--btn-halo) / 0.88),
+            0 1px 0 rgb(0 0 0 / 0.08);
+    }
+
+    .btn-circuit:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .btn-circuit {
+            transition: none;
+        }
+
+        .btn-circuit:active:not(:disabled) {
+            transform: none;
+        }
+    }
+}
+
 .font-typewriter-condensed {
     font-family: "Typewriter Condensed", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }

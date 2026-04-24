@@ -81,7 +81,7 @@ export default function Contacts({language}) {
 
                 <button type="submit"
                     disabled={loading}
-                    className="w-full bg-black text-white py-3 rounded hover:bg-black/90 disabled:opacity-50 transition-colors duration-200 dark:bg-white dark:text-black dark:hover:bg-white/90">
+                    className="w-full btn-circuit py-3 rounded font-semibold">
                     {loading ? t("contacts.sending") : t("contacts.send")}
                 </button>
 
