@@ -62,18 +62,24 @@
 
         background-color: rgb(var(--btn-bg));
         color: rgb(var(--btn-fg));
-        border: 1px solid rgb(var(--btn-line) / 0.55);
-        box-shadow: 0 1px 0 rgb(0 0 0 / 0.08);
+        /* Circuit is in the border only; keep the inside clean. */
+        border: 1px solid transparent;
+        background-origin: border-box;
+        box-shadow:
+            inset 0 0 0 1px rgb(var(--btn-line) / 0.55),
+            0 1px 0 rgb(0 0 0 / 0.08);
 
-        /* Grid + nodes to hint "circuit traces" without hurting legibility. */
+        /* Grid + nodes clipped to the border only (fill layer covers the inside). */
         background-image:
+            linear-gradient(rgb(var(--btn-bg)), rgb(var(--btn-bg))),
             linear-gradient(90deg, rgb(var(--btn-line) / var(--btn-grid-alpha)) 1px, transparent 1px),
             linear-gradient(rgb(var(--btn-line) / var(--btn-grid-alpha)) 1px, transparent 1px),
             radial-gradient(circle at 10px 10px, rgb(var(--btn-line) / var(--btn-node-strong-alpha)) 1.15px, transparent 1.25px),
             radial-gradient(circle at 30px 22px, rgb(var(--btn-line) / var(--btn-node-soft-alpha)) 1px, transparent 1.05px),
             radial-gradient(circle at 22px 34px, rgb(var(--btn-line) / var(--btn-node-soft-alpha)) 1px, transparent 1.05px);
-        background-size: 28px 28px, 28px 28px, 56px 56px, 56px 56px, 56px 56px;
-        background-position: 0 0, 0 0, 0 0, 14px 14px, 28px 0;
+        background-clip: padding-box, border-box, border-box, border-box, border-box, border-box;
+        background-size: auto, 28px 28px, 28px 28px, 56px 56px, 56px 56px, 56px 56px;
+        background-position: 0 0, 0 0, 0 0, 0 0, 14px 14px, 28px 0;
 
         transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 120ms ease;
     }
@@ -95,7 +101,6 @@
         --btn-grid-alpha: 0.12;
         --btn-node-strong-alpha: 0.24;
         --btn-node-soft-alpha: 0.18;
-        border-color: rgb(0 0 0 / 0.75);
         box-shadow: 0 1px 0 rgb(0 0 0 / 0.1), 0 8px 20px rgb(0 0 0 / 0.08);
     }
 
