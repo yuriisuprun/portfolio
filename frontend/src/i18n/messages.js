@@ -7,7 +7,7 @@ export const MESSAGES = {
       home: "HOME",
       about: "ABOUT",
       projects: "PROJECTS",
-      contacts: "CONTACTS",
+      contacts: "CONTACT",
       toggleMenuAria: "Toggle menu",
       switchToItalianAria: "Switch to Italian",
       switchToEnglishAria: "Switch to English",
@@ -44,9 +44,18 @@ export const MESSAGES = {
       },
     },
     hero: {
+      // Home hero (reference UI)
+      kicker: "Hi, I'm Yurii",
+      headlineLines: ["I build interactive,", "scalable, and engaging", "solutions"],
+      headline: "I build interactive, scalable, and engaging solutions",
+      subtitle:
+        "Software engineer focused on building fast, clean, and user-friendly web applications.",
+      ctaProjects: "View Projects",
+      ctaContact: "Contact Me",
+
+      // Legacy keys kept for backwards-compat if referenced elsewhere.
       rolePrefix: "Hi, I'm Yurii, a software engineer",
-      roleSuffix:
-        " who builds ",
+      roleSuffix: " who builds ",
       typewriterWords: ["interactive", "scalable", "engaging"],
       roleSuffixEnd: "solutions",
       imageAlt: "Yurii Suprun - Software Engineer",
@@ -54,6 +63,28 @@ export const MESSAGES = {
         linkedin: "LinkedIn",
         github: "GitHub",
         email: "iursuprun@gmail.com",
+      },
+    },
+    featured: {
+      kicker: "FEATURED PROJECTS",
+      title: "Things I've built",
+      analytics: {
+        title: "Analytics Dashboard",
+        description:
+          "Real-time analytics dashboard with interactive charts and custom reports.",
+        tags: ["React", "TypeScript", "Chart.js"],
+      },
+      task: {
+        title: "Task Manager",
+        description:
+          "A productivity app to organize tasks, set priorities and track progress.",
+        tags: ["Next.js", "Tailwind CSS", "Prisma"],
+      },
+      ecommerce: {
+        title: "E-commerce Platform",
+        description:
+          "Full-stack e-commerce platform with product catalog, cart and payments.",
+        tags: ["Node.js", "Express", "PostgreSQL"],
       },
     },
     about: {
@@ -133,9 +164,17 @@ export const MESSAGES = {
       },
     },
     hero: {
+      kicker: "Ciao, sono Yurii",
+      headlineLines: ["Creo soluzioni", "interattive, scalabili", "e coinvolgenti"],
+      headline: "Creo soluzioni interattive, scalabili e coinvolgenti",
+      subtitle:
+        "Ingegnere del software focalizzato su applicazioni web veloci, pulite e user-friendly.",
+      ctaProjects: "Vedi Progetti",
+      ctaContact: "Contattami",
+
+      // Legacy keys kept for backwards-compat if referenced elsewhere.
       rolePrefix: "Ciao, sono Yurii, un ingegnere del software",
-      roleSuffix:
-        " che crea ",
+      roleSuffix: " che crea ",
       typewriterWords: ["interattive", "scalabili", "coinvolgenti"],
       roleSuffixEnd: "soluzioni",
       imageAlt: "Yurii Suprun - Software Engineer",
@@ -143,6 +182,28 @@ export const MESSAGES = {
         linkedin: "LinkedIn",
         github: "GitHub",
         email: "iursuprun@gmail.com",
+      },
+    },
+    featured: {
+      kicker: "PROGETTI IN EVIDENZA",
+      title: "Cose che ho creato",
+      analytics: {
+        title: "Dashboard Analytics",
+        description:
+          "Dashboard analytics in tempo reale con grafici interattivi e report personalizzati.",
+        tags: ["React", "TypeScript", "Chart.js"],
+      },
+      task: {
+        title: "Task Manager",
+        description:
+          "App di produttivita per organizzare i task, impostare priorita e tracciare i progressi.",
+        tags: ["Next.js", "Tailwind CSS", "Prisma"],
+      },
+      ecommerce: {
+        title: "Piattaforma E-commerce",
+        description:
+          "Piattaforma e-commerce full-stack con catalogo, carrello e pagamenti.",
+        tags: ["Node.js", "Express", "PostgreSQL"],
       },
     },
     about: {

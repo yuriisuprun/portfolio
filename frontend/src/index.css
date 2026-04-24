@@ -2,44 +2,45 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Use a single, explicit typeface everywhere. */
-@layer theme {
-    :root {
-        --font-sans: "Typewriter Condensed";
-        --font-mono: "Typewriter Condensed";
-        --default-font-family: "Typewriter Condensed";
-        --default-mono-font-family: "Typewriter Condensed";
-    }
-}
-
 @layer base {
     :root {
         color-scheme: light;
-        --bw-bg: 255 255 255;
-        --bw-fg: 0 0 0;
-        --bw-focus: 0 0 0;
+        --app-bg: 250 248 244; /* warm off-white like the reference */
+        --app-fg: 15 23 42; /* slate-900-ish */
+        --app-muted: 100 116 139; /* slate-500-ish */
+        --app-card: 255 255 255;
+        --app-border: 15 23 42 / 0.12;
+        --app-focus: 249 115 22; /* orange-500 */
+        --app-accent: 249 115 22;
+        --app-accent-hover: 234 88 12;
     }
 
     .dark {
         color-scheme: dark;
-        --bw-bg: 0 0 0;
-        --bw-fg: 255 255 255;
-        --bw-focus: 255 255 255;
+        --app-bg: 10 14 20;
+        --app-fg: 241 245 249;
+        --app-muted: 148 163 184;
+        --app-card: 15 23 42;
+        --app-border: 241 245 249 / 0.16;
+        --app-focus: 251 146 60;
+        --app-accent: 251 146 60;
+        --app-accent-hover: 249 115 22;
     }
 
     html,
     body {
-        font-family: "Typewriter Condensed";
-        background: rgb(var(--bw-bg));
-        color: rgb(var(--bw-fg));
+        font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+            Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: rgb(var(--app-bg));
+        color: rgb(var(--app-fg));
     }
 
     ::selection {
-        background: rgb(var(--bw-fg) / 0.18);
+        background: rgb(var(--app-accent) / 0.22);
     }
 
     :focus-visible {
-        outline: 2px solid rgb(var(--bw-focus));
+        outline: 2px solid rgb(var(--app-focus));
         outline-offset: 3px;
     }
 
@@ -49,107 +50,41 @@
 }
 
 @layer components {
-    /* White button with a subtle "circuit board" pattern in black. */
-    .btn-circuit {
-        --btn-bg: 255 255 255;
-        --btn-fg: 0 0 0;
-        --btn-line: 0 0 0;
-        --btn-grid-alpha: 0.08;
-        --btn-node-strong-alpha: 0.16;
-        --btn-node-soft-alpha: 0.12;
-        --btn-ring: 0 0 0;
-        --btn-halo: 255 255 255;
-
-        background-color: rgb(var(--btn-bg));
-        color: rgb(var(--btn-fg));
-        /* Circuit is in the border only; keep the inside clean. */
-        border: 1px solid transparent;
-        background-origin: border-box;
-        box-shadow:
-            inset 0 0 0 1px rgb(var(--btn-line) / 0.55),
-            0 1px 0 rgb(0 0 0 / 0.08);
-
-        /* Grid + nodes clipped to the border only (fill layer covers the inside). */
-        background-image:
-            linear-gradient(rgb(var(--btn-bg)), rgb(var(--btn-bg))),
-            linear-gradient(90deg, rgb(var(--btn-line) / var(--btn-grid-alpha)) 1px, transparent 1px),
-            linear-gradient(rgb(var(--btn-line) / var(--btn-grid-alpha)) 1px, transparent 1px),
-            radial-gradient(circle at 10px 10px, rgb(var(--btn-line) / var(--btn-node-strong-alpha)) 1.15px, transparent 1.25px),
-            radial-gradient(circle at 30px 22px, rgb(var(--btn-line) / var(--btn-node-soft-alpha)) 1px, transparent 1.05px),
-            radial-gradient(circle at 22px 34px, rgb(var(--btn-line) / var(--btn-node-soft-alpha)) 1px, transparent 1.05px);
-        background-clip: padding-box, border-box, border-box, border-box, border-box, border-box;
-        background-size: auto, 28px 28px, 28px 28px, 56px 56px, 56px 56px, 56px 56px;
-        background-position: 0 0, 0 0, 0 0, 0 0, 14px 14px, 28px 0;
-
-        transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 120ms ease;
+    .btn-primary {
+        background: rgb(var(--app-accent));
+        color: #fff;
+        border: 1px solid rgb(0 0 0 / 0.06);
+        box-shadow: 0 1px 0 rgb(0 0 0 / 0.05);
+        transition: background-color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
     }
-
-    .dark .btn-circuit {
-        --btn-bg: 0 0 0;
-        --btn-fg: 255 255 255;
-        --btn-line: 255 255 255;
-        --btn-grid-alpha: 0.12;
-        --btn-node-strong-alpha: 0.22;
-        --btn-node-soft-alpha: 0.17;
-        --btn-ring: 255 255 255;
-        --btn-halo: 0 0 0;
-
-        box-shadow:
-            inset 0 0 0 1px rgb(255 255 255 / 0.72),
-            0 0 0 1px rgb(255 255 255 / 0.22),
-            0 10px 28px rgb(0 0 0 / 0.6),
-            0 0 18px rgb(255 255 255 / 0.08);
+    .btn-primary:hover {
+        background: rgb(var(--app-accent-hover));
+        box-shadow: 0 8px 18px rgb(0 0 0 / 0.08);
     }
-
-    .btn-circuit:hover:not(:disabled) {
-        --btn-grid-alpha: 0.12;
-        --btn-node-strong-alpha: 0.24;
-        --btn-node-soft-alpha: 0.18;
-        box-shadow: 0 1px 0 rgb(0 0 0 / 0.1), 0 8px 20px rgb(0 0 0 / 0.08);
-    }
-
-    .dark .btn-circuit:hover:not(:disabled) {
-        box-shadow:
-            inset 0 0 0 1px rgb(255 255 255 / 0.88),
-            0 0 0 1px rgb(255 255 255 / 0.3),
-            0 14px 36px rgb(0 0 0 / 0.7),
-            0 0 22px rgb(255 255 255 / 0.11);
-    }
-
-    .btn-circuit:active:not(:disabled) {
+    .btn-primary:active {
         transform: translateY(1px);
-        box-shadow: 0 0 0 rgb(0 0 0 / 0);
+        box-shadow: 0 2px 10px rgb(0 0 0 / 0.08);
     }
 
-    .btn-circuit:focus-visible {
-        outline: none;
-        /* Visible on both themes: ring contrasts with button, halo contrasts with page background. */
-        box-shadow:
-            0 0 0 3px rgb(var(--btn-ring) / 0.78),
-            0 0 0 6px rgb(var(--btn-halo) / 0.88),
-            0 1px 0 rgb(0 0 0 / 0.08);
+    .btn-outline {
+        background: rgb(var(--app-card));
+        color: rgb(var(--app-fg));
+        border: 1px solid rgb(var(--app-border));
+        transition: background-color 160ms ease, transform 120ms ease, box-shadow 160ms ease;
     }
-
-    .btn-circuit:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
+    .btn-outline:hover {
+        background: rgb(0 0 0 / 0.03);
+        box-shadow: 0 8px 18px rgb(0 0 0 / 0.06);
     }
-
-    @media (prefers-reduced-motion: reduce) {
-        .btn-circuit {
-            transition: none;
-        }
-
-        .btn-circuit:active:not(:disabled) {
-            transform: none;
-        }
+    .dark .btn-outline:hover {
+        background: rgb(255 255 255 / 0.05);
     }
-}
-
-.font-typewriter-condensed {
-    font-family: "Typewriter Condensed", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    .btn-outline:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 10px rgb(0 0 0 / 0.06);
+    }
 }
 
 a {
-    transition: 0.2s;
+    transition: color 160ms ease, background-color 160ms ease, opacity 160ms ease;
 }

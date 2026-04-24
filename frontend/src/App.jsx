@@ -43,11 +43,11 @@ function App() {
     return (
         <I18nProvider locale={language} setLocale={setLanguage}>
             <div
-                className="min-h-screen flex flex-col bg-white text-black dark:bg-black dark:text-white transition-colors">
-                <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 flex flex-col flex-grow">
+                className="min-h-screen flex flex-col bg-transparent text-[rgb(var(--app-fg))] transition-colors">
+                <div className="w-full max-w-6xl mx-auto px-5 sm:px-8 flex flex-col flex-grow">
                     <Navbar dark={dark} setDark={setDark} language={language} setLanguage={setLanguage}/>
 
-                    <main className="flex-grow text-[17px] sm:text-[18px] leading-[1.7]">
+                    <main className="flex-grow text-[16px] sm:text-[17px] leading-[1.65]">
                         <Routes>
                             <Route path="/" element={<Navigate to="/home" replace/>}/>
                             {routeConfig().map(({path, component, seoKey}) => (

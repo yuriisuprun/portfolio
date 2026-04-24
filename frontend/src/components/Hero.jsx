@@ -1,170 +1,276 @@
-import React, { memo, useMemo } from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { SITE_CONFIG } from "../config/siteConfig";
 import { useT } from "../i18n/i18n";
 
-const ICON_CLASSNAME = "w-4 h-4 grayscale brightness-0 dark:invert";
-const LINK_ROW_CLASSNAME = "flex items-center gap-2 text-black/80 dark:text-white/80";
+const ICON_CLASSNAME =
+  "w-[16px] h-[16px] grayscale brightness-0 opacity-80 dark:invert";
+const CHIP_CLASSNAME =
+  "inline-flex items-center rounded-full bg-black/5 dark:bg-white/10 px-3 py-1 text-[12px] text-[rgb(var(--app-muted))]";
 
-function getExternalLinkProps(external) {
-  return external ? { target: "_blank", rel: "noopener noreferrer" } : {};
-}
-
-function sanitizeWordList(value) {
-  if (!Array.isArray(value)) return [];
-  return value.filter((w) => typeof w === "string" && w.trim().length > 0);
-}
-
-function formatWordList(words, locale) {
-  if (words.length === 0) return "";
-
-  // Prefer a locale-aware conjunction ("a, b, and c") but keep a safe fallback.
-  try {
-    const intl = globalThis.Intl;
-    if (intl && typeof intl.ListFormat === "function") {
-      return new intl.ListFormat(locale, {
-        style: "long",
-        type: "conjunction",
-      }).format(words);
-    }
-  } catch {
-    // Ignore and fall back to a simple join.
-  }
-
-  return words.join(", ");
-}
-
-function getGreeting(language) {
-  if (language === "it") {
-    return (
-      <>
-        Ciao, sono <span className="font-bold">Yurii</span>, un ingegnere del
-        software
-      </>
-    );
-  }
-
+function ArrowRightIcon({ className = "" }) {
   return (
-    <>
-      Hi, I'm <span className="font-bold">Yurii</span>, a software engineer
-    </>
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M5 12h12M13 6l6 6-6 6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
-function buildLinks(t) {
-  return [
+ArrowRightIcon.propTypes = { className: PropTypes.string };
+
+function MailIcon({ className = "" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M4 7h16v10H4V7z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M4 8l8 6 8-6"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+MailIcon.propTypes = { className: PropTypes.string };
+
+function ExternalLinkIcon({ className = "" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M14 5h5v5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M10 14L19 5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M19 14v5H5V5h5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+ExternalLinkIcon.propTypes = { className: PropTypes.string };
+
+function FeaturedCard({ title, description, tags, iconSrc, href }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative rounded-2xl border border-black/10 dark:border-white/15 bg-[rgb(var(--app-card))] p-6 shadow-[0_1px_0_rgba(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-shadow"
+    >
+      <span className="absolute right-5 top-5 text-[rgb(var(--app-muted))] group-hover:text-[rgb(var(--app-fg))] transition-colors">
+        <ExternalLinkIcon className="h-5 w-5" />
+      </span>
+      <div className="flex gap-5">
+        <div className="shrink-0">
+          <img
+            src={iconSrc}
+            alt=""
+            className="h-[74px] w-[74px] rounded-xl bg-black/5 dark:bg-white/5 p-2"
+          />
+        </div>
+        <div className="min-w-0">
+          <h3 className="font-bold text-[16px] sm:text-[17px] leading-snug text-[rgb(var(--app-fg))]">
+            {title}
+          </h3>
+          <p className="mt-2 text-[14px] leading-relaxed text-[rgb(var(--app-muted))]">
+            {description}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span key={tag} className={CHIP_CLASSNAME}>
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+FeaturedCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  iconSrc: PropTypes.string.isRequired,
+  href: PropTypes.string.isRequired,
+};
+
+export default function Hero({ language }) {
+  const { t, tArray } = useT(language);
+  const headlineLines = tArray("hero.headlineLines");
+
+  const featured = [
     {
-      key: "linkedin",
-      label: t("hero.links.linkedin"),
-      href: SITE_CONFIG.linkedin,
-      external: true,
+      title: t("featured.analytics.title"),
+      description: t("featured.analytics.description"),
+      tags: tArray("featured.analytics.tags"),
+      iconSrc: "/projects/analytics.svg",
+      href: `${SITE_CONFIG.github}/`,
     },
     {
-      key: "github",
-      label: t("hero.links.github"),
-      href: SITE_CONFIG.github,
-      external: true,
+      title: t("featured.task.title"),
+      description: t("featured.task.description"),
+      tags: tArray("featured.task.tags"),
+      iconSrc: "/projects/task-manager.svg",
+      href: `${SITE_CONFIG.github}/`,
     },
     {
-      key: "email",
-      label: t("hero.links.email"),
-      href: `mailto:${SITE_CONFIG.email}`,
-      external: false,
+      title: t("featured.ecommerce.title"),
+      description: t("featured.ecommerce.description"),
+      tags: tArray("featured.ecommerce.tags"),
+      iconSrc: "/projects/ecommerce.svg",
+      href: `${SITE_CONFIG.github}/`,
     },
   ];
-}
-
-const HeroLinkItem = memo(function HeroLinkItem({
-  label,
-  href,
-  external,
-  iconKey,
-}) {
-  const linkProps = getExternalLinkProps(external);
 
   return (
-    <p className={LINK_ROW_CLASSNAME}>
-      <img
-        src={`/icons/${iconKey}.png`}
-        alt={`${label} icon`}
-        className={ICON_CLASSNAME}
-      />
-      <a
-        href={href}
-        {...linkProps}
-        aria-label={label}
-        className={iconKey === "email" ? "hover:no-underline" : "hover:underline"}
-      >
-        {label}
-      </a>
-    </p>
-  );
-});
+    <section className="pt-10 sm:pt-14">
+      <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="max-w-xl">
+          <p className="text-[rgb(var(--app-accent))] font-semibold">
+            {t("hero.kicker")}
+          </p>
 
-HeroLinkItem.propTypes = {
-  label: PropTypes.string.isRequired,
-  href: PropTypes.string.isRequired,
-  external: PropTypes.bool.isRequired,
-  iconKey: PropTypes.string.isRequired,
-};
+          <h1 className="mt-4 text-[40px] sm:text-[54px] leading-[1.06] font-extrabold tracking-[-0.02em] text-[rgb(var(--app-fg))]">
+            {Array.isArray(headlineLines) && headlineLines.length > 0 ? (
+              headlineLines.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))
+            ) : (
+              <span>{t("hero.headline")}</span>
+            )}
+          </h1>
 
-const HeroLinks = memo(function HeroLinks({ links }) {
-  return (
-    <div className="space-y-1">
-      {links.map(({ key, label, href, external }) => (
-        <HeroLinkItem
-          key={key}
-          label={label}
-          href={href}
-          external={external}
-          iconKey={key}
-        />
-      ))}
-    </div>
-  );
-});
+          <p className="mt-5 text-[16px] sm:text-[17px] leading-relaxed text-[rgb(var(--app-muted))]">
+            {t("hero.subtitle")}
+          </p>
 
-HeroLinks.propTypes = {
-  links: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
-      href: PropTypes.string.isRequired,
-      external: PropTypes.bool.isRequired,
-    })
-  ).isRequired,
-};
+          <div className="mt-7 flex flex-wrap gap-4">
+            <Link
+              to="/projects"
+              className="btn-primary inline-flex items-center gap-3 rounded-lg px-5 py-3 font-semibold"
+            >
+              {t("hero.ctaProjects")}
+              <ArrowRightIcon className="h-5 w-5" />
+            </Link>
 
-function Hero({ language }) {
-  const { t, tArray } = useT(language);
+            <Link
+              to="/contacts"
+              className="btn-outline inline-flex items-center gap-3 rounded-lg px-5 py-3 font-semibold"
+            >
+              {t("hero.ctaContact")}
+              <MailIcon className="h-5 w-5" />
+            </Link>
+          </div>
 
-  const links = useMemo(() => buildLinks(t), [t]);
+          <div className="mt-7 flex flex-wrap items-center gap-6 text-[14px] text-[rgb(var(--app-muted))]">
+            <a
+              href={SITE_CONFIG.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 hover:text-[rgb(var(--app-fg))]"
+            >
+              <img
+                src="/icons/linkedin.png"
+                alt=""
+                className={ICON_CLASSNAME}
+              />
+              {t("hero.links.linkedin")}
+            </a>
+            <a
+              href={SITE_CONFIG.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 hover:text-[rgb(var(--app-fg))]"
+            >
+              <img src="/icons/github.png" alt="" className={ICON_CLASSNAME} />
+              {t("hero.links.github")}
+            </a>
+            <a
+              href={`mailto:${SITE_CONFIG.email}`}
+              className="inline-flex items-center gap-2 hover:text-[rgb(var(--app-fg))]"
+            >
+              <img src="/icons/email.png" alt="" className={ICON_CLASSNAME} />
+              {t("hero.links.email")}
+            </a>
+          </div>
+        </div>
 
-  const typewriterWords = useMemo(() => tArray("hero.typewriterWords"), [tArray]);
+        <div className="flex justify-center lg:justify-end">
+          <img
+            src="/hero-illustration.jpg"
+            alt=""
+            className="w-full max-w-[560px] h-auto"
+          />
+        </div>
+      </div>
 
-  const descriptorText = useMemo(() => {
-    const words = sanitizeWordList(typewriterWords);
-    const locale = language || "en";
-    return formatWordList(words, locale);
-  }, [typewriterWords, language]);
+      <div className="mt-14 sm:mt-16 pb-6">
+        <div className="text-center">
+          <p className="text-[12px] font-semibold tracking-[0.12em] text-[rgb(var(--app-accent))]">
+            {t("featured.kicker")}
+          </p>
+          <h2 className="mt-2 text-[24px] sm:text-[30px] font-extrabold text-[rgb(var(--app-fg))]">
+            {t("featured.title")}
+          </h2>
+        </div>
 
-  const hasDescriptor = descriptorText.length > 0;
-
-  return (
-    <section className="flex flex-col sm:flex-row items-center sm:items-start gap-6 min-h-[70vh] pt-32 sm:pt-40 px-4 sm:px-6">
-      <div className="flex-1 space-y-4 sm:space-y-6">
-        <p className="text-[1.05em] sm:text-[1.2em] text-black/70 dark:text-white/70 leading-relaxed">
-          {getGreeting(language)}
-          {t("hero.roleSuffix")}
-
-          <span className="text-black/85 dark:text-white/85 font-semibold">
-            {descriptorText}
-          </span>
-          {hasDescriptor ? " " : ""}
-          {t("hero.roleSuffixEnd")}
-        </p>
-
-        <HeroLinks links={links} />
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((card) => (
+            <FeaturedCard key={card.title} {...card} />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -173,5 +279,3 @@ function Hero({ language }) {
 Hero.propTypes = {
   language: PropTypes.oneOf(["en", "it"]),
 };
-
-export default memo(Hero);

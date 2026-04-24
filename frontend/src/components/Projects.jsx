@@ -16,7 +16,8 @@ const ALLOWED_REPOS = [
 ];
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";
-const CARD_CLASSNAME = "border border-black/20 dark:border-white/20 p-6 rounded";
+const CARD_CLASSNAME =
+    "relative rounded-2xl border border-black/10 dark:border-white/15 bg-[rgb(var(--app-card))] p-6 shadow-[0_1px_0_rgba(0,0,0,0.04)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-shadow";
 
 export default function Projects({language}) {
     const {t} = useT(language);
@@ -63,19 +64,21 @@ export default function Projects({language}) {
 
     return (
         <section className="py-16">
-            <h2 className="text-3xl mb-10 leading-tight">{t("projects.title")}</h2>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-10 leading-tight text-[rgb(var(--app-fg))]">
+                {t("projects.title")}
+            </h2>
 
             {loading && (
                 <>
-                    <p className="text-[0.95em] text-black/70 dark:text-white/70 mb-6 leading-relaxed">
+                    <p className="text-[0.95em] text-[rgb(var(--app-muted))] mb-6 leading-relaxed">
                         {t("projects.info")}
                     </p>
                     <div className={GRID_CLASSNAME}>
                         {Array.from({length: SKELETON_COUNT}).map((_, i) => (
                             <div key={i} className={`${CARD_CLASSNAME} animate-pulse`}>
-                                <div className="h-4 bg-black/10 dark:bg-white/15 w-2/3 mb-4"/>
-                                <div className="h-3 bg-black/10 dark:bg-white/15 mb-2"/>
-                                <div className="h-3 bg-black/10 dark:bg-white/15 w-5/6"/>
+                                <div className="h-4 bg-black/10 dark:bg-white/10 w-2/3 mb-4 rounded"/>
+                                <div className="h-3 bg-black/10 dark:bg-white/10 mb-2 rounded"/>
+                                <div className="h-3 bg-black/10 dark:bg-white/10 w-5/6 rounded"/>
                             </div>
                         ))}
                     </div>
@@ -83,7 +86,7 @@ export default function Projects({language}) {
             )}
 
             {!loading && error && (
-                <p className="text-[0.95em] text-black dark:text-white leading-relaxed" role="alert">
+                <p className="text-[0.95em] text-[rgb(var(--app-fg))] leading-relaxed" role="alert">
                     {t("projects.error")}
                 </p>
             )}
@@ -92,19 +95,33 @@ export default function Projects({language}) {
                 <div className={GRID_CLASSNAME}>
                     {repos.map((repo) => (
                         <div key={repo.id} className={CARD_CLASSNAME}>
-                            <h3 className="text-lg font-bold leading-snug">{repo.name}</h3>
+                            <a
+                                href={repo.html_url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="absolute right-5 top-5 text-[rgb(var(--app-muted))] hover:text-[rgb(var(--app-fg))]"
+                                aria-label={`${repo.name} external link`}
+                                title={t("projects.view")}
+                            >
+                                <span aria-hidden="true">↗</span>
+                            </a>
+
+                            <h3 className="text-lg font-bold leading-snug text-[rgb(var(--app-fg))]">{repo.name}</h3>
 
                             {repo.description && (
-                                <p className="text-[0.95em] text-black/70 dark:text-white/70 mt-2 leading-relaxed">
+                                <p className="text-[0.95em] text-[rgb(var(--app-muted))] mt-2 leading-relaxed">
                                     {repo.description}
                                 </p>
                             )}
 
-                            <a href={repo.html_url}
+                            <a
+                                href={repo.html_url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="block mt-4 underline underline-offset-4 hover:no-underline">
-                                &gt; {t("projects.view")}
+                                className="inline-flex items-center gap-2 mt-5 font-semibold text-[rgb(var(--app-fg))] hover:opacity-80"
+                            >
+                                {t("projects.view")}
+                                <span aria-hidden="true">→</span>
                             </a>
                         </div>
                     ))}

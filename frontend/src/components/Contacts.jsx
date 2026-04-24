@@ -57,13 +57,13 @@ export default function Contacts({language}) {
 
     return (
         <section className="py-16 px-4 sm:px-6 max-w-2xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-black dark:text-white leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-[rgb(var(--app-fg))] leading-tight">
                 {t("contacts.title")}
             </h2>
 
             <ContactLinks links={contactLinks} directText={t("contacts.direct")}/>
 
-            <p className="mb-2 text-black/80 dark:text-white/80 font-typewriter-condensed">
+            <p className="mb-2 text-[rgb(var(--app-muted))]">
                 {t("contacts.description")}
             </p>
 
@@ -81,7 +81,7 @@ export default function Contacts({language}) {
 
                 <button type="submit"
                     disabled={loading}
-                    className="w-full btn-circuit py-3 rounded font-semibold">
+                    className="w-full btn-primary py-3 rounded-lg font-semibold">
                     {loading ? t("contacts.sending") : t("contacts.send")}
                 </button>
 
@@ -103,7 +103,7 @@ Contacts.propTypes = {
 function ContactLinks({links, directText}) {
     return (
         <div className="mb-8">
-            <p className="font-semibold mb-3 font-typewriter-condensed">{directText}</p>
+            <p className="font-semibold mb-3 text-[rgb(var(--app-fg))]">{directText}</p>
             <ul className="flex flex-wrap gap-4">
                 {links.map(({key, label, href, icon}) => (
                     <li key={key}>
@@ -111,14 +111,14 @@ function ContactLinks({links, directText}) {
                             <a href={href}
                                 target={key !== "phone" && key !== "email" ? "_blank" : "_self"}
                                 rel={key !== "phone" && key !== "email" ? "noopener noreferrer" : undefined}
-                                className="flex items-center gap-2 px-4 py-2 border border-black/30 dark:border-white/30 rounded hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200"
+                                className="flex items-center gap-2 px-4 py-2 border border-black/10 dark:border-white/15 rounded-lg bg-[rgb(var(--app-card))] hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200 text-[rgb(var(--app-muted))] hover:text-[rgb(var(--app-fg))]"
                                 aria-label={label}>
                                 <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 grayscale brightness-0 dark:invert"/>
                                 {label}
                             </a>
                         ) : (
                             <span
-                                className="flex items-center gap-2 px-4 py-2 border border-black/30 dark:border-white/30 rounded bg-black/5 dark:bg-white/10 cursor-default"
+                                className="flex items-center gap-2 px-4 py-2 border border-black/10 dark:border-white/15 rounded-lg bg-black/5 dark:bg-white/10 cursor-default text-[rgb(var(--app-muted))]"
                                 aria-label={label}>
                                 <img src={`/icons/${icon}.png`} alt={`${label} icon`} className="w-5 h-5 grayscale brightness-0 dark:invert"/>
                                 {label}
@@ -150,7 +150,7 @@ function InputField({id, name, type = "text", value, onChange, placeholder}) {
                 {placeholder}
             </label>
             <input id={id} name={name} type={type} required value={value} onChange={onChange} placeholder={placeholder}
-                className="w-full p-3 border border-black/20 dark:border-white/20 rounded bg-white dark:bg-black text-black dark:text-white placeholder-black/50 dark:placeholder-white/50 transition font-typewriter-condensed"
+                className="w-full p-3 border border-black/10 dark:border-white/15 rounded-lg bg-[rgb(var(--app-card))] text-[rgb(var(--app-fg))] placeholder-black/40 dark:placeholder-white/40 transition"
             />
         </>
     );
@@ -172,7 +172,7 @@ function TextAreaField({id, name, value, onChange, placeholder}) {
                 {placeholder}
             </label>
             <textarea id={id} name={name} rows={5} required value={value} onChange={onChange} placeholder={placeholder}
-                className="w-full p-3 border border-black/20 dark:border-white/20 rounded bg-white dark:bg-black text-black dark:text-white placeholder-black/50 dark:placeholder-white/50 transition resize-none font-typewriter-condensed"/>
+                className="w-full p-3 border border-black/10 dark:border-white/15 rounded-lg bg-[rgb(var(--app-card))] text-[rgb(var(--app-fg))] placeholder-black/40 dark:placeholder-white/40 transition resize-none"/>
         </>
     );
 }
