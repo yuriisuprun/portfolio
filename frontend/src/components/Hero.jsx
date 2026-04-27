@@ -249,7 +249,7 @@ export default function Hero({ language }) {
 
         <div className="flex justify-center lg:justify-end">
           <img
-            src="/hero-illustration.jpg"
+            src="/hero-illustration.png"
             alt=""
             className="w-full max-w-[560px] h-auto"
           />
