@@ -8,11 +8,11 @@ const REPO_LIMIT = 6;
 const SKELETON_COUNT = 6;
 
 const ALLOWED_REPOS = [
+    "AI-language-tutoring-system",
     "polaris",
     "portfolio",
     "monolith-to-microservices",
     "library-system",
-    "AI-language-tutoring-system",
 ];
 
 const GRID_CLASSNAME = "grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6";
