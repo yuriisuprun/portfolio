@@ -16,12 +16,12 @@ beforeEach(() => {
 test('shows loading state then renders filtered repos in configured order', async () => {
   axios.get.mockResolvedValueOnce({
     data: [
-      { id: 1, name: 'portfolio', html_url: 'https://example.com/portfolio' },
-      { id: 2, name: 'other-repo', html_url: 'https://example.com/other-repo' },
-      {id: 3, name: 'monolith-to-microservices', html_url: 'https://example.com/monolith-to-microservices',},
-      { id: 4, name: 'polaris', html_url: 'https://example.com/polaris' },
-      { id: 5, name: 'library-system', html_url: 'https://example.com/library-system' },
-      { id: 6, name: 'AI-language-tutoring-system', html_url: 'https://example.com/AI-language-tutoring-system' },
+      { id: 1, name: 'AI-language-tutoring-system', html_url: 'https://example.com/AI-language-tutoring-system' },
+      { id: 2, name: 'portfolio', html_url: 'https://example.com/portfolio' },
+      { id: 3, name: 'other-repo', html_url: 'https://example.com/other-repo' },
+      {id: 4, name: 'monolith-to-microservices', html_url: 'https://example.com/monolith-to-microservices',},
+      { id: 5, name: 'polaris', html_url: 'https://example.com/polaris' },
+      { id: 6, name: 'library-system', html_url: 'https://example.com/library-system' },
     ],
   });
 
@@ -41,11 +41,11 @@ test('shows loading state then renders filtered repos in configured order', asyn
   // Ensure the ordering matches the allow-list ordering.
   const repoHeadings = screen.getAllByRole('heading', { level: 3 });
   expect(repoHeadings.map((h) => h.textContent)).toEqual([
+    'AI-language-tutoring-system',
     'polaris',
     'portfolio',
     'monolith-to-microservices',
     'library-system',
-    'AI-language-tutoring-system',
   ]);
 
   // Loading info should go away once finished.
