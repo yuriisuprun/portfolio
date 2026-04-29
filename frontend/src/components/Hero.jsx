@@ -256,22 +256,22 @@ export default function Hero({ language }) {
         </div>
       </div>
 
-      <div className="mt-14 sm:mt-16 pb-6">
-        <div className="text-center">
-          <p className="text-[12px] font-semibold tracking-[0.12em] text-[rgb(var(--app-accent))]">
-            {t("featured.kicker")}
-          </p>
-          <h2 className="mt-2 text-[24px] sm:text-[30px] font-extrabold text-[rgb(var(--app-fg))]">
-            {t("featured.title")}
-          </h2>
-        </div>
+      {/*<div className="mt-14 sm:mt-16 pb-6">*/}
+      {/*  <div className="text-center">*/}
+      {/*    <p className="text-[12px] font-semibold tracking-[0.12em] text-[rgb(var(--app-accent))]">*/}
+      {/*      {t("featured.kicker")}*/}
+      {/*    </p>*/}
+      {/*    <h2 className="mt-2 text-[24px] sm:text-[30px] font-extrabold text-[rgb(var(--app-fg))]">*/}
+      {/*      {t("featured.title")}*/}
+      {/*    </h2>*/}
+      {/*  </div>*/}
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((card) => (
-            <FeaturedCard key={card.title} {...card} />
-          ))}
-        </div>
-      </div>
+      {/*  <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">*/}
+      {/*    {featured.map((card) => (*/}
+      {/*      <FeaturedCard key={card.title} {...card} />*/}
+      {/*    ))}*/}
+      {/*  </div>*/}
+      {/*</div>*/}
     </section>
   );
 }
