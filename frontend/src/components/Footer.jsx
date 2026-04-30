@@ -7,10 +7,8 @@ export default function Footer({language}) {
     const year = new Date().getFullYear();
 
     return (
-        <footer
-            role="contentinfo"
-            className="border-t border-black/10 dark:border-white/15 py-7 text-sm text-[rgb(var(--app-muted))] text-center"
-        >
+        <footer role="contentinfo"
+            className="border-t border-black/10 dark:border-white/15 py-7 text-sm text-[rgb(var(--app-muted))] text-center">
             {"\u00A9"} {year} | {t("footer.designedBy")}{" "}
             <span className="font-semibold text-[rgb(var(--app-fg))]">Yurii Suprun</span>{" "}
             {t("footer.with")}{" "}
