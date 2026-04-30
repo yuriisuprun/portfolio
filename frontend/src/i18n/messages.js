@@ -44,7 +44,6 @@ export const MESSAGES = {
       },
     },
     hero: {
-      // Home hero (reference UI)
       kicker: "Hi, I'm Yurii",
       headlineLines: ["I build interactive,", "scalable, and engaging", "solutions"],
       headline: "I build interactive, scalable, and engaging solutions",
