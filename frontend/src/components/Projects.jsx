@@ -9,7 +9,7 @@ const SKELETON_COUNT = 6;
 
 const ALLOWED_REPOS = [
     "AI-language-tutoring-system",
-    "polaris",
+    "memora-mcp",
     "portfolio",
     "monolith-to-microservices",
     "library-system",

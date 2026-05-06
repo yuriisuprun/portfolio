@@ -20,7 +20,7 @@ test('shows loading state then renders filtered repos in configured order', asyn
       { id: 2, name: 'portfolio', html_url: 'https://example.com/portfolio' },
       { id: 3, name: 'other-repo', html_url: 'https://example.com/other-repo' },
       {id: 4, name: 'monolith-to-microservices', html_url: 'https://example.com/monolith-to-microservices',},
-      { id: 5, name: 'polaris', html_url: 'https://example.com/polaris' },
+      { id: 5, name: 'memora-mcp', html_url: 'https://example.com/memora-mcp' },
       { id: 6, name: 'library-system', html_url: 'https://example.com/library-system' },
     ],
   });
@@ -33,7 +33,7 @@ test('shows loading state then renders filtered repos in configured order', asyn
   ).toBeInTheDocument();
 
   // Wait for the first repo to render.
-  expect(await screen.findByText('polaris')).toBeInTheDocument();
+  expect(await screen.findByText('memora-mcp')).toBeInTheDocument();
 
   // Disallowed repos are filtered out.
   expect(screen.queryByText('other-repo')).not.toBeInTheDocument();
@@ -42,7 +42,7 @@ test('shows loading state then renders filtered repos in configured order', asyn
   const repoHeadings = screen.getAllByRole('heading', { level: 3 });
   expect(repoHeadings.map((h) => h.textContent)).toEqual([
     'AI-language-tutoring-system',
-    'polaris',
+    'memora-mcp',
     'portfolio',
     'monolith-to-microservices',
     'library-system',
