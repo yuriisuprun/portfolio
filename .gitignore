@@ -3,3 +3,6 @@
 ### VS Code ###
 .vscode/
 *.code-workspace
+
+### Kiro ###
+.kiro/steering/
